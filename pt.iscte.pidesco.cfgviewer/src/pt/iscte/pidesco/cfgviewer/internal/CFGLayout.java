@@ -1,5 +1,8 @@
 package pt.iscte.pidesco.cfgviewer.internal;
 
+import java.util.ArrayList;
+import java.util.Stack;
+
 import org.eclipse.zest.core.widgets.GraphNode;
 import org.eclipse.zest.layouts.LayoutEntity;
 import org.eclipse.zest.layouts.algorithms.AbstractLayoutAlgorithm;
@@ -7,6 +10,7 @@ import org.eclipse.zest.layouts.dataStructures.InternalNode;
 import org.eclipse.zest.layouts.dataStructures.InternalRelationship;
 
 import pt.iscte.paddle.model.cfg.IBranchNode;
+import pt.iscte.paddle.model.cfg.INode;
 
 public class CFGLayout extends AbstractLayoutAlgorithm {
 	
@@ -14,51 +18,43 @@ public class CFGLayout extends AbstractLayoutAlgorithm {
 	private static final double HSPACING = 2;*/
 	
 	private static final int SPACING = 30;
+	private INode lastNode;
 
 	public CFGLayout(int styles) {
 		super(styles);
 	}
 	
+	/*
+	 * 
+	 * O código aparenta desenhar primeiro os nós da guarda verdadeira (alternative) e so quando acaba os true é que desenhas os false
+	 * Tentar usar isto para formatar o desenho?
+	 * 
+	 */
 	@Override
 	protected void applyLayoutInternal(InternalNode[] entitiesToLayout, InternalRelationship[] relationshipsToConsider,
 			double boundsX, double boundsY, double boundsWidth, double boundsHeight) {
 		
-		for(InternalRelationship r : relationshipsToConsider) {
-//			System.out.println("R: " + r.toString());
-			System.out.println("InternalRelationship GraphData: " + r.getGraphData());
-			
-		}
+		int currentY = 50;
+		int currentX = 50;
 		
-		for(InternalNode node : entitiesToLayout) {
-			System.out.println("InternalNode graphdata: " + node.getLayoutInformation());
+		for(InternalNode in : entitiesToLayout) {
+			INode node = (INode)((GraphNode)in.getLayoutEntity().getGraphData()).getData();	//Aqui consigo aceder ao conteudo do node
 			
-			LayoutEntity e = node.getLayoutEntity();
-//			System.out.println("fsdfiudsfdnbfiu: " + e.getGraphData());
-			GraphNode g = (GraphNode)e.getGraphData();
-			
-			
-			if(g.getData() instanceof IBranchNode) {		//Aqui consigo aceder ao conteudo do node
-				System.out.println("Branch");
-			} else {
-				System.out.println("not branch");
-			}
-		}
-		
-		int currentHeight = 50;
-		int currentWidth = 50;
-		
-//		boolean isAfterBranch = false;
-		for(InternalNode node : entitiesToLayout) {
-//			if(!isAfterBranch) {
-				node.setLocation(currentWidth, currentHeight);
-				currentHeight += node.getHeightInLayout() + SPACING;
+			/*if(!(node instanceof IBranchNode)) {
+				in.setLocation(currentX, currentY);
+				
 //				currentWidth += node.getWidthInLayout() + SPACING;
 				
-//			}
+			} else {
+				System.out.println("NOT");
+			}*/
 			
+			in.setLocation(currentX, currentY);
 			
+			currentY += in.getHeightInLayout() + SPACING;
 		}
 	}
+	
 
 	@Override
 	public void setLayoutArea(double x, double y, double width, double height) {
