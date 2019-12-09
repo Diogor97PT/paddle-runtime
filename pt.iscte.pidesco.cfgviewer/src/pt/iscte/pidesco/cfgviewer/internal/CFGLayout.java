@@ -1,8 +1,6 @@
 package pt.iscte.pidesco.cfgviewer.internal;
 
-import java.util.ArrayList;
-import java.util.Stack;
-
+import org.eclipse.zest.core.widgets.GraphConnection;
 import org.eclipse.zest.core.widgets.GraphNode;
 import org.eclipse.zest.layouts.LayoutEntity;
 import org.eclipse.zest.layouts.algorithms.AbstractLayoutAlgorithm;
@@ -10,48 +8,46 @@ import org.eclipse.zest.layouts.dataStructures.InternalNode;
 import org.eclipse.zest.layouts.dataStructures.InternalRelationship;
 
 import pt.iscte.paddle.model.cfg.IBranchNode;
-import pt.iscte.paddle.model.cfg.INode;
 
 public class CFGLayout extends AbstractLayoutAlgorithm {
 	
-	/*private static final double DELTA = 10;
-	private static final double HSPACING = 2;*/
-	
 	private static final int SPACING = 30;
-	private INode lastNode;
+	private static final int startY = 40;
+	private static final int startX = 50;
 
 	public CFGLayout(int styles) {
 		super(styles);
 	}
 	
-	/*
-	 * 
-	 * O código aparenta desenhar primeiro os nós da guarda verdadeira (alternative) e so quando acaba os true é que desenhas os false
-	 * Tentar usar isto para formatar o desenho?
-	 * 
-	 */
 	@Override
 	protected void applyLayoutInternal(InternalNode[] entitiesToLayout, InternalRelationship[] relationshipsToConsider,
 			double boundsX, double boundsY, double boundsWidth, double boundsHeight) {
 		
-		int currentY = 50;
-		int currentX = 50;
+		int currentY = startY;
+		
+		for(InternalNode n : entitiesToLayout) {
+			n.setLocation(startX, currentY);
+			currentY += n.getLayoutEntity().getHeightInLayout() + SPACING;
+		}
 		
 		for(InternalNode in : entitiesToLayout) {
-			INode node = (INode)((GraphNode)in.getLayoutEntity().getGraphData()).getData();	//Aqui consigo aceder ao conteudo do node
-			
-			/*if(!(node instanceof IBranchNode)) {
-				in.setLocation(currentX, currentY);
-				
-//				currentWidth += node.getWidthInLayout() + SPACING;
-				
-			} else {
-				System.out.println("NOT");
-			}*/
-			
-			in.setLocation(currentX, currentY);
-			
-			currentY += in.getHeightInLayout() + SPACING;
+			GraphNode gn = (GraphNode) in.getLayoutEntity().getGraphData();
+
+			if(gn.getData() instanceof IBranchNode) {
+				IBranchNode node = (IBranchNode) gn.getData();
+
+				for(Object obj : gn.getSourceConnections()) {
+					GraphConnection gc = (GraphConnection)obj;
+					
+					if(gc.getDestination().getData().equals(node.getAlternative()) && !(gc.getDestination().getLayoutEntity().getYInLayout() < gc.getSource().getLayoutEntity().getYInLayout())) {
+						LayoutEntity le = gc.getDestination().getLayoutEntity();
+						le.setLocationInLayout(gc.getSource().getLayoutEntity().getXInLayout() + le.getWidthInLayout() + SPACING, le.getYInLayout());
+					} else if (gc.getDestination().getData().equals(node.getNext()) && !(gc.getDestination().getLayoutEntity().getYInLayout() < gc.getSource().getLayoutEntity().getYInLayout())){
+						LayoutEntity le = gc.getDestination().getLayoutEntity();
+						le.setLocationInLayout(gc.getSource().getLayoutEntity().getXInLayout(), le.getYInLayout());
+					}
+				}
+			}
 		}
 	}
 	
