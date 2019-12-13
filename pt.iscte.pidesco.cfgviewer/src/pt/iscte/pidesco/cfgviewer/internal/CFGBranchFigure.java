@@ -17,9 +17,6 @@ public class CFGBranchFigure extends CFGFigure{
 		this(text);
 		
 		setToolTip(new Label(tooltip));
-		
-		LineBorder border = (LineBorder) getBorder();
-		border.setStyle(Graphics.LINE_DASH);
 	}
 
 }

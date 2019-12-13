@@ -29,7 +29,7 @@ import pt.iscte.pidesco.extensibility.PidescoView;
 public class CFGView implements PidescoView {
 	
 	/*
-	 * Criar layout customizado (ver horizontalshift mas fazer vertical)
+	 * Fazer o grafo numa janela independente (SWT?)
 	 * 
 	 * Marcar caminho apenas
 	 * Marcar caminho e caixas
@@ -52,11 +52,6 @@ public class CFGView implements PidescoView {
 		
 		IControlFlowGraph cfg = CFG_Creator.create_cfg();
 		gv.setInput(cfg.getNodes());
-		
-//		gv.setLayoutAlgorithm(new TreeLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING), false);
-//		gv.setLayoutAlgorithm(new CompositeLayoutAlgorithm(new LayoutAlgorithm[] {new TreeLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING), new HorizontalShift(LayoutStyles.NO_LAYOUT_NODE_RESIZING)}));
-//		gv.setLayoutAlgorithm(new HorizontalTreeLayoutAlgorithm(LayoutStyles.NO_LAYOUT_NODE_RESIZING));
-//		gv.setLayoutAlgorithm(new HorizontalShift(LayoutStyles.NO_LAYOUT_NODE_RESIZING));
 		
 		gv.setLayoutAlgorithm(new CFGLayout(LayoutStyles.NO_LAYOUT_NODE_RESIZING));
 		gv.applyLayout();
@@ -120,9 +115,9 @@ public class CFGView implements PidescoView {
 			} else {
 				INode node = (INode) element;
 				if(node.isEntry()) 
-					return new CFGFigure("Entry");
+					return new CFGExitFigure("Entry");
 				else 
-					return new CFGFigure("Exit");
+					return new CFGExitFigure("Exit");
 				
 			}
 		}
@@ -142,13 +137,6 @@ public class CFGView implements PidescoView {
 			
 			return "";
 		}
-		
-		/*@Override
-		public Image getImage(Object element) {		//Possivelmente remover
-			return super.getImage(element);
-		}*/
-		
-		
 	}
 	
 

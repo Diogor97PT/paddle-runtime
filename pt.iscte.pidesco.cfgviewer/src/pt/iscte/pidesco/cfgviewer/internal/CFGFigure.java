@@ -12,7 +12,7 @@ import org.eclipse.swt.graphics.Color;
 public class CFGFigure extends Figure {
 	
 	//private static final Color figureColor = new Color(null, 50, 155, 168);
-	public static Color figureColor = new Color(null,255,255,206);
+	private static Color backgroundColor = new Color(null,255,255,206);
 	
 	public CFGFigure(String text) {
 		BorderLayout layout = new BorderLayout();
@@ -20,11 +20,10 @@ public class CFGFigure extends Figure {
 //		layout.setVerticalSpacing(10);
 		
 		setLayoutManager(layout);
-		setBackgroundColor(figureColor);
+		setBackgroundColor(backgroundColor);
 		setOpaque(true);
 		
-		LineBorder border = new LineBorder(ColorConstants.black, 1, Graphics.LINE_SOLID);
-		border.setWidth(2);
+		LineBorder border = new LineBorder(ColorConstants.black, 2, Graphics.LINE_SOLID);
 		setBorder(border);
 		
 		setPreferredSize(100, 50);
@@ -32,7 +31,6 @@ public class CFGFigure extends Figure {
 		
 		Label l = new Label(text);
 		l.setLabelAlignment(PositionConstants.CENTER);
-//		l.setBorder(new LineBorder(1));
 		add(l, BorderLayout.CENTER);
 	}
 	

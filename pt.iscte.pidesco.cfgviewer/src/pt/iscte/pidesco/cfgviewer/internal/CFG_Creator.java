@@ -15,6 +15,11 @@ import pt.iscte.paddle.model.cfg.IBranchNode;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.model.cfg.IStatementNode;
 
+/*
+ * 
+ * Classe temporária de testes
+ * 
+ */
 public class CFG_Creator {
 
 	public static IControlFlowGraph create_cfg() {
@@ -65,8 +70,6 @@ public class CFG_Creator {
 		b_loop.setNext(s_ret);
 
 		s_ret.setNext(cfg.getExitNode());
-		
-		//cfg.getNodes().forEach(n -> System.out.println(n));
 		
 		return cfg;
 	}

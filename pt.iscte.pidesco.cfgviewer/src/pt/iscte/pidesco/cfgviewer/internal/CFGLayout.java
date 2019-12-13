@@ -23,11 +23,13 @@ public class CFGLayout extends AbstractLayoutAlgorithm {
 	protected void applyLayoutInternal(InternalNode[] entitiesToLayout, InternalRelationship[] relationshipsToConsider,
 			double boundsX, double boundsY, double boundsWidth, double boundsHeight) {
 		
-		int currentY = startY;
-		
-		for(InternalNode n : entitiesToLayout) {
+		/*for(InternalNode n : entitiesToLayout) {
 			n.setLocation(startX, currentY);
 			currentY += n.getLayoutEntity().getHeightInLayout() + SPACING;
+		}*/
+		
+		for(int i = 0; i < entitiesToLayout.length; i++) {
+			entitiesToLayout[i].setLocation(startX, startY + ((entitiesToLayout[i].getLayoutEntity().getHeightInLayout() + SPACING) * i));
 		}
 		
 		for(InternalNode in : entitiesToLayout) {
@@ -54,39 +56,29 @@ public class CFGLayout extends AbstractLayoutAlgorithm {
 
 	@Override
 	public void setLayoutArea(double x, double y, double width, double height) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
 	protected boolean isValidConfiguration(boolean asynchronous, boolean continuous) {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
 	@Override
 	protected void preLayoutAlgorithm(InternalNode[] entitiesToLayout, InternalRelationship[] relationshipsToConsider,
 			double x, double y, double width, double height) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
-	protected void postLayoutAlgorithm(InternalNode[] entitiesToLayout,
-			InternalRelationship[] relationshipsToConsider) {
-		// TODO Auto-generated method stub
-		
+	protected void postLayoutAlgorithm(InternalNode[] entitiesToLayout, InternalRelationship[] relationshipsToConsider) {
 	}
 
 	@Override
 	protected int getTotalNumberOfLayoutSteps() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	protected int getCurrentLayoutStep() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
