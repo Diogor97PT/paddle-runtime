@@ -12,7 +12,7 @@ import pt.iscte.paddle.model.cfg.IBranchNode;
 public class CFGLayout extends AbstractLayoutAlgorithm {
 	
 	private static final int SPACING = 30;
-	private static final int startY = 40;
+	private static final int startY = 20;
 	private static final int startX = 50;
 
 	public CFGLayout(int styles) {
@@ -40,12 +40,10 @@ public class CFGLayout extends AbstractLayoutAlgorithm {
 
 				for(Object obj : gn.getSourceConnections()) {
 					GraphConnection gc = (GraphConnection)obj;
-					
+					LayoutEntity le = gc.getDestination().getLayoutEntity();;
 					if(gc.getDestination().getData().equals(node.getAlternative()) && !(gc.getDestination().getLayoutEntity().getYInLayout() < gc.getSource().getLayoutEntity().getYInLayout())) {
-						LayoutEntity le = gc.getDestination().getLayoutEntity();
 						le.setLocationInLayout(gc.getSource().getLayoutEntity().getXInLayout() + le.getWidthInLayout() + SPACING, le.getYInLayout());
 					} else if (gc.getDestination().getData().equals(node.getNext()) && !(gc.getDestination().getLayoutEntity().getYInLayout() < gc.getSource().getLayoutEntity().getYInLayout())){
-						LayoutEntity le = gc.getDestination().getLayoutEntity();
 						le.setLocationInLayout(gc.getSource().getLayoutEntity().getXInLayout(), le.getYInLayout());
 					}
 				}

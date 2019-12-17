@@ -2,7 +2,6 @@ package pt.iscte.pidesco.cfgviewer.internal;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.IFigure;
@@ -10,7 +9,6 @@ import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.zest.core.viewers.EntityConnectionData;
 import org.eclipse.zest.core.viewers.GraphViewer;
@@ -21,12 +19,10 @@ import org.eclipse.zest.core.widgets.ZestStyles;
 import org.eclipse.zest.layouts.LayoutStyles;
 
 import pt.iscte.paddle.model.cfg.IBranchNode;
-import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.model.cfg.INode;
 import pt.iscte.paddle.model.cfg.IStatementNode;
-import pt.iscte.pidesco.extensibility.PidescoView;
 
-public class CFGView implements PidescoView {
+public class CFGView {
 	
 	/*
 	 * Fazer o grafo numa janela independente (SWT?)
@@ -41,8 +37,25 @@ public class CFGView implements PidescoView {
 	 *  
 	 * 
 	 * */
+	
+	private GraphViewer gv;
+	
+	public CFGView(Composite viewArea) {
+		gv = new GraphViewer(viewArea, SWT.BORDER);
 
-	@Override
+		gv.setContentProvider(new GraphNodeContentProvider());
+		gv.setLabelProvider(new GraphLabelContentProvider());
+		//gv.addSelectionChangedListener(listener);  //Pode vir a ser útil
+		
+		gv.setLayoutAlgorithm(new CFGLayout(LayoutStyles.NO_LAYOUT_NODE_RESIZING));
+		gv.applyLayout();
+	}
+	
+	public void setInput(Object input) {
+		gv.setInput(input);
+	}
+
+	/*@Override
 	public void createContents(Composite viewArea, Map<String, Image> imageMap) {
 		GraphViewer gv = new GraphViewer(viewArea, SWT.BORDER);
 		
@@ -55,7 +68,7 @@ public class CFGView implements PidescoView {
 		
 		gv.setLayoutAlgorithm(new CFGLayout(LayoutStyles.NO_LAYOUT_NODE_RESIZING));
 		gv.applyLayout();
-	}
+	}*/
 	
 	class GraphNodeContentProvider extends ArrayContentProvider implements IGraphEntityContentProvider {
 
