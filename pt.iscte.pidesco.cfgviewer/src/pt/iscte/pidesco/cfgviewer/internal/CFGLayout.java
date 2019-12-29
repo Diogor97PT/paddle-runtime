@@ -23,14 +23,16 @@ public class CFGLayout extends AbstractLayoutAlgorithm {
 	protected void applyLayoutInternal(InternalNode[] entitiesToLayout, InternalRelationship[] relationshipsToConsider,
 			double boundsX, double boundsY, double boundsWidth, double boundsHeight) {
 		
-		/*for(InternalNode n : entitiesToLayout) {
+		int currentY = startY;
+		
+		for(InternalNode n : entitiesToLayout) {
 			n.setLocation(startX, currentY);
 			currentY += n.getLayoutEntity().getHeightInLayout() + SPACING;
-		}*/
-		
-		for(int i = 0; i < entitiesToLayout.length; i++) {
-			entitiesToLayout[i].setLocation(startX, startY + ((entitiesToLayout[i].getLayoutEntity().getHeightInLayout() + SPACING) * i));
 		}
+		
+//		for(int i = 0; i < entitiesToLayout.length; i++) {
+//			entitiesToLayout[i].setLocation(startX, startY + ((entitiesToLayout[i].getLayoutEntity().getHeightInLayout() + SPACING) * i));
+//		}
 		
 		for(InternalNode in : entitiesToLayout) {
 			GraphNode gn = (GraphNode) in.getLayoutEntity().getGraphData();
@@ -40,7 +42,7 @@ public class CFGLayout extends AbstractLayoutAlgorithm {
 
 				for(Object obj : gn.getSourceConnections()) {
 					GraphConnection gc = (GraphConnection)obj;
-					LayoutEntity le = gc.getDestination().getLayoutEntity();;
+					LayoutEntity le = gc.getDestination().getLayoutEntity();
 					if(gc.getDestination().getData().equals(node.getAlternative()) && !(gc.getDestination().getLayoutEntity().getYInLayout() < gc.getSource().getLayoutEntity().getYInLayout())) {
 						le.setLocationInLayout(gc.getSource().getLayoutEntity().getXInLayout() + le.getWidthInLayout() + SPACING, le.getYInLayout());
 					} else if (gc.getDestination().getData().equals(node.getNext()) && !(gc.getDestination().getLayoutEntity().getYInLayout() < gc.getSource().getLayoutEntity().getYInLayout())){
