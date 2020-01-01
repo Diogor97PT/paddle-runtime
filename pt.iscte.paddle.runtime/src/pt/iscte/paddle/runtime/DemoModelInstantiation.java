@@ -8,9 +8,9 @@ import pt.iscte.paddle.interpreter.IExecutionData;
 import pt.iscte.paddle.interpreter.IMachine;
 import pt.iscte.paddle.interpreter.IProgramState;
 import pt.iscte.paddle.interpreter.IValue;
-import pt.iscte.paddle.javali.translator.Model2Java;
 import pt.iscte.paddle.model.IBlock;
 import pt.iscte.paddle.model.ILoop;
+import pt.iscte.paddle.model.IModel2CodeTranslator;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IVariable;
@@ -41,7 +41,7 @@ public class DemoModelInstantiation {
 		i.setId("i");
 
 		// prints model as code (without ids if the above setId calls are not executed)
-		String src = module.translate(new Model2Java());
+		String src = module.translate(new IModel2CodeTranslator.Java());
 		System.out.println(src);
 
 		IProgramState state = IMachine.create(module);
