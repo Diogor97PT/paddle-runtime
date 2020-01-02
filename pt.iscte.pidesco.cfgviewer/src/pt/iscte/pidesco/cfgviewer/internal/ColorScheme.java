@@ -38,7 +38,7 @@ public class ColorScheme implements IColorScheme {
 		if(source instanceof IBranchNode) {
 			IBranchNode branch = (IBranchNode) source;
 			if(destination.equals(branch.getAlternative()))
-				return ColorConstants.green;
+				return ColorConstants.darkGreen;
 			else
 				return ColorConstants.red;
 		} else {
