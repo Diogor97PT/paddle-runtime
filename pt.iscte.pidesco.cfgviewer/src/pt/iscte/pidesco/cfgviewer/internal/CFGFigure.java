@@ -12,8 +12,6 @@ public class CFGFigure extends Figure {
 	
 	public CFGFigure(String text, Color backgroundColor, Color borderColor) {
 		BorderLayout layout = new BorderLayout();
-//		layout.setHorizontalSpacing(10);
-//		layout.setVerticalSpacing(10);
 		
 		setLayoutManager(layout);
 		setBackgroundColor(backgroundColor);

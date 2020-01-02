@@ -21,7 +21,7 @@ public class CFGWindow {
 		Display display = new Display();
 		
 		Shell shell = new Shell(display);
-		shell.setText("Control Flow Graph");
+		shell.setText("Control Flow Graph Viewer");
 		shell.setLayout(new FillLayout());
 		
 		Composite viewArea = new Composite(shell, SWT.NONE);
@@ -41,7 +41,6 @@ public class CFGWindow {
 	public static void main(String[] args) {
 		
 		/*IControlFlowGraph cfg = CFG_Creator.create_cfg();
-		
 		new CFGWindow(cfg);*/
 		
 		File codeToCheck = new File("test.javali");

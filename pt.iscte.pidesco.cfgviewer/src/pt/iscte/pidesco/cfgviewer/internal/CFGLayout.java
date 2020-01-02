@@ -30,9 +30,6 @@ public class CFGLayout extends AbstractLayoutAlgorithm {
 			currentY += n.getLayoutEntity().getHeightInLayout() + SPACING;
 		}
 		
-//		for(int i = 0; i < entitiesToLayout.length; i++) {
-//			entitiesToLayout[i].setLocation(startX, startY + ((entitiesToLayout[i].getLayoutEntity().getHeightInLayout() + SPACING) * i));
-//		}
 		
 		for(InternalNode in : entitiesToLayout) {
 			GraphNode gn = (GraphNode) in.getLayoutEntity().getGraphData();
@@ -51,6 +48,18 @@ public class CFGLayout extends AbstractLayoutAlgorithm {
 				}
 			}
 		}
+		
+		/*for(InternalRelationship ir : relationshipsToConsider) {
+			GraphConnection gc = (GraphConnection)ir.getLayoutRelationship().getGraphData();
+//			System.out.println(gc);
+			
+//			gc.setCurveDepth(10);
+//			System.out.println(gc.getConnectionFigure().getChildren());
+			Label fig = (Label)gc.getConnectionFigure().getChildren().get(0);
+//			fig.setLocation(new Point(fig.getLocation().x + 20, fig.getLocation().y));
+			fig.setText("            " + fig.getText());
+			fig.setLocation(new Point(20, 20));
+		}*/
 	}
 	
 

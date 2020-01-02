@@ -3,7 +3,6 @@ package pt.iscte.pidesco.cfgviewer.internal;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -12,7 +11,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.zest.core.viewers.EntityConnectionData;
 import org.eclipse.zest.core.viewers.GraphViewer;
-import org.eclipse.zest.core.viewers.IConnectionStyleProvider;
+import org.eclipse.zest.core.viewers.IEntityConnectionStyleProvider;
 import org.eclipse.zest.core.viewers.IFigureProvider;
 import org.eclipse.zest.core.viewers.IGraphEntityContentProvider;
 import org.eclipse.zest.core.widgets.ZestStyles;
@@ -74,42 +73,29 @@ public class CFGView {
 		}
 	}
 	
-	private class GraphLabelContentProvider extends LabelProvider implements IFigureProvider, IConnectionStyleProvider {
+	private class GraphLabelContentProvider extends LabelProvider implements IFigureProvider, IEntityConnectionStyleProvider {
 		
 		/*fazer colorscheme para este caso (tipo de ligação tracejado, normal, etc)*/
 		@Override
-		public int getConnectionStyle(Object rel) {
-			if(rel instanceof EntityConnectionData) {
-				EntityConnectionData ecd = (EntityConnectionData) rel;
-				if(ecd.source instanceof IBranchNode && ((IBranchNode)ecd.source).getAlternative().equals(ecd.dest)) {
-					return ZestStyles.CONNECTIONS_DASH | ZestStyles.CONNECTIONS_DIRECTED;
-				}
+		public int getConnectionStyle(Object src, Object dest) {
+			if(src instanceof IBranchNode && ((IBranchNode)src).getAlternative().equals(dest)) {
+				return ZestStyles.CONNECTIONS_DASH | ZestStyles.CONNECTIONS_DIRECTED;
 			}
 			return ZestStyles.CONNECTIONS_DIRECTED;
 		}
 
 		@Override
-		public Color getColor(Object rel) {		//Color of the connections
-			if(rel instanceof EntityConnectionData) {
-				EntityConnectionData ecd = (EntityConnectionData) rel;
-				return ics.getConnectionColor((INode)ecd.source, (INode)ecd.dest);
-			}
-			
-			return ColorConstants.red;
+		public Color getColor(Object src, Object dest) {
+			return ics.getConnectionColor((INode)src, (INode)dest);
 		}
 
 		@Override
-		public Color getHighlightColor(Object rel) {	//Color of the Highlight
-//			return ColorConstants.blue;
-			if(rel instanceof EntityConnectionData) {
-				EntityConnectionData ecd = (EntityConnectionData) rel;
-				return ics.getHighlightColor((INode)ecd.source, (INode)ecd.dest);
-			}
-			return ColorConstants.blue;
+		public Color getHighlightColor(Object src, Object dest) {
+			return ics.getHighlightColor((INode)src, (INode)dest);
 		}
 
 		@Override
-		public int getLineWidth(Object rel) {
+		public int getLineWidth(Object src, Object dest) {
 			return 2;
 		}
 
@@ -142,18 +128,8 @@ public class CFGView {
 			if(element instanceof EntityConnectionData) {
 				EntityConnectionData ecd = (EntityConnectionData) element;
 				return ics.getConnectionText((INode)ecd.source, (INode)ecd.dest);
-//				if(ecd.source instanceof IBranchNode) {
-//					IBranchNode node = (IBranchNode)ecd.source;
-//					if(node.getAlternative().equals(ecd.dest))
-//						return "True";
-//					else
-//						return "False";
-//				}
 			}
-			
 			return "";
 		}
 	}
-	
-
 }

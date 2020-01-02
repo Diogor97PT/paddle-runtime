@@ -3,6 +3,7 @@ int max(int[] array) {
 	m = array[0];
 	int i;
 	i = 1;
+	return i;
 	while(i < array.length) {
 		if(array[i] > m) {
 			while(m > 20){
@@ -14,9 +15,12 @@ int max(int[] array) {
 						m = m - 15; 
 					}
 					else {	 
-						m = m - 5; 
+						m = m - 5;
+						while(i > 200){
+							break;
+							m = m + 135;
+						}
 					}
-					//m = 0;
 				}
 				m = m + 100;
 				m = m + 101;
@@ -29,6 +33,9 @@ int max(int[] array) {
 		i = i + 1;
 	}
 	m = 10;
+	while(i > 200){
+		m = m + 135;
+	}
 	m = 20;
 	m = 30;
 	return m; 
