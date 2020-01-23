@@ -8,7 +8,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-import pt.iscte.paddle.codequality.cfg.CFGBuilder;
+import pt.iscte.paddle.codequality.cfg.Builder;
 import pt.iscte.paddle.javali.translator.Translator;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
@@ -43,12 +43,12 @@ public class CFGWindow {
 		/*IControlFlowGraph cfg = CFG_Creator.create_cfg();
 		new CFGWindow(cfg);*/
 		
-		File codeToCheck = new File("test.javali");
+		File codeToCheck = new File("test3.javali");
 		Translator translator = new Translator(codeToCheck.getAbsolutePath());
 		IModule module1 = translator.createProgram();
 		IProcedure procedure = module1.getProcedures().iterator().next(); // first procedure
 		
-		CFGBuilder icfg = new CFGBuilder(procedure);
+		Builder icfg = new Builder(procedure);
 		
 		IColorScheme ics = new ColorScheme();
 		new CFGWindow(icfg.getCFG(), ics);
