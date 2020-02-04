@@ -9,13 +9,14 @@ import pt.iscte.paddle.interpreter.IProgramState;
 import pt.iscte.paddle.interpreter.IProgramState.IListener;
 import pt.iscte.paddle.interpreter.IValue;
 import pt.iscte.paddle.javali.translator.Translator;
-import pt.iscte.paddle.model.IArrayAllocation;
 import pt.iscte.paddle.model.IArrayElementAssignment;
-import pt.iscte.paddle.model.IExpression.IVisitor;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProgramElement;
+import pt.iscte.paddle.model.IVariable;
 import pt.iscte.paddle.model.IVariableAssignment;
+import pt.iscte.paddle.roles.IVariableRole;
+import pt.iscte.paddle.runtime.roles.IStepper;
 
 public class DemoListener {
 
@@ -43,8 +44,15 @@ public class DemoListener {
 			
 		});
 
+		
+		for(IVariable i : nats.getVariables()) {
+			if(IStepper.isStepper(i)) {
+				IVariableRole vr = IStepper.createStepper(i);
+				System.out.println(i + ":" + vr);
+			}
+		}
+		
 		System.out.println("Modifications of variable i:");
-
 		
 		try {
 			IExecutionData data = state.execute(nats, 5);// naturals(5)
