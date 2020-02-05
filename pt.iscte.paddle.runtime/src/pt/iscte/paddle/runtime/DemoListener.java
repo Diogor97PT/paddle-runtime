@@ -9,7 +9,6 @@ import pt.iscte.paddle.interpreter.IProgramState;
 import pt.iscte.paddle.interpreter.IProgramState.IListener;
 import pt.iscte.paddle.interpreter.IValue;
 import pt.iscte.paddle.javali.translator.Translator;
-import pt.iscte.paddle.model.IArrayElementAssignment;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProgramElement;
@@ -47,8 +46,8 @@ public class DemoListener {
 		
 		for(IVariable i : nats.getVariables()) {
 			if(IStepper.isStepper(i)) {
-				IVariableRole vr = IStepper.createStepper(i);
-				System.out.println(i + ":" + vr);
+				IVariableRole vr = IStepper.createStepper(i); //falta verificar se o step size é igual
+				System.out.println(i + ":" + vr);	
 			}
 		}
 		
@@ -65,7 +64,7 @@ public class DemoListener {
 			int invalidPos = e.getInvalidIndex();
 			String variable = e.getIndexExpression().getId();
 			String array = e.getTarget().getId();
-			int arrayDimension = e.getIndexDimension();	//Dimensão da array que deu erro
+			//int arrayDimension = e.getIndexDimension();	//Dimensão da array que deu erro
 			
 			if(invalidPos < 0) {	//tentou aceder a uma posição da array menor que 0
 				//System.err.println("Tentativa de acesso a uma posição inferior a 0.");
@@ -85,18 +84,7 @@ public class DemoListener {
 			System.out.println(array);
 			System.out.println(arrayDimension);*/
 		} catch (ExecutionError e) {
-			if(e.getType().equals(ExecutionError.Type.ARRAY_INDEX_BOUNDS)) {
-				
-				System.out.println();
-				System.err.println(e.getSourceElement());
-				//System.err.println(e.getArgument());
-				IArrayElementAssignment ar = (IArrayElementAssignment)e.getSourceElement();
-				
-				System.err.println("Verifica se estás a tentar iterar até no máximo o tamanho da array - 1");
-				System.out.println(state.getCallStack().getTopFrame().getVariables());
-			} else {
-				throw new ExecutionError(e.getType(), e.getSourceElement(), e.getMessage());
-			}
+			throw new ExecutionError(e.getType(), e.getSourceElement(), e.getMessage());
 		}
 	}
 }

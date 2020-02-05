@@ -8,8 +8,6 @@ import pt.iscte.paddle.model.IOperator;
 import pt.iscte.paddle.model.IVariable;
 import pt.iscte.paddle.model.IVariableAssignment;
 import pt.iscte.paddle.roles.IVariableRole;
-import pt.iscte.paddle.roles.IGatherer.Gatherer;
-import pt.iscte.paddle.roles.IGatherer.Visitor;
 
 public interface IStepper extends IVariableRole {
 	Direction getDirection();
@@ -25,7 +23,7 @@ public interface IStepper extends IVariableRole {
 	static boolean isStepper(IVariable var) {
 		Visitor v = new Visitor(var);
 		var.getOwnerProcedure().accept(v);
-		return v.isValid && v.direction != null; //trocar
+		return v.isValid && v.direction != null;
 	}
 	
 	static IVariableRole createStepper(IVariable var) {
@@ -40,12 +38,11 @@ public interface IStepper extends IVariableRole {
 		final IVariable var;
 		
 		boolean first = true;
-		int firstValue;
 		
 		Direction direction = null;
-		int stepSize;
+		int stepSize = Integer.MIN_VALUE;
 		
-		boolean isValid = true; //true até prova do contrário
+		boolean isValid = true; //true until proven otherwise
 		
 		public Visitor(IVariable var) {
 			this.var = var;
@@ -53,7 +50,7 @@ public interface IStepper extends IVariableRole {
 		
 		@Override
 		public boolean visit(IVariableAssignment assignment) {
-			if(assignment.getTarget().equals(var)){
+			if(assignment.getTarget().equals(var) && isValid){
 				if(first) {
 					first = !first;
 				} else {
@@ -72,26 +69,31 @@ public interface IStepper extends IVariableRole {
 			IExpression expression = var.getExpression();
 			if(expression instanceof IBinaryExpression) {
 				IBinaryExpression be = (IBinaryExpression) expression;
-				IExpression left = be.getLeftOperand();							//left e right -> ex:  v = left + right
+				IExpression left = be.getLeftOperand();							//left e right -> ex:  var = left + right
 				IExpression right = be.getRightOperand();
 				if(be.getOperator() == IOperator.ADD || be.getOperator() == IOperator.SUB) {		//Stepper only sums or subtracts
 					if(left instanceof IVariable && (((IVariable)left).equals(var.getTarget()) && right instanceof ILiteral)){ //left variable and right literal
 						ILiteral i = (ILiteral) right;
 						System.out.println(i.getStringValue());
+						int step = Integer.parseInt(i.getStringValue());
+						
+						if(stepSize != Integer.MIN_VALUE && step != stepSize) return null;	//step size must always be the same
+						else if (stepSize == Integer.MIN_VALUE) stepSize = step;
+							
 						return calculateDirection(be.getOperator());
-					} else if (right instanceof IVariable && (((IVariable)right).equals(var.getTarget()) && left instanceof ILiteral)) { //left literal and right variable
-						ILiteral i = (ILiteral) right;
+					} /*else if (right instanceof IVariable && (((IVariable)right).equals(var.getTarget()) && left instanceof ILiteral)) { //left literal and right variable
+						ILiteral i = (ILiteral) left;
+						System.out.println("left");
 						System.out.println(i.getStringValue());
 						return calculateDirection(be.getOperator());
-					}
+					}*/  												//não faz sentido fazer 1 + i para um iterador?
 				}
 			}
 			return null;
 		}
-		
 	}
 	
-	static Direction calculateDirection(IOperator op) {
+	static Direction calculateDirection(IOperator op) {	//only checks operation to know direction
 		if(op == IOperator.ADD)
 			return Direction.INC;
 		else 
