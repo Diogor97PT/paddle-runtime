@@ -46,9 +46,10 @@ public class DemoListener {
 		
 		for(IVariable i : nats.getVariables()) {
 			if(IStepper.isStepper(i)) {
-				IVariableRole vr = IStepper.createStepper(i); //falta verificar se o step size é igual
-				System.out.println(i + ":" + vr);	
-			}
+				IVariableRole vr = IStepper.createStepper(i);
+				System.out.println(i + " : " + vr);	
+			} else 
+				System.out.println(i + " : not a Stepper");
 		}
 		
 		System.out.println("Modifications of variable i:");

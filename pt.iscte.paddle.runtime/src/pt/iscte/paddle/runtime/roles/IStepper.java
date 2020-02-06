@@ -71,30 +71,25 @@ public interface IStepper extends IVariableRole {
 				IBinaryExpression be = (IBinaryExpression) expression;
 				IExpression left = be.getLeftOperand();							//left e right -> ex:  var = left + right
 				IExpression right = be.getRightOperand();
-				if(be.getOperator() == IOperator.ADD || be.getOperator() == IOperator.SUB) {		//Stepper only sums or subtracts
-					if(left instanceof IVariable && (((IVariable)left).equals(var.getTarget()) && right instanceof ILiteral)){ //left variable and right literal
-						ILiteral i = (ILiteral) right;
-						System.out.println(i.getStringValue());
-						int step = Integer.parseInt(i.getStringValue());
-						
-						if(stepSize != Integer.MIN_VALUE && step != stepSize) return null;	//step size must always be the same
-						else if (stepSize == Integer.MIN_VALUE) stepSize = step;
-							
-						return calculateDirection(be.getOperator());
-					} /*else if (right instanceof IVariable && (((IVariable)right).equals(var.getTarget()) && left instanceof ILiteral)) { //left literal and right variable
-						ILiteral i = (ILiteral) left;
-						System.out.println("left");
-						System.out.println(i.getStringValue());
-						return calculateDirection(be.getOperator());
-					}*/  												//não faz sentido fazer 1 + i para um iterador?
-				}
+				if((be.getOperator() == IOperator.ADD || be.getOperator() == IOperator.SUB)		//Stepper only sums or subtracts
+						&& (left instanceof IVariable && (((IVariable)left).equals(var.getTarget()) && right instanceof ILiteral))) {	//left variable and right literal
+					
+					ILiteral i = (ILiteral) right;
+					int step = Integer.parseInt(i.getStringValue());
+
+					if(stepSize != Integer.MIN_VALUE && step != stepSize) return null;	//step size must always be the same
+					else if (stepSize == Integer.MIN_VALUE) stepSize = step;
+
+					return calculateDirection(be.getOperator(), step);
+				}  							
+				//não faz sentido fazer 1 + i para um iterador? verificar apenas se a variavel estiver à esquerda
 			}
 			return null;
 		}
 	}
 	
-	static Direction calculateDirection(IOperator op) {	//only checks operation to know direction
-		if(op == IOperator.ADD)
+	static Direction calculateDirection(IOperator op, int step) {	//does not check if step == 0
+		if((op == IOperator.ADD && step > 0) || op == IOperator.SUB && step < 0)
 			return Direction.INC;
 		else 
 			return Direction.DEC;
