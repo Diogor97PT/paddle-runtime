@@ -10,6 +10,7 @@ import pt.iscte.paddle.model.IVariableAssignment;
 import pt.iscte.paddle.roles.IVariableRole;
 
 public interface IStepper extends IVariableRole {
+	
 	Direction getDirection();
 
 	default String getName() {
@@ -95,7 +96,7 @@ public interface IStepper extends IVariableRole {
 			return Direction.DEC;
 	}
 	
-	static class Stepper implements IStepper {
+	public static class Stepper implements IStepper {
 
 		private Direction direction;
 		
