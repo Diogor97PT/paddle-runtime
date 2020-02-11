@@ -94,31 +94,5 @@ public class DemoListener {
 		} catch (ExecutionError e) {
 			throw new ExecutionError(e.getType(), e.getSourceElement(), e.getMessage());
 		}
-		
-		
-		/*catch (ArrayIndexError e) {
-			int invalidPos = e.getInvalidIndex();
-			String variable = e.getIndexExpression().getId();
-			String array = e.getTarget().getId();
-			//int arrayDimension = e.getIndexDimension();	//Dimensão da array que deu erro
-			
-			if(invalidPos < 0) {	//tentou aceder a uma posição da array menor que 0
-				//System.err.println("Tentativa de acesso a uma posição inferior a 0.");
-				System.err.println("A variável " + variable  + "=" + invalidPos + " refere-se a uma posição inferior à menor posição possível, 0.");
-				//System.err.println("No Java, assim como em grande parte das linguagens de programação, o os vetores começam pela posição 0.");
-				System.err.println("");
-			} else {	//posição é maior do que o tamanho da array
-				System.err.println("Tentativa de acesso a uma posição superior ao tamanho do vetor.");
-				System.err.println("A variável " + variable  + "=" + invalidPos + " refere-se a uma posição superior ao tamanho da array " + array 
-						+ " em " + array + "[" + variable + "].");
-			}
-			
-			//prints
-			System.out.println(e);
-			System.out.println(invalidPos);
-			System.out.println(variable);
-			System.out.println(array);
-			System.out.println(arrayDimension);
-		}*/
 	}
 }
