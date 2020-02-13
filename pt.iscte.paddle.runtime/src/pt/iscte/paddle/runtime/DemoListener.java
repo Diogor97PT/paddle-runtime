@@ -78,7 +78,7 @@ public class DemoListener {
 			sb.append(variable);
 			
 			if(IStepper.isStepper(nats.getVariable(variable))) {
-				sb.append(", que é um iterador para as posições do vetor " + array);
+				sb.append(", que é um iterador para as posições do vetor " + array + ".");
 			} else {
 				sb.append(".");
 			}

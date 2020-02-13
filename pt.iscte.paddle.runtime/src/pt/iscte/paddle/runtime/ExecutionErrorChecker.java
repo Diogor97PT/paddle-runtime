@@ -54,7 +54,8 @@ public class ExecutionErrorChecker {
 			
 			/*@Override
 			public void infiniteLoop() {	
-				IListener.super.infiniteLoop();
+				//IListener.super.infiniteLoop();
+				System.out.println("Nice loop mate");
 			}*/
 		});
 		

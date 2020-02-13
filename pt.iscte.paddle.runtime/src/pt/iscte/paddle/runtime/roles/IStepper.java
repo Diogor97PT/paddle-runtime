@@ -74,7 +74,6 @@ public interface IStepper extends IVariableRole {
 				IExpression right = be.getRightOperand();
 				if((be.getOperator() == IOperator.ADD || be.getOperator() == IOperator.SUB)		//Stepper only sums or subtracts
 						&& (left instanceof IVariable && (((IVariable)left).equals(var.getTarget()) && right instanceof ILiteral))) {	//left variable and right literal
-					
 					ILiteral i = (ILiteral) right;
 					int step = Integer.parseInt(i.getStringValue());
 
@@ -82,8 +81,18 @@ public interface IStepper extends IVariableRole {
 					else if (stepSize == Integer.MIN_VALUE) stepSize = step;
 
 					return calculateDirection(be.getOperator(), step);
-				}  							
-				//não faz sentido fazer 1 + i para um iterador? verificar apenas se a variavel estiver à esquerda
+				} else if (be.getOperator() == IOperator.ADD
+						&& (left instanceof ILiteral && (right instanceof IVariable && (((IVariable)right).equals(var.getTarget()))))) { //left literal and right variable
+																																		//1 + i	<- only sum is accepted
+					ILiteral i = (ILiteral) left;
+					int step = Integer.parseInt(i.getStringValue());
+					
+					if(stepSize != Integer.MIN_VALUE && step != stepSize) return null;
+					else if (stepSize == Integer.MIN_VALUE) stepSize = step;
+					
+					return calculateDirection(be.getOperator(), step);
+				}
+				
 			}
 			return null;
 		}
