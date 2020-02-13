@@ -10,7 +10,6 @@ import org.junit.Test;
 
 import pt.iscte.paddle.model.IBlock;
 import pt.iscte.paddle.model.ILoop;
-import pt.iscte.paddle.model.IModel2CodeTranslator;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IVariable;
@@ -24,7 +23,7 @@ public class StepperTest {
 	@Test
 	public void StepperAddPositiveTest() {		//i + 1
 		IModule module = IModule.create();				//Criar classe
-		module.setId("AddPositive");					//dar nome à classe
+		module.setId("StepperTest");					//dar nome à classe
 		
 		IProcedure naturals = module.addProcedure(INT.array().reference());	//
 		naturals.setId("naturals");
@@ -57,7 +56,7 @@ public class StepperTest {
 	@Test
 	public void StepperSubPositiveTest() {		//i - 1
 		IModule module = IModule.create();
-		module.setId("SubPositive");
+		module.setId("StepperTest");
 		
 		IProcedure naturals = module.addProcedure(INT.array().reference());
 		naturals.setId("naturals");
@@ -87,7 +86,7 @@ public class StepperTest {
 	@Test
 	public void StepperAddNegativeTest() {		//i + (-1)
 		IModule module = IModule.create();
-		module.setId("AddNegative");
+		module.setId("StepperTest");
 		
 		IProcedure naturals = module.addProcedure(INT.array().reference());
 		naturals.setId("naturals");
@@ -117,7 +116,7 @@ public class StepperTest {
 	@Test
 	public void StepperSubNegativeTest() {		//i - (-1)
 		IModule module = IModule.create();
-		module.setId("SubNegative");
+		module.setId("StepperTest");
 		
 		IProcedure naturals = module.addProcedure(INT.array().reference());
 		naturals.setId("naturals");
@@ -147,7 +146,7 @@ public class StepperTest {
 	@Test
 	public void StepperLeftLiteralRightVarSum() {	//1 + i
 		IModule module = IModule.create();
-		module.setId("SubNegative");
+		module.setId("StepperTest");
 		
 		IProcedure naturals = module.addProcedure(INT.array().reference());
 		naturals.setId("naturals");
@@ -177,7 +176,7 @@ public class StepperTest {
 	@Test
 	public void StepperLeftLiteralRightVarSub() {	//1 - i		Should not be a Stepper
 		IModule module = IModule.create();
-		module.setId("SubNegative");
+		module.setId("StepperTest");
 		
 		IProcedure naturals = module.addProcedure(INT.array().reference());
 		naturals.setId("naturals");
