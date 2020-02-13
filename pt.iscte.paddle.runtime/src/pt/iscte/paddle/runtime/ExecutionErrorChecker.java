@@ -7,14 +7,14 @@ import pt.iscte.paddle.interpreter.ExecutionError;
 import pt.iscte.paddle.interpreter.IExecutionData;
 import pt.iscte.paddle.interpreter.IMachine;
 import pt.iscte.paddle.interpreter.IProgramState;
-import pt.iscte.paddle.interpreter.IValue;
 import pt.iscte.paddle.interpreter.IProgramState.IListener;
+import pt.iscte.paddle.interpreter.IValue;
 import pt.iscte.paddle.javali.translator.Translator;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.IVariable;
-import pt.iscte.paddle.roles.IVariableRole;
+import pt.iscte.paddle.runtime.roles.IFixedValue;
 import pt.iscte.paddle.runtime.roles.IStepper;
 
 public class ExecutionErrorChecker {
@@ -62,12 +62,20 @@ public class ExecutionErrorChecker {
 	}
 	
 	public void printDebugStuff() {
-		for(IVariable i : procedure.getVariables()) {
+		/*for(IVariable i : procedure.getVariables()) {
 			if(IStepper.isStepper(i)) {
 				IVariableRole vr = IStepper.createStepper(i);
 				System.out.println(i + " : " + vr);	
 			} else 
 				System.out.println(i + " : not a Stepper");
+		}*/
+		
+		for(IVariable i : procedure.getVariables()) {
+			if(IFixedValue.isFixedValue(i)) {
+				System.out.println(i + " : Is Fixed Value");
+			} else {
+				System.out.println(i + " : not a fixed value");
+			}
 		}
 	}
 	
@@ -116,6 +124,6 @@ public class ExecutionErrorChecker {
 		ExecutionErrorChecker ec = new ExecutionErrorChecker();
 		ec.addListener();
 		ec.printDebugStuff();
-		ec.execute();
+		//ec.execute();
 	}
 }
