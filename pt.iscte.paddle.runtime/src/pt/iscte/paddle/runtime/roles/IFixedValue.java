@@ -1,6 +1,6 @@
 package pt.iscte.paddle.runtime.roles;
 
-import pt.iscte.paddle.interpreter.IArray;
+import pt.iscte.paddle.model.IArrayElementAssignment;
 import pt.iscte.paddle.model.IBlock;
 import pt.iscte.paddle.model.IVariable;
 import pt.iscte.paddle.model.IVariableAssignment;
@@ -46,6 +46,12 @@ public interface IFixedValue extends IVariableRole {
 				} else if(isValid)
 					isValid = false;
 			}
+			return false;
+		}
+		
+		@Override
+		public boolean visit(IArrayElementAssignment assignment) {
+			//System.out.println(assignment);
 			return false;
 		}
 		
