@@ -14,6 +14,7 @@ import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.IVariable;
+import pt.iscte.paddle.roles.IVariableRole;
 import pt.iscte.paddle.runtime.roles.IFixedValue;
 import pt.iscte.paddle.runtime.roles.IStepper;
 
@@ -72,7 +73,8 @@ public class ExecutionErrorChecker {
 		
 		for(IVariable i : procedure.getVariables()) {
 			if(IFixedValue.isFixedValue(i)) {
-				System.out.println(i + " : Is Fixed Value");
+				IVariableRole vr = IFixedValue.createFixedValue(i);
+				System.out.println(i + " : " + vr);
 			} else {
 				System.out.println(i + " : not a fixed value");
 			}
