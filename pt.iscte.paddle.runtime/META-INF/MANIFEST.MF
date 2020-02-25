@@ -3,8 +3,12 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Paddle Runtime
 Bundle-SymbolicName: pt.iscte.paddle.runtime
 Bundle-Version: 1.0.0.qualifier
-Export-Package: .
+Export-Package: pt.iscte.paddle.runtime,
+ pt.iscte.paddle.runtime.roles,
+ pt.iscte.paddle.runtime.tests
 Require-Bundle: pt.iscte.paddle.model;bundle-version="0.1.0",
  pt.iscte.paddle.javali;bundle-version="1.0.0",
  org.junit;bundle-version="4.12.0"
 Import-Package: pt.iscte.paddle.roles
+Automatic-Module-Name: pt.iscte.paddle.runtime
+Bundle-RequiredExecutionEnvironment: JavaSE-11
