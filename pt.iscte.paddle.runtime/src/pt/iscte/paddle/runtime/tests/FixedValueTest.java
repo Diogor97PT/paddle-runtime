@@ -12,7 +12,7 @@ import pt.iscte.paddle.model.ILoop;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IVariable;
-import pt.iscte.paddle.roles.IVariableRole;
+import pt.iscte.paddle.model.roles.IVariableRole;
 import pt.iscte.paddle.runtime.roles.IFixedValue;
 
 public class FixedValueTest {

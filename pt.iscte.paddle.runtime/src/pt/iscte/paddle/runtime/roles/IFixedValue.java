@@ -4,7 +4,7 @@ import pt.iscte.paddle.model.IArrayElementAssignment;
 import pt.iscte.paddle.model.IBlock;
 import pt.iscte.paddle.model.IVariable;
 import pt.iscte.paddle.model.IVariableAssignment;
-import pt.iscte.paddle.roles.IVariableRole;
+import pt.iscte.paddle.model.roles.IVariableRole;
 
 public interface IFixedValue extends IVariableRole {
 	
@@ -25,7 +25,7 @@ public interface IFixedValue extends IVariableRole {
 		return new FixedValue(v.isModified);
 	}
 	
-	class Visitor implements IBlock.IVisitor {
+	class Visitor implements IBlock.IVisitor {		//acrescentar para objetos (records)
 		final IVariable var;
 		
 		boolean isValid = true;	//valid until assigned

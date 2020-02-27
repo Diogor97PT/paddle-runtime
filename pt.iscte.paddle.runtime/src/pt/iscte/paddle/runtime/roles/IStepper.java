@@ -7,7 +7,7 @@ import pt.iscte.paddle.model.ILiteral;
 import pt.iscte.paddle.model.IOperator;
 import pt.iscte.paddle.model.IVariable;
 import pt.iscte.paddle.model.IVariableAssignment;
-import pt.iscte.paddle.roles.IVariableRole;
+import pt.iscte.paddle.model.roles.IVariableRole;
 
 public interface IStepper extends IVariableRole {
 	
@@ -66,7 +66,7 @@ public interface IStepper extends IVariableRole {
 			return false;
 		}
 		
-		Direction getDirection(IVariableAssignment var) { //Check step size / direction
+		private Direction getDirection(IVariableAssignment var) { //Check step size / direction
 			IExpression expression = var.getExpression();
 			if(expression instanceof IBinaryExpression) {
 				IBinaryExpression be = (IBinaryExpression) expression;
@@ -86,7 +86,7 @@ public interface IStepper extends IVariableRole {
 			return null;
 		}
 		
-		Direction getDirectionHelper(ILiteral i, IBinaryExpression be) {
+		private Direction getDirectionHelper(ILiteral i, IBinaryExpression be) {
 			int step = Integer.parseInt(i.getStringValue());
 
 			if(stepSize != Integer.MIN_VALUE && step != stepSize) return null;	//step size must always be the same
@@ -94,13 +94,13 @@ public interface IStepper extends IVariableRole {
 
 			return calculateDirection(be.getOperator(), step);
 		}
-	}
-	
-	static Direction calculateDirection(IOperator op, int step) {	//does not check if step == 0
-		if((op == IOperator.ADD && step > 0) || op == IOperator.SUB && step < 0)
-			return Direction.INC;
-		else 
-			return Direction.DEC;
+		
+		private Direction calculateDirection(IOperator op, int step) {	//does not check if step == 0
+			if((op == IOperator.ADD && step > 0) || op == IOperator.SUB && step < 0)
+				return Direction.INC;
+			else 
+				return Direction.DEC;
+		}
 	}
 	
 	public static class Stepper implements IStepper {
