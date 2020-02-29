@@ -14,9 +14,8 @@ import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.IVariable;
-import pt.iscte.paddle.model.roles.IVariableRole;
 import pt.iscte.paddle.runtime.roles.IArrayIndexIterator;
-import pt.iscte.paddle.runtime.roles.IFixedValue;
+import pt.iscte.paddle.runtime.roles.IArrayIndexIterator.ArrayIndexIterator;
 import pt.iscte.paddle.runtime.roles.IStepper;
 
 public class ExecutionErrorChecker {
@@ -28,7 +27,7 @@ public class ExecutionErrorChecker {
 	
 	public ExecutionErrorChecker() {
 		//Initialize Environment
-		translator = new Translator(new File("MeuFicheiro.javali").getAbsolutePath());
+		translator = new Translator(new File("TestFile.javali").getAbsolutePath());
 		module = translator.createProgram();
 		procedure = module.getProcedures().iterator().next();	//Loads first procedure in class
 		state = IMachine.create(module);
@@ -64,26 +63,28 @@ public class ExecutionErrorChecker {
 	}
 	
 	public void printDebugStuff() {
-		for(IVariable i : procedure.getVariables()) {
+		/*for(IVariable i : procedure.getVariables()) {
 			if(IStepper.isStepper(i)) {
 				IVariableRole vr = IStepper.createStepper(i);
 				System.out.println(i + " : " + vr);	
 			} else 
 				System.out.println(i + " : not a Stepper");
-		}
+		}*/
 		
-		for(IVariable i : procedure.getVariables()) {
+		/*for(IVariable i : procedure.getVariables()) {
 			if(IFixedValue.isFixedValue(i)) {
 				IVariableRole vr = IFixedValue.createFixedValue(i);
 				System.out.println(i + " : " + vr);
 			} else {
 				System.out.println(i + " : not a fixed value");
 			}
-		}
+		}*/
 		
 		for(IVariable i : procedure.getVariables()) {
 			if(IArrayIndexIterator.isArrayIndexIterator(i)) {
-				
+				ArrayIndexIterator var = (ArrayIndexIterator) IArrayIndexIterator.createArrayIndexIterator(i);
+				System.out.println(var.getArrayVariables());
+				System.out.println(i + " : " + var);
 			}
 		}
 	}

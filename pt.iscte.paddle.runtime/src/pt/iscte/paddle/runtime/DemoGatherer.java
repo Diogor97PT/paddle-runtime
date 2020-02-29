@@ -5,7 +5,6 @@ import pt.iscte.paddle.javali.translator.Translator;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IVariable;
-import pt.iscte.paddle.model.roles.IGatherer;
 import pt.iscte.paddle.model.roles.IVariableRole;
 
 public class DemoGatherer {
