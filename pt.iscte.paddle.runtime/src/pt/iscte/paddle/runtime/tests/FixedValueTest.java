@@ -13,7 +13,7 @@ import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.roles.IVariableRole;
-import pt.iscte.paddle.runtime.roles.IFixedValue;
+import pt.iscte.paddle.runtime.roles.impl.FixedValue;
 
 public class FixedValueTest {
 	
@@ -22,7 +22,7 @@ public class FixedValueTest {
 		IModule module = IModule.create();				//Criar classe
 		module.setId("FixedValueTest");					//dar nome à classe
 		
-		IProcedure naturals = module.addProcedure(INT.array().reference());	//
+		IProcedure naturals = module.addProcedure(INT.array().reference());	//criar função
 		naturals.setId("naturals");
 		
 		IVariableDeclaration n = naturals.addParameter(INT);		//Parâmetro da Função
@@ -46,12 +46,12 @@ public class FixedValueTest {
 		/*String code = module.translate(new IModel2CodeTranslator.Java());
 		System.out.println(code);*/
 		
-		assertEquals(IFixedValue.isFixedValue(n), true);
-		assertEquals(IFixedValue.isFixedValue(array), true);
-		assertEquals(IFixedValue.isFixedValue(i), false);
+		assertEquals(FixedValue.isFixedValue(n), true);
+		assertEquals(FixedValue.isFixedValue(array), true);
+		assertEquals(FixedValue.isFixedValue(i), false);
 		
-		IVariableRole vrn = IFixedValue.createFixedValue(n);
-		IVariableRole vrarray = IFixedValue.createFixedValue(array);
+		IVariableRole vrn = new FixedValue(n);
+		IVariableRole vrarray = new FixedValue(array);
 		
 		assertEquals(vrn.toString(), vrn.getName());
 		assertEquals(vrarray.toString(), vrarray.getName() + " array that has been modified");
@@ -85,9 +85,9 @@ public class FixedValueTest {
 		
 		body.addReturn(array);
 		
-		assertEquals(IFixedValue.isFixedValue(n), true);
-		assertEquals(IFixedValue.isFixedValue(array), false);
-		assertEquals(IFixedValue.isFixedValue(i), false);
+		assertEquals(FixedValue.isFixedValue(n), true);
+		assertEquals(FixedValue.isFixedValue(array), false);
+		assertEquals(FixedValue.isFixedValue(i), false);
 	}
 
 }

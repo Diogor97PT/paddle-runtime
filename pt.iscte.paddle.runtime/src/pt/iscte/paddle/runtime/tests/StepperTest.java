@@ -14,7 +14,7 @@ import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.roles.IVariableRole;
-import pt.iscte.paddle.runtime.roles.IStepper;
+import pt.iscte.paddle.runtime.roles.impl.Stepper;
 
 public class StepperTest {
 
@@ -49,7 +49,7 @@ public class StepperTest {
 		/*String code = module.translate(new IModel2CodeTranslator.Java());
 		System.out.println(code);*/
 		
-		IVariableRole role = IStepper.createStepper(i);
+		IVariableRole role = new Stepper(i);
 		assertEquals(role.toString(), "Stepper(INC)");
 	}
 	
@@ -79,7 +79,7 @@ public class StepperTest {
 		
 		body.addReturn(array);
 		
-		IVariableRole role = IStepper.createStepper(i);
+		IVariableRole role = new Stepper(i);
 		assertEquals(role.toString(), "Stepper(DEC)");
 	}
 	
@@ -109,7 +109,7 @@ public class StepperTest {
 		
 		body.addReturn(array);
 		
-		IVariableRole role = IStepper.createStepper(i);
+		IVariableRole role = new Stepper(i);
 		assertEquals(role.toString(), "Stepper(DEC)");
 	}
 
@@ -139,7 +139,7 @@ public class StepperTest {
 		
 		body.addReturn(array);
 		
-		IVariableRole role = IStepper.createStepper(i);
+		IVariableRole role = new Stepper(i);
 		assertEquals(role.toString(), "Stepper(INC)");
 	}
 	
@@ -169,7 +169,7 @@ public class StepperTest {
 		
 		body.addReturn(array);
 		
-		IVariableRole role = IStepper.createStepper(i);
+		IVariableRole role = new Stepper(i);
 		assertEquals(role.toString(), "Stepper(INC)");
 	}
 	
@@ -199,6 +199,6 @@ public class StepperTest {
 		
 		body.addReturn(array);
 		
-		assertEquals(IStepper.isStepper(i), false);
+		assertEquals(Stepper.isStepper(i), false);
 	}
 }

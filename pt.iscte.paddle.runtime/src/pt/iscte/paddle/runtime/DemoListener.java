@@ -15,7 +15,7 @@ import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.IVariableAssignment;
 import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.roles.IVariableRole;
-import pt.iscte.paddle.runtime.roles.IStepper;
+import pt.iscte.paddle.runtime.roles.impl.Stepper;
 
 public class DemoListener {
 
@@ -45,8 +45,8 @@ public class DemoListener {
 
 		
 		for(IVariableDeclaration i : nats.getVariables()) {
-			if(IStepper.isStepper(i)) {
-				IVariableRole vr = IStepper.createStepper(i);
+			if(Stepper.isStepper(i)) {
+				IVariableRole vr = new Stepper(i);
 				System.out.println(i + " : " + vr);	
 			} else 
 				System.out.println(i + " : not a Stepper");
@@ -77,7 +77,7 @@ public class DemoListener {
 			sb.append("O acesso foi feito através da variável ");
 			sb.append(variable);
 			
-			if(IStepper.isStepper(nats.getVariable(variable))) {
+			if(Stepper.isStepper(nats.getVariable(variable))) {
 				sb.append(", que é um iterador para as posições do vetor " + array + ".");
 			} else {
 				sb.append(".");

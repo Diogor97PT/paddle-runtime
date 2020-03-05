@@ -17,9 +17,8 @@ import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.IVariableDeclaration;
-import pt.iscte.paddle.runtime.roles.IArrayIndexIterator;
-import pt.iscte.paddle.runtime.roles.IArrayIndexIterator.ArrayIndexIterator;
-import pt.iscte.paddle.runtime.roles.IStepper;
+import pt.iscte.paddle.runtime.roles.impl.ArrayIndexIterator;
+import pt.iscte.paddle.runtime.roles.impl.Stepper;
 
 public class ExecutionErrorChecker {
 	
@@ -68,17 +67,17 @@ public class ExecutionErrorChecker {
 	}
 	
 	public void printDebugStuff() {
-		/*for(IVariable i : procedure.getVariables()) {
-			if(IStepper.isStepper(i)) {
-				IVariableRole vr = IStepper.createStepper(i);
+		/*for(IVariableDeclaration i : procedure.getVariables()) {
+			if(Stepper.isStepper(i)) {
+				IVariableRole vr = new Stepper(i);
 				System.out.println(i + " : " + vr);	
 			} else 
 				System.out.println(i + " : not a Stepper");
 		}*/
 		
-		/*for(IVariable i : procedure.getVariables()) {
-			if(IFixedValue.isFixedValue(i)) {
-				IVariableRole vr = IFixedValue.createFixedValue(i);
+		/*for(IVariableDeclaration i : procedure.getVariables()) {
+			if(FixedValue.isFixedValue(i)) {
+				IVariableRole vr = new FixedValue(i);
 				System.out.println(i + " : " + vr);
 			} else {
 				System.out.println(i + " : not a fixed value");
@@ -86,8 +85,8 @@ public class ExecutionErrorChecker {
 		}*/
 		
 		for(IVariableDeclaration i : procedure.getVariables()) {
-			if(IArrayIndexIterator.isArrayIndexIterator(i)) {
-				ArrayIndexIterator var = (ArrayIndexIterator) IArrayIndexIterator.createArrayIndexIterator(i);
+			if(ArrayIndexIterator.isArrayIndexIterator(i)) {
+				ArrayIndexIterator var = new ArrayIndexIterator(i);
 				System.out.println(var.getArrayVariables());
 				System.out.println(i + " : " + var);
 			} else {
@@ -128,7 +127,7 @@ public class ExecutionErrorChecker {
 		sb.append("O acesso foi feito através da variável ");
 		sb.append(variable);
 
-		if(IStepper.isStepper(procedure.getVariable(variable))) {
+		if(Stepper.isStepper(procedure.getVariable(variable))) {
 			sb.append(", que é um iterador para as posições do vetor " + array);
 		} else {
 			sb.append(".");
