@@ -1,8 +1,6 @@
 package pt.iscte.paddle.runtime;
 
-import static pt.iscte.paddle.model.IOperator.ADD;
-import static pt.iscte.paddle.model.IOperator.SMALLER;
-import static pt.iscte.paddle.model.IType.INT;
+import java.io.File;
 
 import pt.iscte.paddle.interpreter.ArrayIndexError;
 import pt.iscte.paddle.interpreter.ExecutionError;
@@ -11,8 +9,7 @@ import pt.iscte.paddle.interpreter.IMachine;
 import pt.iscte.paddle.interpreter.IProgramState;
 import pt.iscte.paddle.interpreter.IProgramState.IListener;
 import pt.iscte.paddle.interpreter.IValue;
-import pt.iscte.paddle.model.IBlock;
-import pt.iscte.paddle.model.ILoop;
+import pt.iscte.paddle.javali.translator.Translator;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProgramElement;
@@ -22,19 +19,17 @@ import pt.iscte.paddle.runtime.roles.impl.Stepper;
 
 public class ExecutionErrorChecker {
 	
-	//private Translator translator;
+	private Translator translator;
 	private IModule module;
 	private IProcedure procedure;
 	private IProgramState state;
 	
 	public ExecutionErrorChecker() {
 		//Initialize Environment
-		/*translator = new Translator(new File("TestFile.javali").getAbsolutePath());
+		translator = new Translator(new File("TestFile.javali").getAbsolutePath());
 		module = translator.createProgram();
 		procedure = module.getProcedures().iterator().next();	//Loads first procedure in class
-		state = IMachine.create(module);*/
-		
-		createModule();
+		state = IMachine.create(module);
 	}
 	
 	public void addListener() {
@@ -134,34 +129,6 @@ public class ExecutionErrorChecker {
 		}
 
 		return sb.toString();
-	}
-	
-	private void createModule() {
-		module = IModule.create();				//Criar classe
-		module.setId("ClassName");					//dar nome à classe
-		
-		procedure = module.addProcedure(INT.array().reference());	//
-		procedure.setId("naturals");
-		
-		IVariableDeclaration n = procedure.addParameter(INT);		//Parâmetro da Função
-		n.setId("n");
-		
-		IBlock body = procedure.getBody();				//corpo da função
-		
-		IVariableDeclaration array = body.addVariable(INT.array().reference());
-		array.setId("array");
-		body.addAssignment(array, INT.array().heapAllocation(n));
-		
-		IVariableDeclaration i = body.addVariable(INT, INT.literal(0));
-		i.setId("i");
-		
-		ILoop loop = body.addLoop(SMALLER.on(i, n));
-		loop.addArrayElementAssignment(array, ADD.on(i, INT.literal(1)), i);
-		loop.addAssignment(i, ADD.on(i, INT.literal(1)));
-		
-		body.addReturn(array);
-		
-		state = IMachine.create(module);
 	}
 
 	public static void main(String[] args) throws ExecutionError {

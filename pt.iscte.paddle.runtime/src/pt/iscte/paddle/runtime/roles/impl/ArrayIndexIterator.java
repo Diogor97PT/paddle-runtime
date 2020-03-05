@@ -63,20 +63,14 @@ public class ArrayIndexIterator implements IArrayIndexIterator {
 		
 		@Override
 		public boolean visit(IArrayElement arrayElement) {	//... = v[i] + ....
-			//System.out.println(exp.getIndexes());
 			
 			for(IExpression exp : arrayElement.getIndexes()) {
 				IVariableDeclaration var = ((IVariableExpression) exp).getVariable();
-				if(var.equals(this.var) && !arrayVariables.contains(var))
-					arrayVariables.add(var);
+				IVariableDeclaration arrayVariable = ((IVariableExpression)arrayElement.getTarget()).getVariable();
+				if(var.equals(this.var) && !arrayVariables.contains(arrayVariable))
+					arrayVariables.add(arrayVariable);
 			}
 			
-			/*if(arrayElement.getIndexes().contains(var.expression().expression())) {
-				System.out.println(arrayElement);
-				IVariableDeclaration v = (IVariableDeclaration) arrayElement.getTarget();
-				if(!arrayVariables.contains(v))
-					arrayVariables.add(v);
-			}*/
 			return false;
 		}
 		
@@ -85,16 +79,11 @@ public class ArrayIndexIterator implements IArrayIndexIterator {
 			
 			for(IExpression exp : assignment.getIndexes()) {
 				IVariableDeclaration var = ((IVariableExpression) exp).getVariable();
-				if(var.equals(this.var) && !arrayVariables.contains(var))
-					arrayVariables.add(var);
+				IVariableDeclaration arrayVariable = ((IVariableExpression)assignment.getTarget()).getVariable();
+				if(var.equals(this.var) && !arrayVariables.contains(arrayVariable))
+					arrayVariables.add(arrayVariable);
 			}
 			
-			/*if(assignment.getIndexes().contains(var.expression().expression())) {
-				System.out.println(assignment);
-				IVariableDeclaration v = (IVariableDeclaration) assignment.getTarget();
-				if(!arrayVariables.contains(v))
-					arrayVariables.add(v);
-			}*/
 			return false;
 		}
 		
