@@ -2,8 +2,9 @@ package pt.iscte.paddle.runtime.roles;
 
 import pt.iscte.paddle.model.IArrayElementAssignment;
 import pt.iscte.paddle.model.IBlock;
-import pt.iscte.paddle.model.IVariable;
 import pt.iscte.paddle.model.IVariableAssignment;
+import pt.iscte.paddle.model.IVariableDeclaration;
+import pt.iscte.paddle.model.IVariableExpression;
 import pt.iscte.paddle.model.roles.IVariableRole;
 
 public interface IFixedValue extends IVariableRole {
@@ -12,13 +13,13 @@ public interface IFixedValue extends IVariableRole {
 		return "Fixed Value";
 	}
 
-	static boolean isFixedValue(IVariable var) {
+	static boolean isFixedValue(IVariableDeclaration var) {
 		Visitor v = new Visitor(var);
 		var.getOwnerProcedure().accept(v);
 		return v.isValid;
 	}
 	
-	static IVariableRole createFixedValue(IVariable var) {
+	static IVariableRole createFixedValue(IVariableDeclaration var) {
 		assert isFixedValue(var);
 		Visitor v = new Visitor(var);
 		var.getOwnerProcedure().accept(v);
@@ -26,14 +27,14 @@ public interface IFixedValue extends IVariableRole {
 	}
 	
 	class Visitor implements IBlock.IVisitor {		//acrescentar para objetos (records)
-		final IVariable var;
+		final IVariableDeclaration var;
 		
 		boolean isValid = true;	//valid until assigned
 		boolean first;			//if is first assignment
 		
 		boolean isModified;		//true if variable is an array and is modified internally
 		
-		public Visitor(IVariable var) {
+		public Visitor(IVariableDeclaration var) {
 			this.var = var;
 			
 			if(var.getOwnerProcedure().getParameters().contains(var))	//if var is parameter of function, it's value is already assigned
@@ -57,7 +58,7 @@ public interface IFixedValue extends IVariableRole {
 		
 		@Override
 		public boolean visit(IArrayElementAssignment assignment) {
-			if(assignment.getTarget().equals(var)) {
+			if(((IVariableExpression)assignment.getTarget()).getVariable().equals(var)) {
 				isModified = true;
 			}
 			return false;

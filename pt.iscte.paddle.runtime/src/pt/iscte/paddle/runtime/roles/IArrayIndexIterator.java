@@ -6,7 +6,9 @@ import java.util.List;
 import pt.iscte.paddle.model.IArrayElement;
 import pt.iscte.paddle.model.IArrayElementAssignment;
 import pt.iscte.paddle.model.IBlock;
-import pt.iscte.paddle.model.IVariable;
+import pt.iscte.paddle.model.IExpression;
+import pt.iscte.paddle.model.IVariableDeclaration;
+import pt.iscte.paddle.model.IVariableExpression;
 import pt.iscte.paddle.model.roles.IVariableRole;
 
 public interface IArrayIndexIterator extends IStepper {
@@ -16,21 +18,21 @@ public interface IArrayIndexIterator extends IStepper {
 	 * o 2º vetor não é detetado
 	 */
 	
-	List<IVariable> getArrayVariables();	//arrays em que a variavel é usada
+	List<IVariableDeclaration> getArrayVariables();	//arrays em que a variavel é usada
 	
 	@Override
 	default String getName() {
 		return "Array Index Iterator";
 	}
 	
-	static boolean isArrayIndexIterator(IVariable var) {
+	static boolean isArrayIndexIterator(IVariableDeclaration var) {
 		assert(IStepper.isStepper(var));
 		Visitor v = new Visitor(var);
 		var.getOwnerProcedure().accept(v);
 		return v.isUsedInArrays();
 	}
 	
-	static IVariableRole createArrayIndexIterator(IVariable var) {
+	static IVariableRole createArrayIndexIterator(IVariableDeclaration var) {
 		assert isArrayIndexIterator(var);
 		Stepper stepper = (Stepper) IStepper.createStepper(var);
 		Visitor v = new Visitor(var);
@@ -40,33 +42,47 @@ public interface IArrayIndexIterator extends IStepper {
 	
 	class Visitor implements IBlock.IVisitor {
 		
-		final IVariable var;
-		List<IVariable> arrayVariables = new ArrayList<>();
+		final IVariableDeclaration var;
+		List<IVariableDeclaration> arrayVariables = new ArrayList<>();
 		
-		public Visitor(IVariable var) {
+		public Visitor(IVariableDeclaration var) {
 			this.var = var;
 		}
 		
 		@Override
 		public boolean visit(IArrayElement arrayElement) {	//... = v[i] + ....
 			//System.out.println(exp.getIndexes());
-			if(arrayElement.getIndexes().contains(var)) {
+			
+			for(IExpression exp : arrayElement.getIndexes()) {
+				IVariableDeclaration var = ((IVariableExpression) exp).getVariable();
+				if(var.equals(this.var) && !arrayVariables.contains(var))
+					arrayVariables.add(var);
+			}
+			
+			/*if(arrayElement.getIndexes().contains(var.expression().expression())) {
 				System.out.println(arrayElement);
-				IVariable v = (IVariable) arrayElement.getTarget();
+				IVariableDeclaration v = (IVariableDeclaration) arrayElement.getTarget();
 				if(!arrayVariables.contains(v))
 					arrayVariables.add(v);
-			}
+			}*/
 			return false;
 		}
 		
 		@Override
 		public boolean visit(IArrayElementAssignment assignment) {	//v[i] = ...
-			if(assignment.getIndexes().contains(var)) {
+			
+			for(IExpression exp : assignment.getIndexes()) {
+				IVariableDeclaration var = ((IVariableExpression) exp).getVariable();
+				if(var.equals(this.var) && !arrayVariables.contains(var))
+					arrayVariables.add(var);
+			}
+			
+			/*if(assignment.getIndexes().contains(var.expression().expression())) {
 				System.out.println(assignment);
-				IVariable v = (IVariable) assignment.getTarget();
+				IVariableDeclaration v = (IVariableDeclaration) assignment.getTarget();
 				if(!arrayVariables.contains(v))
 					arrayVariables.add(v);
-			}
+			}*/
 			return false;
 		}
 		
@@ -78,9 +94,9 @@ public interface IArrayIndexIterator extends IStepper {
 	public static class ArrayIndexIterator implements IArrayIndexIterator {
 		
 		private Direction direction;
-		private List<IVariable> arrayVariables;
+		private List<IVariableDeclaration> arrayVariables;
 		
-		public ArrayIndexIterator(Direction direction, List<IVariable> arrayVariables) {
+		public ArrayIndexIterator(Direction direction, List<IVariableDeclaration> arrayVariables) {
 			this.direction = direction;
 			this.arrayVariables = arrayVariables;
 		}
@@ -91,7 +107,7 @@ public interface IArrayIndexIterator extends IStepper {
 		}
 
 		@Override
-		public List<IVariable> getArrayVariables() {
+		public List<IVariableDeclaration> getArrayVariables() {
 			return arrayVariables;
 		}
 		

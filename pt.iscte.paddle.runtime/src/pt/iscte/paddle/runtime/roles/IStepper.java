@@ -5,8 +5,9 @@ import pt.iscte.paddle.model.IBlock;
 import pt.iscte.paddle.model.IExpression;
 import pt.iscte.paddle.model.ILiteral;
 import pt.iscte.paddle.model.IOperator;
-import pt.iscte.paddle.model.IVariable;
 import pt.iscte.paddle.model.IVariableAssignment;
+import pt.iscte.paddle.model.IVariableDeclaration;
+import pt.iscte.paddle.model.IVariableExpression;
 import pt.iscte.paddle.model.roles.IVariableRole;
 
 public interface IStepper extends IVariableRole {
@@ -21,13 +22,13 @@ public interface IStepper extends IVariableRole {
 		INC, DEC;
 	}
 	
-	static boolean isStepper(IVariable var) {
+	static boolean isStepper(IVariableDeclaration var) {
 		Visitor v = new Visitor(var);
 		var.getOwnerProcedure().accept(v);
 		return v.isValid && v.direction != null;
 	}
 	
-	static IVariableRole createStepper(IVariable var) {
+	static IVariableRole createStepper(IVariableDeclaration var) {
 		assert isStepper(var);
 		Visitor v = new Visitor(var);
 		var.getOwnerProcedure().accept(v);
@@ -36,7 +37,7 @@ public interface IStepper extends IVariableRole {
 	
 	class Visitor implements IBlock.IVisitor {
 		
-		final IVariable var;
+		final IVariableDeclaration var;
 		
 		boolean first = true;
 		
@@ -45,7 +46,7 @@ public interface IStepper extends IVariableRole {
 		
 		boolean isValid = true; //true until proven otherwise
 		
-		public Visitor(IVariable var) {
+		public Visitor(IVariableDeclaration var) {
 			this.var = var;
 		}
 		
@@ -73,11 +74,11 @@ public interface IStepper extends IVariableRole {
 				IExpression left = be.getLeftOperand();							//left e right -> ex:  var = left + right
 				IExpression right = be.getRightOperand();
 				if((be.getOperator() == IOperator.ADD || be.getOperator() == IOperator.SUB)		//Stepper only sums or subtracts
-						&& (left instanceof IVariable && (((IVariable)left).equals(var.getTarget()) && right instanceof ILiteral))) {	//left variable and right literal
+						&& (left instanceof IVariableExpression && (((IVariableExpression)left).getVariable().equals(var.getTarget()) && right instanceof ILiteral))) {	//left variable and right literal
 					
 					return getDirectionHelper((ILiteral) right, be);
 				} else if (be.getOperator() == IOperator.ADD
-						&& (left instanceof ILiteral && (right instanceof IVariable && (((IVariable)right).equals(var.getTarget()))))) { //left literal and right variable
+						&& (left instanceof ILiteral && (right instanceof IVariableExpression && (((IVariableExpression)right).getVariable().equals(var.getTarget()))))) { //left literal and right variable
 																																		//1 + i	<- only sum is accepted
 					return getDirectionHelper((ILiteral) left, be);
 				}

@@ -11,7 +11,7 @@ import pt.iscte.paddle.model.IBlock;
 import pt.iscte.paddle.model.ILoop;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
-import pt.iscte.paddle.model.IVariable;
+import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.roles.IVariableRole;
 import pt.iscte.paddle.runtime.roles.IFixedValue;
 
@@ -25,16 +25,16 @@ public class FixedValueTest {
 		IProcedure naturals = module.addProcedure(INT.array().reference());	//
 		naturals.setId("naturals");
 		
-		IVariable n = naturals.addParameter(INT);		//Parâmetro da Função
+		IVariableDeclaration n = naturals.addParameter(INT);		//Parâmetro da Função
 		n.setId("n");
 		
 		IBlock body = naturals.getBody();				//corpo da função
 		
-		IVariable array = body.addVariable(INT.array().reference());
+		IVariableDeclaration array = body.addVariable(INT.array().reference());
 		array.setId("array");
 		body.addAssignment(array, INT.array().heapAllocation(n));
 		
-		IVariable i = body.addVariable(INT, INT.literal(0));
+		IVariableDeclaration i = body.addVariable(INT, INT.literal(0));
 		i.setId("i");
 		
 		ILoop loop = body.addLoop(SMALLER.on(i, n));
@@ -65,16 +65,16 @@ public class FixedValueTest {
 		IProcedure naturals = module.addProcedure(INT.array().reference());	//
 		naturals.setId("naturals");
 		
-		IVariable n = naturals.addParameter(INT);		//Parâmetro da Função
+		IVariableDeclaration n = naturals.addParameter(INT);		//Parâmetro da Função
 		n.setId("n");
 		
 		IBlock body = naturals.getBody();				//corpo da função
 		
-		IVariable array = body.addVariable(INT.array().reference());
+		IVariableDeclaration array = body.addVariable(INT.array().reference());
 		array.setId("array");
 		body.addAssignment(array, INT.array().heapAllocation(n));
 		
-		IVariable i = body.addVariable(INT, INT.literal(0));
+		IVariableDeclaration i = body.addVariable(INT, INT.literal(0));
 		i.setId("i");
 		
 		ILoop loop = body.addLoop(SMALLER.on(i, n));
