@@ -1,10 +1,9 @@
 package pt.iscte.paddle.runtime;
 
 import static pt.iscte.paddle.model.IOperator.ADD;
-import static pt.iscte.paddle.model.IOperator.SMALLER;
+import static pt.iscte.paddle.model.IOperator.SMALLER_EQ;
 import static pt.iscte.paddle.model.IType.INT;
 
-import java.io.File;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -15,7 +14,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
 import pt.iscte.paddle.interpreter.ExecutionError;
@@ -23,7 +21,6 @@ import pt.iscte.paddle.interpreter.IExecutionData;
 import pt.iscte.paddle.interpreter.IMachine;
 import pt.iscte.paddle.interpreter.IProgramState;
 import pt.iscte.paddle.interpreter.IValue;
-import pt.iscte.paddle.javali.translator.Translator;
 import pt.iscte.paddle.javardise.ClassWidget;
 import pt.iscte.paddle.javardise.Constants;
 import pt.iscte.paddle.model.IBlock;
@@ -36,19 +33,20 @@ import pt.iscte.paddle.model.IVariableDeclaration;
 public class DemoWindow {
 	
 	private static Shell shell;
-
+	
 	public static void main(String[] args) {
 		
-		IModule module = IModule.create();				//Criar classe
-		module.setId("StepperTest");					//dar nome à classe
+		//Initialize code
+		IModule module = IModule.create();										//Criar classe
+		module.setId("StepperTest");											//dar nome à classe
 		
-		IProcedure naturals = module.addProcedure(INT.array().reference());	//
-		naturals.setId("naturals");
+		IProcedure procedure = module.addProcedure(INT.array().reference());	//criar função
+		procedure.setId("naturals");
 		
-		IVariableDeclaration n = naturals.addParameter(INT);		//Parâmetro da Função
+		IVariableDeclaration n = procedure.addParameter(INT);					//Parâmetro da Função
 		n.setId("n");
 		
-		IBlock body = naturals.getBody();				//corpo da função
+		IBlock body = procedure.getBody();										//corpo da função
 		
 		IVariableDeclaration array = body.addVariable(INT.array().reference());
 		array.setId("array");
@@ -57,19 +55,13 @@ public class DemoWindow {
 		IVariableDeclaration i = body.addVariable(INT, INT.literal(0));
 		i.setId("i");
 		
-		ILoop loop = body.addLoop(SMALLER.on(i, n));
+		ILoop loop = body.addLoop(SMALLER_EQ.on(i, n));
 		loop.addArrayElementAssignment(array, ADD.on(i, INT.literal(1)), i);
 		loop.addAssignment(i, ADD.on(i, INT.literal(1)));
 		
 		body.addReturn(array);
 		
 		IProgramState state = IMachine.create(module);
-		
-		//Initialize code
-		/*Translator translator = new Translator(new File("MeuFicheiro.javali").getAbsolutePath());
-		IModule module = translator.createProgram();
-		module.setId("WindowTest");
-		IProcedure proc = module.getProcedures().iterator().next();*/
 		
 		//Start Window
 		Display display = new Display();
@@ -84,10 +76,21 @@ public class DemoWindow {
 		ClassWidget widget = new ClassWidget(shell, module);
 		widget.setEnabled(false);
 
-		List<IBlockElement> children = naturals.getBody().getChildren();
+		List<IBlockElement> children = procedure.getBody().getChildren();
 
 		Composite comp = new Composite(shell, SWT.BORDER);
 		comp.setLayout(new FillLayout());
+		
+		System.out.println(children);
+		
+		Button markRoles = new Button(comp, SWT.PUSH);
+		markRoles.setText("Mark Roles");
+		markRoles.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				
+			}
+		});
 		
 		Button executeCode = new Button(comp, SWT.PUSH);
 		executeCode.setText("Executar Código");
@@ -95,7 +98,7 @@ public class DemoWindow {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				try {
-					IExecutionData data = state.execute(naturals, 5);
+					IExecutionData data = state.execute(procedure, 5);
 					
 					IValue value = data.getReturnValue();
 					
@@ -115,4 +118,35 @@ public class DemoWindow {
 		}
 		display.dispose();
 	}
+	
+//	public String generateArrayErrorString(ArrayIndexError e) {
+//		int invalidPos = e.getInvalidIndex();
+//		String variable = ((IVariableExpression)e.getIndexExpression()).getVariable().getId();
+//		String array = e.getTarget().getId();
+//		int arrayDimension = e.getIndexDimension();	//Dimensão da array que deu erro
+//
+//		String tamanhoArray = "Não_implementado";
+//
+//		StringBuilder sb = new StringBuilder("Tentativa de acesso à posição ");
+//		sb.append(invalidPos);
+//		sb.append(", que é inválida para o vetor ");
+//		sb.append(array);
+//		sb.append(" (comprimento " + arrayDimension + ", índices válidos [0, " + tamanhoArray + "]. ");
+//		sb.append("O acesso foi feito através da variável ");
+//		sb.append(variable);
+//
+//		System.out.println(procedure.getVariables());
+//		System.out.println(variable);
+//		
+//		IVariableRole role = IVariableRole.match(procedure.getVariable(variable));
+//		System.out.println(role.getClass());
+//		
+//		/*if(Stepper.isStepper(procedure.getVariable(variable))) {
+//			sb.append(", que é um iterador para as posições do vetor " + array);
+//		} else {
+//			sb.append(".");
+//		}*/
+//
+//		return sb.toString();
+//	}
 }

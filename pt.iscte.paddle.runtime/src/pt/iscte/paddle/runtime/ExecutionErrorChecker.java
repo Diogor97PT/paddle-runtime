@@ -1,6 +1,8 @@
 package pt.iscte.paddle.runtime;
 
-import java.io.File;
+import static pt.iscte.paddle.model.IOperator.ADD;
+import static pt.iscte.paddle.model.IOperator.SMALLER_EQ;
+import static pt.iscte.paddle.model.IType.INT;
 
 import pt.iscte.paddle.interpreter.ArrayIndexError;
 import pt.iscte.paddle.interpreter.ExecutionError;
@@ -9,26 +11,49 @@ import pt.iscte.paddle.interpreter.IMachine;
 import pt.iscte.paddle.interpreter.IProgramState;
 import pt.iscte.paddle.interpreter.IProgramState.IListener;
 import pt.iscte.paddle.interpreter.IValue;
-import pt.iscte.paddle.javali.translator.Translator;
+import pt.iscte.paddle.model.IBlock;
+import pt.iscte.paddle.model.ILoop;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.IVariableDeclaration;
-import pt.iscte.paddle.runtime.roles.impl.ArrayIndexIterator;
-import pt.iscte.paddle.runtime.roles.impl.Stepper;
+import pt.iscte.paddle.model.IVariableExpression;
+import pt.iscte.paddle.model.roles.IStepper;
+import pt.iscte.paddle.model.roles.IVariableRole;
 
 public class ExecutionErrorChecker {
 	
-	private Translator translator;
 	private IModule module;
 	private IProcedure procedure;
 	private IProgramState state;
 	
 	public ExecutionErrorChecker() {
 		//Initialize Environment
-		translator = new Translator(new File("TestFile.javali").getAbsolutePath());
-		module = translator.createProgram();
-		procedure = module.getProcedures().iterator().next();	//Loads first procedure in class
+		
+		module = IModule.create();
+		module.setId("StepperTest");
+		
+		procedure = module.addProcedure(INT.array().reference());
+		procedure.setId("naturals");
+		
+		IVariableDeclaration n = procedure.addParameter(INT);
+		n.setId("n");
+		
+		IBlock body = procedure.getBody();
+		
+		IVariableDeclaration array = body.addVariable(INT.array().reference());
+		array.setId("array");
+		body.addAssignment(array, INT.array().heapAllocation(n));
+		
+		IVariableDeclaration i = body.addVariable(INT, INT.literal(0));
+		i.setId("i");
+		
+		ILoop loop = body.addLoop(SMALLER_EQ.on(i, n));
+		loop.addArrayElementAssignment(array, ADD.on(i, INT.literal(1)), i);
+		loop.addAssignment(i, ADD.on(i, INT.literal(1)));
+		
+		body.addReturn(array);
+		
 		state = IMachine.create(module);
 	}
 	
@@ -62,31 +87,9 @@ public class ExecutionErrorChecker {
 	}
 	
 	public void printDebugStuff() {
-		/*for(IVariableDeclaration i : procedure.getVariables()) {
-			if(Stepper.isStepper(i)) {
-				IVariableRole vr = new Stepper(i);
-				System.out.println(i + " : " + vr);	
-			} else 
-				System.out.println(i + " : not a Stepper");
-		}*/
-		
-		/*for(IVariableDeclaration i : procedure.getVariables()) {
-			if(FixedValue.isFixedValue(i)) {
-				IVariableRole vr = new FixedValue(i);
-				System.out.println(i + " : " + vr);
-			} else {
-				System.out.println(i + " : not a fixed value");
-			}
-		}*/
-		
-		for(IVariableDeclaration i : procedure.getVariables()) {
-			if(ArrayIndexIterator.isArrayIndexIterator(i)) {
-				ArrayIndexIterator var = new ArrayIndexIterator(i);
-				System.out.println(var.getArrayVariables());
-				System.out.println(i + " : " + var);
-			} else {
-				System.out.println("Não deu em nada");
-			}
+		for(IVariableDeclaration var : procedure.getVariables()) {
+			IVariableRole role = IVariableRole.match(var);
+			System.out.println(var.getId() + ": " + role);
 		}
 	}
 	
@@ -108,8 +111,8 @@ public class ExecutionErrorChecker {
 	
 	public String generateArrayErrorString(ArrayIndexError e) {
 		int invalidPos = e.getInvalidIndex();
-		String variable = e.getIndexExpression().getId();
-		String array = e.getTarget().getId();
+		String variable = ((IVariableExpression)e.getIndexExpression()).getVariable().getId();
+		String array = ((IVariableExpression)e.getTarget()).getVariable().getId();
 		int arrayDimension = e.getIndexDimension();	//Dimensão da array que deu erro
 
 		String tamanhoArray = "Não_implementado";
@@ -122,7 +125,12 @@ public class ExecutionErrorChecker {
 		sb.append("O acesso foi feito através da variável ");
 		sb.append(variable);
 
-		if(Stepper.isStepper(procedure.getVariable(variable))) {
+		System.out.println(procedure.getVariables());
+		System.out.println(variable);
+		
+		IVariableRole role = IVariableRole.match(procedure.getVariable(variable));
+		
+		if(role instanceof IStepper) {
 			sb.append(", que é um iterador para as posições do vetor " + array);
 		} else {
 			sb.append(".");
@@ -135,6 +143,6 @@ public class ExecutionErrorChecker {
 		ExecutionErrorChecker ec = new ExecutionErrorChecker();
 		ec.addListener();
 		ec.printDebugStuff();
-		//ec.execute();
+		ec.execute();
 	}
 }

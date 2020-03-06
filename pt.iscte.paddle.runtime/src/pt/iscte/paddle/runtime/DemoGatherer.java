@@ -14,9 +14,9 @@ public class DemoGatherer {
 		IModule module = translator.createProgram();
 		IProcedure sum = module.getProcedures().iterator().next(); // first procedure
 
-		/*for (IVariableDeclaration var : sum.getVariables()) {
+		for (IVariableDeclaration var : sum.getVariables()) {
 			IVariableRole role = IVariableRole.match(var);
 			System.out.println(var.getId() + ": " + role);
-		}*/
+		}
 	}
 }
