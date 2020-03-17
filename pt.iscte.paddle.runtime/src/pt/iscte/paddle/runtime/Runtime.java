@@ -1,16 +1,19 @@
 package pt.iscte.paddle.runtime;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import pt.iscte.paddle.interpreter.ArrayIndexError;
 import pt.iscte.paddle.interpreter.ExecutionError;
+import pt.iscte.paddle.interpreter.IArray;
 import pt.iscte.paddle.interpreter.IExecutionData;
 import pt.iscte.paddle.interpreter.IMachine;
 import pt.iscte.paddle.interpreter.IProgramState;
 import pt.iscte.paddle.interpreter.IProgramState.IListener;
+import pt.iscte.paddle.interpreter.IReference;
 import pt.iscte.paddle.interpreter.IValue;
 import pt.iscte.paddle.javardise.MarkerService;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
-import pt.iscte.paddle.model.IArrayElementAssignment;
-import pt.iscte.paddle.model.IBlock.IVisitor;
 import pt.iscte.paddle.model.IModel2CodeTranslator;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
@@ -29,6 +32,8 @@ public class Runtime {
 	private IProcedure procedure;
 	private IProgramState state;
 	
+	private Map<IVariableDeclaration, IReference> references = new HashMap<>();
+	
 	public Runtime(Test test) {
 		module = test.getModule();
 		procedure = test.getProcedure();
@@ -45,7 +50,11 @@ public class Runtime {
 			public void step(IProgramElement statement) {
 				if(statement instanceof IVariableAssignment) {
 					IVariableAssignment a = (IVariableAssignment) statement;
-					System.out.println(state.getCallStack().getTopFrame().getVariableStore(a.getTarget()));
+					IReference r = state.getCallStack().getTopFrame().getVariableStore(a.getTarget());
+					
+					references.putIfAbsent(a.getTarget(), r);
+					
+					System.out.println(r.getValue());
 				}
 			}
 		});
@@ -61,8 +70,6 @@ public class Runtime {
 			System.out.println("\n" + "RESULT: " + value);
 			text.line("RESULT: " + value);
 		} catch (ArrayIndexError e) {
-			//System.out.println(generateArrayIndexError(e));
-			
 			generateArrayIndexError(e, text);
 		} catch (ExecutionError e) {
 			System.err.println("EXCEPTION NOT HANDLED YET");
@@ -78,23 +85,23 @@ public class Runtime {
 		IVariableDeclaration array = ((IVariableExpression)e.getTarget()).getVariable();
 		int arrayDimension = e.getIndexDimension();	//Dimensão da array que deu erro
 		
-		array.getOwnerProcedure().accept(new IVisitor() {
-			@Override
-			public boolean visit(IArrayElementAssignment assignment) {
-				return IVisitor.super.visit(assignment);
-			}
-		});
+//		array.getOwnerProcedure().accept(new IVisitor() {
+//			@Override
+//			public boolean visit(IArrayElementAssignment assignment) {
+//				return IVisitor.super.visit(assignment);
+//			}
+//		});
+		
+		IArray array_ref = (IArray)references.get(array).getValue();
 		
 		IProgramElement exceptionPlace = e.getSourceElement();
 		System.out.println(e.getSourceElement());
-		
-		String tamanhoArray = "Não_implementado";
 		
 		text.words("Tentativa de acesso à posição ")
 			.words(Integer.toString(invalidPos))
 			.words(", que é inválida para o ")
 			.link("vetor " + array.getId(), array)
-			.words(" (comprimento " + arrayDimension + ", índices válidos [0, " + tamanhoArray + "]. ")	//retirar que o comprimento é a dimensão da array
+			.words(" (comprimento " + array_ref.getLength() + ", índices válidos [0, " + (array_ref.getLength() - 1) + "]. ")
 			.newline()
 			.words("O acesso foi feito através da ")
 			.link("variável i", variable);
