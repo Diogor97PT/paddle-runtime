@@ -1,4 +1,4 @@
-package pt.iscte.paddle.runtime;
+package pt.iscte.paddle.runtime.demos;
 import static pt.iscte.paddle.model.IOperator.ADD;
 import static pt.iscte.paddle.model.IOperator.SMALLER_EQ;
 import static pt.iscte.paddle.model.IType.INT;
@@ -68,10 +68,10 @@ public class DemoListener {
 		});
 
 		
-		for(IVariableDeclaration var : procedure.getVariables()) {
-			IVariableRole role = IVariableRole.match(var);
-			System.out.println(var.getId() + ": " + role);
-		}
+//		for(IVariableDeclaration var : procedure.getVariables()) {
+//			IVariableRole role = IVariableRole.match(var);
+//			System.out.println(var.getId() + ": " + role);
+//		}
 		
 		System.out.println("Modifications of variable i:");
 		

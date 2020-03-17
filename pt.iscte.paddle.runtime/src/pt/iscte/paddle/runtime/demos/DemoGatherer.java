@@ -1,4 +1,4 @@
-package pt.iscte.paddle.runtime;
+package pt.iscte.paddle.runtime.demos;
 import java.io.File;
 
 import pt.iscte.paddle.javali.translator.Translator;
