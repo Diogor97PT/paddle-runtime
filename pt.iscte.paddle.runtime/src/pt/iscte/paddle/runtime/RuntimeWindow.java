@@ -1,5 +1,7 @@
 package pt.iscte.paddle.runtime;
 
+import java.util.Map;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -14,7 +16,10 @@ import org.eclipse.swt.widgets.Shell;
 
 import pt.iscte.paddle.javardise.ClassWidget;
 import pt.iscte.paddle.javardise.Constants;
-import pt.iscte.paddle.javardise.util.HyperlinkedText;
+import pt.iscte.paddle.javardise.Decoration;
+import pt.iscte.paddle.javardise.MarkerService;
+import pt.iscte.paddle.model.IVariableDeclaration;
+import pt.iscte.paddle.runtime.messages.IMessage;
 
 public class RuntimeWindow {
 	
@@ -96,12 +101,17 @@ public class RuntimeWindow {
 			public void widgetSelected(SelectionEvent e) {
 				if(link != null) {
 					link.dispose();
-					link = null;
 				}
 				
-				HyperlinkedText text = runtime.execute();
-				link = text.create(shell, SWT.BORDER);
-				shell.pack();
+				IMessage message = runtime.execute();
+				link = message.getText().create(shell, SWT.BORDER);
+				
+				for(Map.Entry<IVariableDeclaration, String> entry : message.getVarValues().entrySet()) {
+					Decoration d = MarkerService.addDecoration(entry.getKey(), "Valor atual: " + entry.getValue(), Decoration.Location.RIGHT);
+					d.show();
+				}
+				
+				shell.pack(true);
 			}
 		});
 		
