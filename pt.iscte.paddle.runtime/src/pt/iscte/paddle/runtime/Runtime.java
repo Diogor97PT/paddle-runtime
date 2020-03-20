@@ -19,7 +19,8 @@ import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.IVariableAssignment;
 import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.runtime.RuntimeWindow.InterfaceColor;
-import pt.iscte.paddle.runtime.messages.IMessage;
+import pt.iscte.paddle.runtime.messages.Message;
+import pt.iscte.paddle.runtime.messages.SuccessfulMessage;
 import pt.iscte.paddle.runtime.tests.Test;
 
 public class Runtime {
@@ -55,21 +56,20 @@ public class Runtime {
 		
 	}
 	
-	public IMessage execute() {
+	public Message execute() {
 		HyperlinkedText text = new HyperlinkedText(e1 -> MarkerService.mark(InterfaceColor.BLUE.getColor(), e1));
 		
-		
-		IMessage message = null;
+		Message message = null;
 		
 		try {
 			IExecutionData data = state.execute(procedure, 5);	//naturals(5)
 			IValue value = data.getReturnValue();
-			System.out.println("\n" + "RESULT: " + value);
-			text.line("RESULT: " + value);
+			message = new SuccessfulMessage(text, this, value);
 		} catch (ExecutionError e) {
-//			System.err.println("EXCEPTION NOT HANDLED YET");
-//			e.printStackTrace();
-			message = IMessage.getMessage(text, e, this);
+			message = Message.getMessage(text, e, this);
+			text.newline();
+			message.addVarValuesToText();
+			message.generateShortText();
 		}
 		
 		return message;

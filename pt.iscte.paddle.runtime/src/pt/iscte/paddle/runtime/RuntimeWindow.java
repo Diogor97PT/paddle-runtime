@@ -19,7 +19,7 @@ import pt.iscte.paddle.javardise.Constants;
 import pt.iscte.paddle.javardise.Decoration;
 import pt.iscte.paddle.javardise.MarkerService;
 import pt.iscte.paddle.model.IVariableDeclaration;
-import pt.iscte.paddle.runtime.messages.IMessage;
+import pt.iscte.paddle.runtime.messages.Message;
 
 public class RuntimeWindow {
 	
@@ -96,15 +96,17 @@ public class RuntimeWindow {
 		executeCode.setText("Executar Código");
 		executeCode.addSelectionListener(new SelectionAdapter() {
 			Link link;
+			Decoration dec;
 			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if(link != null) {
-					link.dispose();
-				}
+				if(link != null) link.dispose();
+				if(dec != null) dec.delete();
 				
-				IMessage message = runtime.execute();
+				Message message = runtime.execute();
 				link = message.getText().create(shell, SWT.BORDER);
+				Decoration dec = message.generateShortText();
+				dec.show();
 				
 				for(Map.Entry<IVariableDeclaration, String> entry : message.getVarValues().entrySet()) {
 					Decoration d = MarkerService.addDecoration(entry.getKey(), "Valor atual: " + entry.getValue(), Decoration.Location.RIGHT);
