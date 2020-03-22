@@ -1,5 +1,7 @@
-package pt.iscte.paddle.runtime;
-import java.io.File;
+package pt.iscte.paddle.runtime.demos;
+import static pt.iscte.paddle.model.IOperator.ADD;
+import static pt.iscte.paddle.model.IOperator.SMALLER_EQ;
+import static pt.iscte.paddle.model.IType.INT;
 
 import pt.iscte.paddle.interpreter.ArrayIndexError;
 import pt.iscte.paddle.interpreter.ExecutionError;
@@ -8,23 +10,45 @@ import pt.iscte.paddle.interpreter.IMachine;
 import pt.iscte.paddle.interpreter.IProgramState;
 import pt.iscte.paddle.interpreter.IProgramState.IListener;
 import pt.iscte.paddle.interpreter.IValue;
-import pt.iscte.paddle.javali.translator.Translator;
+import pt.iscte.paddle.model.IBlock;
+import pt.iscte.paddle.model.ILoop;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProgramElement;
-import pt.iscte.paddle.model.IVariable;
 import pt.iscte.paddle.model.IVariableAssignment;
+import pt.iscte.paddle.model.IVariableDeclaration;
+import pt.iscte.paddle.model.IVariableExpression;
+import pt.iscte.paddle.model.roles.IStepper;
 import pt.iscte.paddle.model.roles.IVariableRole;
-import pt.iscte.paddle.runtime.roles.IStepper;
 
 public class DemoListener {
 
 	public static void main(String[] args) throws ExecutionError {
 
-		// instantiate model from file
-		Translator translator = new Translator(new File("MeuFicheiro.javali").getAbsolutePath());
-		IModule module = translator.createProgram();
-		IProcedure nats = module.getProcedures().iterator().next(); // first
+		// instantiate model
+		IModule module = IModule.create();
+		module.setId("StepperTest");
+		
+		IProcedure procedure = module.addProcedure(INT.array().reference());
+		procedure.setId("naturals");
+		
+		IVariableDeclaration n = procedure.addParameter(INT);
+		n.setId("n");
+		
+		IBlock body = procedure.getBody();
+		
+		IVariableDeclaration array = body.addVariable(INT.array().reference());
+		array.setId("array");
+		body.addAssignment(array, INT.array().heapAllocation(n));
+		
+		IVariableDeclaration i = body.addVariable(INT, INT.literal(0));
+		i.setId("i");
+		
+		ILoop loop = body.addLoop(SMALLER_EQ.on(i, n));
+		loop.addArrayElementAssignment(array, ADD.on(i, INT.literal(1)), i);
+		loop.addAssignment(i, ADD.on(i, INT.literal(1)));
+		
+		body.addReturn(array);
 		
 		//System.out.println(module);
 
@@ -44,18 +68,15 @@ public class DemoListener {
 		});
 
 		
-		for(IVariable i : nats.getVariables()) {
-			if(IStepper.isStepper(i)) {
-				IVariableRole vr = IStepper.createStepper(i);
-				System.out.println(i + " : " + vr);	
-			} else 
-				System.out.println(i + " : not a Stepper");
-		}
+//		for(IVariableDeclaration var : procedure.getVariables()) {
+//			IVariableRole role = IVariableRole.match(var);
+//			System.out.println(var.getId() + ": " + role);
+//		}
 		
 		System.out.println("Modifications of variable i:");
 		
 		try {
-			IExecutionData data = state.execute(nats, 5);// naturals(5)
+			IExecutionData data = state.execute(procedure, 5);// naturals(5)
 			
 			IValue ret = data.getReturnValue();
 			
@@ -63,27 +84,31 @@ public class DemoListener {
 			System.out.println("RESULT: " + ret);
 		} catch (ArrayIndexError e) {
 			int invalidPos = e.getInvalidIndex();
-			String variable = e.getIndexExpression().getId();
-			String array = e.getTarget().getId();
+			String variable = ((IVariableExpression)e.getIndexExpression()).getVariable().getId();
+			String arrayVariable = ((IVariableExpression)e.getTarget()).getVariable().getId();
 			int arrayDimension = e.getIndexDimension();	//Dimensão da array que deu erro
-			
+
 			String tamanhoArray = "Não_implementado";
-			
+
 			StringBuilder sb = new StringBuilder("Tentativa de acesso à posição ");
 			sb.append(invalidPos);
 			sb.append(", que é inválida para o vetor ");
-			sb.append(array);
+			sb.append(arrayVariable);
 			sb.append(" (comprimento " + arrayDimension + ", índices válidos [0, " + tamanhoArray + "]. ");
 			sb.append("O acesso foi feito através da variável ");
 			sb.append(variable);
+
+			System.out.println(procedure.getVariables());
+			System.out.println(variable);
 			
-			if(IStepper.isStepper(nats.getVariable(variable))) {
-				sb.append(", que é um iterador para as posições do vetor " + array + ".");
+			IVariableRole role = IVariableRole.match(procedure.getVariable(variable));
+			
+			if(role instanceof IStepper) {
+				sb.append(", que é um iterador para as posições do vetor " + arrayVariable);
 			} else {
 				sb.append(".");
 			}
-			
-			
+
 			System.out.println(sb.toString());
 			
 			/*System.out.println(e);
