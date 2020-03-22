@@ -13,7 +13,7 @@ public class ColorScheme implements IColorScheme {
 	
 	@Override
 	public Color getNodeColor(INode node) {
-		return new Color(null,255,255,206);
+		return ColorConstants.tooltipBackground;
 	}
 	
 	@Override
@@ -51,9 +51,9 @@ public class ColorScheme implements IColorScheme {
 		if(source instanceof IBranchNode) {
 			IBranchNode branch = (IBranchNode) source;
 			if(destination.equals(branch.getAlternative()))
-				return "True";
+				return "true";
 			else
-				return "False";
+				return "false";
 		}
 		
 		return "";

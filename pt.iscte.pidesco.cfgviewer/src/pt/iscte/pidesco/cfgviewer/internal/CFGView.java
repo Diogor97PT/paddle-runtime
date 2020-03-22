@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
@@ -29,9 +31,9 @@ public class CFGView {
 	 * Marcar caminho e caixas
 	 * Marcar apenas caixas
 	 * 
-	 * Escrever texto na ligação entre 2 pares
+	 * Escrever texto na ligaï¿½ï¿½o entre 2 pares
 	 * 
-	 * Listener para cliques em certos nós
+	 * Listener para cliques em certos nï¿½s
 	 * 
 	 * */
 	
@@ -44,7 +46,13 @@ public class CFGView {
 
 		gv.setContentProvider(new GraphNodeContentProvider());
 		gv.setLabelProvider(new GraphLabelContentProvider());
-		//gv.addSelectionChangedListener(listener);  //Pode vir a ser útil
+		gv.addSelectionChangedListener(new ISelectionChangedListener() {
+			
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				System.out.println(event.getStructuredSelection().getFirstElement());
+			}
+		});
 		
 		gv.setLayoutAlgorithm(new CFGLayout(LayoutStyles.NO_LAYOUT_NODE_RESIZING));
 		gv.applyLayout();
@@ -75,7 +83,7 @@ public class CFGView {
 	
 	private class GraphLabelContentProvider extends LabelProvider implements IFigureProvider, IEntityConnectionStyleProvider {
 		
-		/*fazer colorscheme para este caso (tipo de ligação tracejado, normal, etc)*/
+		/*fazer colorscheme para este caso (tipo de ligaï¿½ï¿½o tracejado, normal, etc)*/
 		@Override
 		public int getConnectionStyle(Object src, Object dest) {
 			if(src instanceof IBranchNode && ((IBranchNode)src).getAlternative().equals(dest)) {
