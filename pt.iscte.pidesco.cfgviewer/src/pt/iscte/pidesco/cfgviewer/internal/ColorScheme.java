@@ -5,9 +5,9 @@ import org.eclipse.swt.graphics.Color;
 
 import pt.iscte.paddle.model.cfg.IBranchNode;
 import pt.iscte.paddle.model.cfg.INode;
-import pt.iscte.pidesco.cfgviewer.ext.IColorScheme;
+import pt.iscte.pidesco.cfgviewer.ext.IStyleProvider;
 
-public class ColorScheme implements IColorScheme {
+public class ColorScheme implements IStyleProvider {
 	
 	/*********** Node ***********/
 	
