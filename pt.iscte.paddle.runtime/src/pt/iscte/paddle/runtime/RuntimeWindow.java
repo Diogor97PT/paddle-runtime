@@ -5,45 +5,31 @@ import java.util.Map;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
-import pt.iscte.paddle.javardise.ClassWidget;
-import pt.iscte.paddle.javardise.Constants;
-import pt.iscte.paddle.javardise.Decoration;
-import pt.iscte.paddle.javardise.MarkerService;
+import pt.iscte.paddle.interpreter.IReference;
+import pt.iscte.paddle.javardise.service.IClassWidget;
+import pt.iscte.paddle.javardise.service.ICodeDecoration;
+import pt.iscte.paddle.javardise.service.IJavardiseService;
+import pt.iscte.paddle.javardise.service.IWidget;
 import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.runtime.messages.Message;
 
 public class RuntimeWindow {
 	
-	private static Shell shell;
-	
-	public static enum InterfaceColor {
-		BLUE(Display.getDefault().getSystemColor(SWT.COLOR_BLUE));
-		
-		private Color color;
-		
-		private InterfaceColor(Color color) {
-			this.color = color;
-		}
-		
-		public Color getColor() {
-			return color;
-		}
-	}
+	private Shell shell;
 	
 	public RuntimeWindow(Runtime runtime) {
 		Display display = new Display();
 		shell = new Shell(display);
-		shell.setText("Teste");
-		shell.setBackground(Constants.COLOR_BACKGROUND);
+		shell.setText("Runtime");
 		
 		GridLayout layout = new GridLayout(1, false);
 		layout.marginTop = 50;
@@ -51,14 +37,17 @@ public class RuntimeWindow {
 		layout.verticalSpacing = 20;
 		shell.setLayout(layout);
 		
-		ClassWidget widget = new ClassWidget(shell, runtime.getModule());
-		widget.setEnabled(false);
+		IClassWidget widget = IJavardiseService.createClassWidget(shell, runtime.getModule());
+		widget.setReadOnly(true);
 		
-		//Add buttons
-		Composite comp = new Composite(shell, SWT.BORDER);
-		comp.setLayout(new FillLayout());
+		//Group where buttons are inserted
+		Group buttonGroup = new Group(shell, SWT.BORDER);
+		buttonGroup.setText("Actions");
+		buttonGroup.setLayout(new FillLayout());
+		buttonGroup.setFocus();
 		
-		Button markRoles = new Button(comp, SWT.TOGGLE);
+		//Button to marak the roles of each variable
+		Button markRoles = new Button(buttonGroup, SWT.TOGGLE);
 		markRoles.setText("Mark Roles");
 //		markRoles.addSelectionListener(new SelectionAdapter() {
 //			Link link;
@@ -92,11 +81,12 @@ public class RuntimeWindow {
 //			}
 //		});
 		
-		Button executeCode = new Button(comp, SWT.PUSH);
+		//Button to execute the code inside the widget
+		Button executeCode = new Button(buttonGroup, SWT.PUSH);
 		executeCode.setText("Executar Código");
 		executeCode.addSelectionListener(new SelectionAdapter() {
 			Link link;
-			Decoration dec;
+			ICodeDecoration<Text> dec;
 			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -105,11 +95,13 @@ public class RuntimeWindow {
 				
 				Message message = runtime.execute();
 				link = message.getText().create(shell, SWT.BORDER);
-				Decoration dec = message.generateShortText();
+				IWidget w = IJavardiseService.getWidget(message.getProgramElement());
+				dec = w.addNote(message.getShortText(), ICodeDecoration.Location.RIGHT);
 				dec.show();
 				
-				for(Map.Entry<IVariableDeclaration, String> entry : message.getVarValues().entrySet()) {
-					Decoration d = MarkerService.addDecoration(entry.getKey(), "Valor atual: " + entry.getValue(), Decoration.Location.RIGHT);
+				for(Map.Entry<IVariableDeclaration, IReference> entry : message.getVarReferences().entrySet()) {
+					IWidget widget = IJavardiseService.getWidget(entry.getKey());
+					ICodeDecoration<Text> d = widget.addNote("Valor atual: " + entry.getValue().getValue(), ICodeDecoration.Location.RIGHT);
 					d.show();
 				}
 				

@@ -17,7 +17,7 @@ import pt.iscte.paddle.model.cfg.IStatementNode;
 
 /*
  * 
- * Classe tempor�ria de testes
+ * Classe temporária de testes
  * 
  */
 public class CFG_Creator {

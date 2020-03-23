@@ -36,9 +36,9 @@ public class CFGViewer extends Composite {
 	 * Marcar caminho e caixas
 	 * Marcar apenas caixas
 	 * 
-	 * Escrever texto na liga��o entre 2 pares
+	 * Escrever texto na ligação entre 2 pares
 	 * 
-	 * Listener para cliques em certos n�s
+	 * Listener para cliques em certos nós
 	 * 
 	 * */
 	
@@ -96,7 +96,7 @@ public class CFGViewer extends Composite {
 	
 	private class GraphLabelContentProvider extends LabelProvider implements IFigureProvider, IEntityConnectionStyleProvider {
 		
-		/*fazer colorscheme para este caso (tipo de liga��o tracejado, normal, etc)*/
+		/*fazer colorscheme para este caso (tipo de ligação tracejado, normal, etc)*/
 		@Override
 		public int getConnectionStyle(Object src, Object dest) {
 			if(src instanceof IBranchNode && ((IBranchNode)src).getAlternative().equals(dest)) {

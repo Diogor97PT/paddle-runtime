@@ -2,27 +2,26 @@ package pt.iscte.paddle.runtime.messages;
 
 import pt.iscte.paddle.interpreter.ArrayIndexError;
 import pt.iscte.paddle.interpreter.IArray;
-import pt.iscte.paddle.javardise.Decoration;
-import pt.iscte.paddle.javardise.MarkerService;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
+import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.IVariableExpression;
 import pt.iscte.paddle.model.roles.IArrayIndexIterator;
 import pt.iscte.paddle.model.roles.IVariableRole;
 import pt.iscte.paddle.runtime.Runtime;
 
-public class ArrayIndexErrorMessage extends Message {
+class ArrayIndexErrorMessage extends Message {
 	
-	private ArrayIndexError e;
-	
-	public ArrayIndexErrorMessage(HyperlinkedText text, ArrayIndexError e, Runtime runtime) {
+	private ArrayIndexError error;
+
+	public ArrayIndexErrorMessage(HyperlinkedText text, Runtime runtime, ArrayIndexError error) {
 		super(text, runtime);
 		
-		this.e = e;
+		this.error = error;
 		
-		int invalidPos = e.getInvalidIndex();
-		IVariableDeclaration variable = ((IVariableExpression)e.getIndexExpression()).getVariable();
-		IVariableDeclaration array = ((IVariableExpression)e.getTarget()).getVariable();
+		int invalidPos = error.getInvalidIndex();
+		IVariableDeclaration variable = ((IVariableExpression)error.getIndexExpression()).getVariable();
+		IVariableDeclaration array = ((IVariableExpression)error.getTarget()).getVariable();
 		//int arrayDimension = e.getIndexDimension();	//Dimensão da array que deu erro
 		
 		IArray array_ref = (IArray)runtime.getReferences().get(array).getValue();
@@ -43,7 +42,12 @@ public class ArrayIndexErrorMessage extends Message {
 	}
 
 	@Override
-	public Decoration generateShortText() {
-		return MarkerService.addDecoration(e.getSourceElement(), "Tentativa de acesso a posição inválida", Decoration.Location.RIGHT);
+	public String getShortText() {
+		return "Tentativa de acesso a posição inválida";
+	}
+	
+	@Override
+	public IProgramElement getProgramElement() {
+		return error.getSourceElement();
 	}
 }

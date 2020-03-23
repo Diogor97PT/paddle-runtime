@@ -1,12 +1,12 @@
 package pt.iscte.paddle.runtime.messages;
 
 import pt.iscte.paddle.interpreter.IValue;
-import pt.iscte.paddle.javardise.Decoration;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
+import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.runtime.Runtime;
 
-public class SuccessfulMessage extends Message {
-
+class SuccessfulMessage extends Message {
+	
 	public SuccessfulMessage(HyperlinkedText text, Runtime runtime, IValue value) {
 		super(text, runtime);
 		
@@ -16,10 +16,14 @@ public class SuccessfulMessage extends Message {
 	}
 
 	@Override
-	public Decoration generateShortText() {
+	public String getShortText() {
+		return "Código executado corretamente.";
+	}
+
+	@Override
+	public IProgramElement getProgramElement() {
 		return null;
 	}
-	
 	
 	
 }
