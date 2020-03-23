@@ -1,43 +1,45 @@
 package pt.iscte.paddle.runtime.messages;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import pt.iscte.paddle.interpreter.ArrayIndexError;
 import pt.iscte.paddle.interpreter.ExecutionError;
-import pt.iscte.paddle.javardise.Decoration;
+import pt.iscte.paddle.interpreter.IReference;
+import pt.iscte.paddle.interpreter.IValue;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
+import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.runtime.Runtime;
 
 public abstract class Message {
 	
 	private HyperlinkedText text;
-	private Map<IVariableDeclaration, String> varValues = new HashMap<>();
+	private Map<IVariableDeclaration, IReference> varReferences;
 	
 	public Message(HyperlinkedText text, Runtime runtime) {
 		this.text = text;
-		
-		runtime.getReferences().forEach((key, value) -> {
-			varValues.put(key, value.getValue().toString());
-		});
+		varReferences = runtime.getReferences();
 	}
 
-	public static Message getMessage(HyperlinkedText text, ExecutionError e, Runtime runtime) {
+	public static Message getErrorMessage(HyperlinkedText text, Runtime runtime, ExecutionError e) {
 		
 		if(e instanceof ArrayIndexError) {
-			return new ArrayIndexErrorMessage(text, (ArrayIndexError)e, runtime);
+			return new ArrayIndexErrorMessage(text, runtime, (ArrayIndexError)e);
 		}
 		
 		return null;
 	}
 	
+	public static Message getSuccessfulMessage(HyperlinkedText text, Runtime runtime, IValue value) {
+		return new SuccessfulMessage(text, runtime, value);
+	}
+	
 	public void addVarValuesToText() {
 		text.line("Valores das variáveis quando ocorreu a Exceção:");
 		
-		varValues.forEach((key, value) -> {
+		varReferences.forEach((key, value) -> {
 			text.link(key.toString(), key);
-			text.line(" : " + value);
+			text.line(" : " + value.getValue());
 		});
 	}
 	
@@ -45,27 +47,11 @@ public abstract class Message {
 		return text;
 	}
 	
-	public Map<IVariableDeclaration, String> getVarValues() {
-		return varValues;
+	public Map<IVariableDeclaration, IReference> getVarReferences() {
+		return varReferences;
 	}
 	
-	public abstract Decoration generateShortText();
+	public abstract String getShortText();
 	
-//	IMessage EMPTY = new IMessage() {
-//		
-//		@Override
-//		public HyperlinkedText getText() {
-//			HyperlinkedText text = new HyperlinkedText(e1 -> MarkerService.mark(InterfaceColor.BLUE.getColor(), e1));
-//			return text.line("Empty Message");
-//		}
-//		
-//		@Override
-//		public void generateShortText() {}
-//
-//		@Override
-//		public Map<IVariableDeclaration, String> getVarValues() {
-//			return null;
-//		}
-//	};
-	
+	public abstract IProgramElement getProgramElement();
 }
