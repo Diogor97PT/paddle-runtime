@@ -4,7 +4,7 @@ import org.eclipse.swt.graphics.Color;
 
 import pt.iscte.paddle.model.cfg.INode;
 
-public interface IColorScheme {
+public interface IStyleProvider {
 	
 	/*********** Node ***********/
 	

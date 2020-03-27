@@ -1,4 +1,4 @@
-package pt.iscte.pidesco.cfgviewer.internal;
+package pt.iscte.pidesco.cfgviewer.ext;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -10,6 +10,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.zest.core.viewers.EntityConnectionData;
 import org.eclipse.zest.core.viewers.GraphViewer;
@@ -22,9 +23,13 @@ import org.eclipse.zest.layouts.LayoutStyles;
 import pt.iscte.paddle.model.cfg.IBranchNode;
 import pt.iscte.paddle.model.cfg.INode;
 import pt.iscte.paddle.model.cfg.IStatementNode;
-import pt.iscte.pidesco.cfgviewer.ext.IColorScheme;
+import pt.iscte.pidesco.cfgviewer.internal.CFGBranchFigure;
+import pt.iscte.pidesco.cfgviewer.internal.CFGExitFigure;
+import pt.iscte.pidesco.cfgviewer.internal.CFGFigure;
+import pt.iscte.pidesco.cfgviewer.internal.CFGLayout;
+import pt.iscte.pidesco.cfgviewer.internal.ColorScheme;
 
-public class CFGView {
+public class CFGViewer extends Composite {
 	
 	/*
 	 * Marcar caminho apenas
@@ -38,10 +43,16 @@ public class CFGView {
 	 * */
 	
 	private GraphViewer gv;
-	private IColorScheme ics;
+	private IStyleProvider ics;
 	
-	public CFGView(Composite viewArea, IColorScheme ics) {
-		gv = new GraphViewer(viewArea, SWT.BORDER);
+	public CFGViewer(Composite viewArea) {
+		this(viewArea, new ColorScheme());
+	}
+	
+	public CFGViewer(Composite viewArea, IStyleProvider ics) {
+		super(viewArea, SWT.NONE);
+		setLayout(new FillLayout());
+		gv = new GraphViewer(this, SWT.BORDER);
 		this.ics = ics;
 
 		gv.setContentProvider(new GraphNodeContentProvider());
@@ -50,10 +61,12 @@ public class CFGView {
 			
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
+				// TODO propagate
+				// TODO highlight nodes
 				System.out.println(event.getStructuredSelection().getFirstElement());
 			}
 		});
-		
+				
 		gv.setLayoutAlgorithm(new CFGLayout(LayoutStyles.NO_LAYOUT_NODE_RESIZING));
 		gv.applyLayout();
 	}
