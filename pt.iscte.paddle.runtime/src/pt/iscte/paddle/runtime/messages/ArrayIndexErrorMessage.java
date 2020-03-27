@@ -10,7 +10,7 @@ import pt.iscte.paddle.model.roles.IArrayIndexIterator;
 import pt.iscte.paddle.model.roles.IVariableRole;
 import pt.iscte.paddle.runtime.Runtime;
 
-class ArrayIndexErrorMessage extends Message {
+class ArrayIndexErrorMessage extends ErrorMessage {
 	
 	private ArrayIndexError error;
 
@@ -43,11 +43,12 @@ class ArrayIndexErrorMessage extends Message {
 
 	@Override
 	public String getShortText() {
-		return "Tentativa de acesso a posição inválida";
+		return "Tentativa de acesso a posição inválida";		//adicionar codigo que deu erro por exemplo neste caso: array[5] (meter mesmo o valor)
 	}
 	
 	@Override
-	public IProgramElement getProgramElement() {
+	public IProgramElement getErrorElement() {
+//		System.out.println(error.getSourceElement());
 		return error.getSourceElement();
 	}
 }

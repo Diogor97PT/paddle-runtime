@@ -6,8 +6,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Link;
@@ -20,7 +22,9 @@ import pt.iscte.paddle.javardise.service.ICodeDecoration;
 import pt.iscte.paddle.javardise.service.IJavardiseService;
 import pt.iscte.paddle.javardise.service.IWidget;
 import pt.iscte.paddle.model.IVariableDeclaration;
+import pt.iscte.paddle.runtime.messages.ErrorMessage;
 import pt.iscte.paddle.runtime.messages.Message;
+import pt.iscte.pidesco.cfgviewer.ext.CFGViewer;
 
 public class RuntimeWindow {
 	
@@ -37,18 +41,31 @@ public class RuntimeWindow {
 		layout.verticalSpacing = 20;
 		shell.setLayout(layout);
 		
-		IClassWidget widget = IJavardiseService.createClassWidget(shell, runtime.getModule());
+		Composite comp = new Composite(shell, SWT.NONE);
+		GridLayout l = new GridLayout(2, true);
+		l.horizontalSpacing = 50;
+		comp.setLayout(l);
+		
+		IClassWidget widget = IJavardiseService.createClassWidget(comp, runtime.getModule());
 		widget.setReadOnly(true);
 		
+		CFGViewer cfg = new CFGViewer(comp);
+		cfg.setInput(runtime.getProcedure().getCFG().getNodes());
+		cfg.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		
+		Composite buttonsAndText = new Composite(shell, SWT.NONE);
+		buttonsAndText.setLayout(new GridLayout(2, false));
+		buttonsAndText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		
 		//Group where buttons are inserted
-		Group buttonGroup = new Group(shell, SWT.BORDER);
+		Group buttonGroup = new Group(buttonsAndText, SWT.BORDER);
 		buttonGroup.setText("Actions");
 		buttonGroup.setLayout(new FillLayout());
 		buttonGroup.setFocus();
 		
-		//Button to marak the roles of each variable
-		Button markRoles = new Button(buttonGroup, SWT.TOGGLE);
-		markRoles.setText("Mark Roles");
+		//Button to mark the roles of each variable
+//		Button markRoles = new Button(buttonGroup, SWT.TOGGLE);
+//		markRoles.setText("Mark Roles");
 //		markRoles.addSelectionListener(new SelectionAdapter() {
 //			Link link;
 //			List<Decoration> decs;
@@ -86,22 +103,26 @@ public class RuntimeWindow {
 		executeCode.setText("Executar Código");
 		executeCode.addSelectionListener(new SelectionAdapter() {
 			Link link;
-			ICodeDecoration<Text> dec;
+			ICodeDecoration<Text> shortTextDecoration;
 			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if(link != null) link.dispose();
-				if(dec != null) dec.delete();
+				if(shortTextDecoration != null) shortTextDecoration.delete();
 				
 				Message message = runtime.execute();
-				link = message.getText().create(shell, SWT.BORDER);
-				IWidget w = IJavardiseService.getWidget(message.getProgramElement());
-				dec = w.addNote(message.getShortText(), ICodeDecoration.Location.RIGHT);
-				dec.show();
+				link = message.getText().create(buttonsAndText, SWT.BORDER);
+				
+				if(message instanceof ErrorMessage) {
+					ErrorMessage errorMessage = (ErrorMessage) message;
+					IWidget w = IJavardiseService.getWidget(errorMessage.getErrorElement());
+					shortTextDecoration = w.addNote(errorMessage.getShortText(), ICodeDecoration.Location.RIGHT);	//Add short text right of the line
+					shortTextDecoration.show();
+				}
 				
 				for(Map.Entry<IVariableDeclaration, IReference> entry : message.getVarReferences().entrySet()) {
 					IWidget widget = IJavardiseService.getWidget(entry.getKey());
-					ICodeDecoration<Text> d = widget.addNote("Valor atual: " + entry.getValue().getValue(), ICodeDecoration.Location.RIGHT);
+					ICodeDecoration<Text> d = widget.addNote(entry.getValue().getValue().toString(), ICodeDecoration.Location.RIGHT);
 					d.show();
 				}
 				

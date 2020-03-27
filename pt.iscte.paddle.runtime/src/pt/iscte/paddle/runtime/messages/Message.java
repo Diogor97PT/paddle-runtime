@@ -7,7 +7,6 @@ import pt.iscte.paddle.interpreter.ExecutionError;
 import pt.iscte.paddle.interpreter.IReference;
 import pt.iscte.paddle.interpreter.IValue;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
-import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.runtime.Runtime;
 
@@ -50,8 +49,4 @@ public abstract class Message {
 	public Map<IVariableDeclaration, IReference> getVarReferences() {
 		return varReferences;
 	}
-	
-	public abstract String getShortText();
-	
-	public abstract IProgramElement getProgramElement();
 }

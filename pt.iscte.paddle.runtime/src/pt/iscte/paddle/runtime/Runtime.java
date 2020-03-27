@@ -10,6 +10,7 @@ import pt.iscte.paddle.interpreter.IProgramState;
 import pt.iscte.paddle.interpreter.IProgramState.IListener;
 import pt.iscte.paddle.interpreter.IReference;
 import pt.iscte.paddle.interpreter.IValue;
+import pt.iscte.paddle.javardise.service.IJavardiseService;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
 import pt.iscte.paddle.model.IModel2CodeTranslator;
 import pt.iscte.paddle.model.IModule;
@@ -55,7 +56,7 @@ public class Runtime {
 	
 	public Message execute() {
 //		HyperlinkedText text = new HyperlinkedText(e1 -> MarkerService.mark(InterfaceColor.BLUE.getColor(), e1));
-		HyperlinkedText text = new HyperlinkedText(null);		//o null faz com que os links para o código não funcionem
+		HyperlinkedText text = new HyperlinkedText(e -> e.forEach(e2 -> IJavardiseService.getWidget(e2).addMark(InterfaceColors.BLUE.getColor()).show()));
 		
 		Message message = null;
 		
@@ -74,6 +75,10 @@ public class Runtime {
 	
 	public IModule getModule() {
 		return module;
+	}
+	
+	public IProcedure getProcedure() {
+		return procedure;
 	}
 	
 	public Map<IVariableDeclaration, IReference> getReferences() {
