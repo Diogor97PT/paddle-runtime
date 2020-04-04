@@ -9,11 +9,11 @@ import pt.iscte.paddle.model.ILoop;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IVariableDeclaration;
 
-public class ArrayIndexErrorTest extends Test {
-	
-	public ArrayIndexErrorTest() {
+public class ArrayIndexErrorExpressionTest extends Test {
+
+	public ArrayIndexErrorExpressionTest() {
 		module = IModule.create();												//Criar classe
-		module.setId("ArrayIndexErrorTest");									//dar nome à classe
+		module.setId("ArrayIndexErrorExpressionTest");							//dar nome à classe
 		
 		procedure = module.addProcedure(INT.array().reference());				//criar função
 		procedure.setId("naturals");
@@ -31,9 +31,12 @@ public class ArrayIndexErrorTest extends Test {
 		i.setId("i");
 		
 		ILoop loop = body.addLoop(SMALLER_EQ.on(i, n));
-		loop.addArrayElementAssignment(array, ADD.on(i, INT.literal(1)), i);
+//		loop.addArrayElementAssignment(array, ADD.on(i, INT.literal(1)), i);
+		loop.addArrayElementAssignment(array, ADD.on(i, INT.literal(1)), ADD.on(i, INT.literal(1)));
 		loop.addAssignment(i, ADD.on(i, INT.literal(1)));
 		
 		body.addReturn(array);
 	}
+	
+	
 }

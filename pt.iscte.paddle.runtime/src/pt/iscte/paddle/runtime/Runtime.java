@@ -12,12 +12,12 @@ import pt.iscte.paddle.interpreter.IReference;
 import pt.iscte.paddle.interpreter.IValue;
 import pt.iscte.paddle.javardise.service.IJavardiseService;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
-import pt.iscte.paddle.model.IModel2CodeTranslator;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.IVariableAssignment;
 import pt.iscte.paddle.model.IVariableDeclaration;
+import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.runtime.messages.Message;
 import pt.iscte.paddle.runtime.tests.ArrayIndexErrorTest;
 import pt.iscte.paddle.runtime.tests.Test;
@@ -27,15 +27,17 @@ public class Runtime {
 	private IModule module;
 	private IProcedure procedure;
 	private IProgramState state;
+	private IControlFlowGraph icfg;
 	
 	private Map<IVariableDeclaration, IReference> varReferences = new HashMap<>();
 	
 	public Runtime(Test test) {
 		module = test.getModule();
 		procedure = test.getProcedure();
+		icfg = procedure.generateCFG();
 		
-		String code = module.translate(new IModel2CodeTranslator.Java());
-		System.out.println(code);
+//		String code = module.translate(new IModel2CodeTranslator.Java());
+//		System.out.println(code);
 		
 		state = IMachine.create(module);
 	}
@@ -55,7 +57,6 @@ public class Runtime {
 	}
 	
 	public Message execute() {
-//		HyperlinkedText text = new HyperlinkedText(e1 -> MarkerService.mark(InterfaceColor.BLUE.getColor(), e1));
 		HyperlinkedText text = new HyperlinkedText(e -> e.forEach(e2 -> IJavardiseService.getWidget(e2).addMark(InterfaceColors.BLUE.getColor()).show()));
 		
 		Message message = null;
@@ -85,7 +86,12 @@ public class Runtime {
 		return varReferences;
 	}
 	
+	public IControlFlowGraph getIcfg() {
+		return icfg;
+	}
+	
 	public static void main(String[] args) {
+//		ArrayIndexErrorExpressionTest test = new ArrayIndexErrorExpressionTest();
 		ArrayIndexErrorTest test = new ArrayIndexErrorTest();
 		Runtime runtime = new Runtime(test);
 		runtime.addListener();

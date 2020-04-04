@@ -3,6 +3,7 @@ package pt.iscte.paddle.runtime.messages;
 import pt.iscte.paddle.interpreter.ArrayIndexError;
 import pt.iscte.paddle.interpreter.IArray;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
+import pt.iscte.paddle.model.IExpression;
 import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.IVariableExpression;
@@ -20,11 +21,17 @@ class ArrayIndexErrorMessage extends ErrorMessage {
 		this.error = error;
 		
 		int invalidPos = error.getInvalidIndex();
-		IVariableDeclaration variable = ((IVariableExpression)error.getIndexExpression()).getVariable();
+		IExpression errorExpression = error.getIndexExpression();
+		IVariableDeclaration variable = getVariableFromExpression(errorExpression).getVariable();				//Testar se rebenta
 		IVariableDeclaration array = ((IVariableExpression)error.getTarget()).getVariable();
 		//int arrayDimension = e.getIndexDimension();	//Dimensão da array que deu erro
 		
 		IArray array_ref = (IArray)runtime.getReferences().get(array).getValue();
+		
+		System.out.println("mensagem");
+		System.out.println(variable);
+		System.out.println(errorExpression);
+		System.out.println(variable.toString());
 		
 		text.words("Tentativa de acesso à posição ")
 			.words(Integer.toString(invalidPos))
@@ -33,7 +40,7 @@ class ArrayIndexErrorMessage extends ErrorMessage {
 			.words(" (comprimento " + array_ref.getLength() + ", índices válidos [0, " + (array_ref.getLength() - 1) + "]. ")
 			.newline()
 			.words("O acesso foi feito através da ")
-			.link("variável i", variable);
+			.link("variável " + variable.toString(), errorExpression);
 		
 		IVariableRole role = IVariableRole.match(variable);
 		if(role instanceof IArrayIndexIterator && ((IArrayIndexIterator) role).getArrayVariables().contains(array)) {
@@ -50,5 +57,10 @@ class ArrayIndexErrorMessage extends ErrorMessage {
 	public IProgramElement getErrorElement() {
 //		System.out.println(error.getSourceElement());
 		return error.getSourceElement();
+	}
+	
+	public IExpression getErrorExpression() {
+//		System.out.println(((IVariableExpression)error.getIndexExpression()).getVariable());
+		return error.getIndexExpression();
 	}
 }

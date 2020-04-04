@@ -1,5 +1,7 @@
 package pt.iscte.paddle.runtime;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
@@ -22,6 +24,7 @@ import pt.iscte.paddle.javardise.service.ICodeDecoration;
 import pt.iscte.paddle.javardise.service.IJavardiseService;
 import pt.iscte.paddle.javardise.service.IWidget;
 import pt.iscte.paddle.model.IVariableDeclaration;
+import pt.iscte.paddle.model.IVariableExpression;
 import pt.iscte.paddle.runtime.messages.ErrorMessage;
 import pt.iscte.paddle.runtime.messages.Message;
 import pt.iscte.pidesco.cfgviewer.ext.CFGViewer;
@@ -50,7 +53,7 @@ public class RuntimeWindow {
 		widget.setReadOnly(true);
 		
 		CFGViewer cfg = new CFGViewer(comp);
-		cfg.setInput(runtime.getProcedure().getCFG().getNodes());
+		cfg.setInput(runtime.getIcfg());
 		cfg.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		
 		Composite buttonsAndText = new Composite(shell, SWT.NONE);
@@ -104,33 +107,63 @@ public class RuntimeWindow {
 		executeCode.addSelectionListener(new SelectionAdapter() {
 			Link link;
 			ICodeDecoration<Text> shortTextDecoration;
+			ICodeDecoration<Text> errorVariableValueDecoration;
+			
+			private List<ICodeDecoration<Text>> valores = new ArrayList<>();
 			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if(link != null) link.dispose();
 				if(shortTextDecoration != null) shortTextDecoration.delete();
+				if(errorVariableValueDecoration != null) errorVariableValueDecoration.delete();
+				valores.forEach(dec -> dec.delete());
 				
 				Message message = runtime.execute();
 				link = message.getText().create(buttonsAndText, SWT.BORDER);
+				link.requestLayout();
 				
 				if(message instanceof ErrorMessage) {
 					ErrorMessage errorMessage = (ErrorMessage) message;
-					IWidget w = IJavardiseService.getWidget(errorMessage.getErrorElement());
-					shortTextDecoration = w.addNote(errorMessage.getShortText(), ICodeDecoration.Location.RIGHT);	//Add short text right of the line
+					IWidget errorLine = IJavardiseService.getWidget(errorMessage.getErrorElement());
+					shortTextDecoration = errorLine.addNote(errorMessage.getShortText(), ICodeDecoration.Location.BOTTOM);	//Add short text right of the line
 					shortTextDecoration.show();
+					
+					IVariableExpression varExp = ErrorMessage.getVariableFromExpression(errorMessage.getErrorExpression());
+					IWidget errorVariable = IJavardiseService.getWidget(varExp);
+					IReference errorVariableReference = message.getVarReferences().get(varExp.getVariable());
+					errorVariableValueDecoration = errorVariable.addNote(varExp.getVariable() + " = " + errorVariableReference.getValue(), ICodeDecoration.Location.TOP);
+					errorVariableValueDecoration.show();
 				}
 				
 				for(Map.Entry<IVariableDeclaration, IReference> entry : message.getVarReferences().entrySet()) {
 					IWidget widget = IJavardiseService.getWidget(entry.getKey());
 					ICodeDecoration<Text> d = widget.addNote(entry.getValue().getValue().toString(), ICodeDecoration.Location.RIGHT);
+					valores.add(d);
 					d.show();
 				}
-				
-				shell.pack(true);
 			}
 		});
 		
-		shell.pack();
+//		Button testSelection = new Button(buttonGroup, SWT.PUSH);
+//		testSelection.setText("Testar Seleção");
+//		testSelection.addSelectionListener(new SelectionAdapter() {
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				INode node1 = runtime.getIcfg().getNodes().get(1);
+//				INode node2 = runtime.getIcfg().getNodes().get(2);
+//				INode node3 = runtime.getIcfg().getNodes().get(3);
+//				
+//				List<INode> nodes = new ArrayList<>();
+//				nodes.add(node1);
+//				nodes.add(node2);
+//				nodes.add(node3);
+//				
+//				cfg.selectNodes(nodes);
+//			}
+//		});
+		
+//		shell.pack();
+		shell.setSize(800, 700);
 		shell.open();
 		while (!shell.isDisposed()) {
 			if(!display.readAndDispatch())
