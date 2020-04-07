@@ -19,7 +19,8 @@ import pt.iscte.paddle.model.IVariableAssignment;
 import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.runtime.messages.Message;
-import pt.iscte.paddle.runtime.tests.ArrayIndexErrorTest;
+import pt.iscte.paddle.runtime.tests.ArrayIndexErrorBackwardTest;
+import pt.iscte.paddle.runtime.tests.ArrayIndexErrorExpressionTest;
 import pt.iscte.paddle.runtime.tests.Test;
 
 public class Runtime {
@@ -91,8 +92,9 @@ public class Runtime {
 	}
 	
 	public static void main(String[] args) {
+//		ArrayIndexErrorTest test = new ArrayIndexErrorTest();
 //		ArrayIndexErrorExpressionTest test = new ArrayIndexErrorExpressionTest();
-		ArrayIndexErrorTest test = new ArrayIndexErrorTest();
+		ArrayIndexErrorBackwardTest test = new ArrayIndexErrorBackwardTest();
 		Runtime runtime = new Runtime(test);
 		runtime.addListener();
 		new RuntimeWindow(runtime);

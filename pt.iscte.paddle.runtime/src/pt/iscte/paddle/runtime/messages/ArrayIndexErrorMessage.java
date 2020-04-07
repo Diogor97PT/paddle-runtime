@@ -22,16 +22,11 @@ class ArrayIndexErrorMessage extends ErrorMessage {
 		
 		int invalidPos = error.getInvalidIndex();
 		IExpression errorExpression = error.getIndexExpression();
-		IVariableDeclaration variable = getVariableFromExpression(errorExpression).getVariable();				//Testar se rebenta
+		IVariableDeclaration variable = getVariableFromExpression(errorExpression).getVariable();				//TODO Testar se rebenta
 		IVariableDeclaration array = ((IVariableExpression)error.getTarget()).getVariable();
 		//int arrayDimension = e.getIndexDimension();	//Dimensão da array que deu erro
 		
 		IArray array_ref = (IArray)runtime.getReferences().get(array).getValue();
-		
-		System.out.println("mensagem");
-		System.out.println(variable);
-		System.out.println(errorExpression);
-		System.out.println(variable.toString());
 		
 		text.words("Tentativa de acesso à posição ")
 			.words(Integer.toString(invalidPos))
