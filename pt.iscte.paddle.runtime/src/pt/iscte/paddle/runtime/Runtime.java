@@ -20,7 +20,6 @@ import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.runtime.messages.Message;
 import pt.iscte.paddle.runtime.tests.ArrayIndexErrorBackwardTest;
-import pt.iscte.paddle.runtime.tests.ArrayIndexErrorExpressionTest;
 import pt.iscte.paddle.runtime.tests.Test;
 
 public class Runtime {
@@ -31,6 +30,7 @@ public class Runtime {
 	private IControlFlowGraph icfg;
 	
 	private Map<IVariableDeclaration, IReference> varReferences = new HashMap<>();
+	private Map<IVariableDeclaration, IReference> parameterReferences = new HashMap<>();
 	
 	public Runtime(Test test) {
 		module = test.getModule();
@@ -45,6 +45,15 @@ public class Runtime {
 	
 	public void addListener() {
 		state.addListener(new IListener() {
+			
+			@Override
+			public void programStarted() {
+				procedure.getParameters().forEach(var -> {
+					IReference r = state.getCallStack().getTopFrame().getVariableStore(var);
+					parameterReferences.put(var, r);
+				});
+			}
+			
 			@Override
 			public void step(IProgramElement statement) {
 				if(statement instanceof IVariableAssignment) {
@@ -54,7 +63,6 @@ public class Runtime {
 				}
 			}
 		});
-		
 	}
 	
 	public Message execute() {
@@ -85,6 +93,10 @@ public class Runtime {
 	
 	public Map<IVariableDeclaration, IReference> getReferences() {
 		return varReferences;
+	}
+	
+	public Map<IVariableDeclaration, IReference> getParameterReferences() {
+		return parameterReferences;
 	}
 	
 	public IControlFlowGraph getIcfg() {

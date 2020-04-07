@@ -14,10 +14,12 @@ public abstract class Message {
 	
 	private HyperlinkedText text;
 	private Map<IVariableDeclaration, IReference> varReferences;
+	private Map<IVariableDeclaration, IReference> parameterReferences;
 	
 	public Message(HyperlinkedText text, Runtime runtime) {
 		this.text = text;
 		varReferences = runtime.getReferences();
+		parameterReferences = runtime.getParameterReferences();
 	}
 
 	public static Message getErrorMessage(HyperlinkedText text, Runtime runtime, ExecutionError e) {
@@ -48,5 +50,9 @@ public abstract class Message {
 	
 	public Map<IVariableDeclaration, IReference> getVarReferences() {
 		return varReferences;
+	}
+	
+	public Map<IVariableDeclaration, IReference> getParameterReferences() {
+		return parameterReferences;
 	}
 }

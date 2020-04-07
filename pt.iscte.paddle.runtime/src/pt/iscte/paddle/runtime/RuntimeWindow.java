@@ -117,6 +117,7 @@ public class RuntimeWindow {
 				if(shortTextDecoration != null) shortTextDecoration.delete();
 				if(errorVariableValueDecoration != null) errorVariableValueDecoration.delete();
 				valores.forEach(dec -> dec.delete());
+				valores.clear();
 				
 				Message message = runtime.execute();
 				link = message.getText().create(buttonsAndText, SWT.BORDER);
@@ -137,7 +138,14 @@ public class RuntimeWindow {
 				
 				for(Map.Entry<IVariableDeclaration, IReference> entry : message.getVarReferences().entrySet()) {
 					IWidget widget = IJavardiseService.getWidget(entry.getKey());
-					ICodeDecoration<Text> d = widget.addNote(entry.getValue().getValue().toString(), ICodeDecoration.Location.RIGHT);
+					ICodeDecoration<Text> d = widget.addNote(entry.getKey() + " = " + entry.getValue().getValue().toString(), ICodeDecoration.Location.RIGHT);
+					valores.add(d);
+					d.show();
+				}
+				
+				for(Map.Entry<IVariableDeclaration, IReference> entry : message.getParameterReferences().entrySet()) {
+					IWidget widget = IJavardiseService.getWidget(entry.getKey());
+					ICodeDecoration<Text> d = widget.addNote(entry.getKey() + " = " + entry.getValue().getValue().toString(), ICodeDecoration.Location.TOP);
 					valores.add(d);
 					d.show();
 				}
@@ -163,7 +171,7 @@ public class RuntimeWindow {
 //		});
 		
 //		shell.pack();
-		shell.setSize(800, 700);
+		shell.setSize(900, 700);
 		shell.open();
 		while (!shell.isDisposed()) {
 			if(!display.readAndDispatch())
