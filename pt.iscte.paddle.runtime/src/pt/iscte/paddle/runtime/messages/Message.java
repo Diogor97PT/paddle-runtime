@@ -1,6 +1,11 @@
 package pt.iscte.paddle.runtime.messages;
 
+import java.util.Collection;
 import java.util.Map;
+
+import com.google.common.collect.Iterables;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.MultimapBuilder;
 
 import pt.iscte.paddle.interpreter.ArrayIndexError;
 import pt.iscte.paddle.interpreter.ExecutionError;
@@ -14,11 +19,13 @@ public abstract class Message {
 	
 	private HyperlinkedText text;
 	private Map<IVariableDeclaration, IReference> varReferences;
+	private ListMultimap<IVariableDeclaration, String> varValues = MultimapBuilder.hashKeys().arrayListValues().build();
 	private Map<IVariableDeclaration, IReference> parameterReferences;
 	
 	public Message(HyperlinkedText text, Runtime runtime) {
 		this.text = text;
-		varReferences = runtime.getReferences();
+		varReferences = runtime.getVarReferences();
+		varValues = runtime.getVarValues();
 		parameterReferences = runtime.getParameterReferences();
 	}
 
@@ -38,10 +45,11 @@ public abstract class Message {
 	public void addVarValuesToText() {
 		text.line("Valores das variáveis quando ocorreu a Exceção:");
 		
-		varReferences.forEach((key, value) -> {
-			text.link(key.toString(), key);
-			text.line(" : " + value.getValue());
-		});
+		for(Map.Entry<IVariableDeclaration, Collection<String>> entry : varValues.asMap().entrySet()) {
+			String varValue = Iterables.getLast(entry.getValue());
+			text.link(entry.getKey().toString(), entry.getKey());
+			text.line(" : " + varValue);
+		}
 	}
 	
 	public HyperlinkedText getText() {
@@ -50,6 +58,10 @@ public abstract class Message {
 	
 	public Map<IVariableDeclaration, IReference> getVarReferences() {
 		return varReferences;
+	}
+	
+	public ListMultimap<IVariableDeclaration, String> getVarValues() {
+		return varValues;
 	}
 	
 	public Map<IVariableDeclaration, IReference> getParameterReferences() {

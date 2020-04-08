@@ -3,6 +3,9 @@ package pt.iscte.paddle.runtime;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.MultimapBuilder;
+
 import pt.iscte.paddle.interpreter.ExecutionError;
 import pt.iscte.paddle.interpreter.IExecutionData;
 import pt.iscte.paddle.interpreter.IMachine;
@@ -12,12 +15,14 @@ import pt.iscte.paddle.interpreter.IReference;
 import pt.iscte.paddle.interpreter.IValue;
 import pt.iscte.paddle.javardise.service.IJavardiseService;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
+import pt.iscte.paddle.model.IArrayElementAssignment;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.IVariableAssignment;
 import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
+import pt.iscte.paddle.runtime.messages.ErrorMessage;
 import pt.iscte.paddle.runtime.messages.Message;
 import pt.iscte.paddle.runtime.tests.ArrayIndexErrorBackwardTest;
 import pt.iscte.paddle.runtime.tests.Test;
@@ -30,6 +35,7 @@ public class Runtime {
 	private IControlFlowGraph icfg;
 	
 	private Map<IVariableDeclaration, IReference> varReferences = new HashMap<>();
+	private ListMultimap<IVariableDeclaration, String> varValues = MultimapBuilder.hashKeys().arrayListValues().build();
 	private Map<IVariableDeclaration, IReference> parameterReferences = new HashMap<>();
 	
 	public Runtime(Test test) {
@@ -48,19 +54,30 @@ public class Runtime {
 			
 			@Override
 			public void programStarted() {
-				procedure.getParameters().forEach(var -> {
+				procedure.getParameters().forEach(var -> {						//Store Parameter references
 					IReference r = state.getCallStack().getTopFrame().getVariableStore(var);
 					parameterReferences.put(var, r);
+				});
+				
+				procedure.getVariables().forEach(var -> {						//Store Variable references
+					IReference r = state.getCallStack().getTopFrame().getVariableStore(var);
+					varReferences.put(var, r);
 				});
 			}
 			
 			@Override
 			public void step(IProgramElement statement) {
-				if(statement instanceof IVariableAssignment) {
+				if(statement instanceof IVariableAssignment) {					//Store variable state when it's assign
 					IVariableAssignment a = (IVariableAssignment) statement;
 					IReference r = state.getCallStack().getTopFrame().getVariableStore(a.getTarget());
-					varReferences.putIfAbsent(a.getTarget(), r);
+					varValues.put(a.getTarget(), r.getValue().toString());
+				} else if(statement instanceof IArrayElementAssignment) {		//Store arrays state when one of it's elements is changed
+					IArrayElementAssignment a = (IArrayElementAssignment) statement;
+					IVariableDeclaration var = ErrorMessage.getVariableFromExpression(a.getTarget()).getVariable();
+					IReference r = state.getCallStack().getTopFrame().getVariableStore(var);
+					varValues.put(var, r.getValue().toString());
 				}
+//				System.out.println(statement.getClass());
 			}
 		});
 	}
@@ -79,7 +96,7 @@ public class Runtime {
 			text.newline();
 			message.addVarValuesToText();
 		}
-		
+		System.out.println(varValues);
 		return message;
 	}
 	
@@ -91,8 +108,12 @@ public class Runtime {
 		return procedure;
 	}
 	
-	public Map<IVariableDeclaration, IReference> getReferences() {
+	public Map<IVariableDeclaration, IReference> getVarReferences() {
 		return varReferences;
+	}
+	
+	public ListMultimap<IVariableDeclaration, String> getVarValues() {
+		return varValues;
 	}
 	
 	public Map<IVariableDeclaration, IReference> getParameterReferences() {

@@ -7,7 +7,6 @@ import static pt.iscte.paddle.model.IType.INT;
 
 import pt.iscte.paddle.model.IBlock;
 import pt.iscte.paddle.model.ILoop;
-import pt.iscte.paddle.model.IModel2CodeTranslator;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IVariableDeclaration;
 
@@ -38,8 +37,8 @@ public class ArrayIndexErrorBackwardTest extends Test {
 		
 		body.addReturn(array);
 		
-		String code = module.translate(new IModel2CodeTranslator.Java());
-		System.out.println(code);
+//		String code = module.translate(new IModel2CodeTranslator.Java());
+//		System.out.println(code);
 	}
 	
 }

@@ -26,7 +26,8 @@ class ArrayIndexErrorMessage extends ErrorMessage {
 		IVariableDeclaration array = ((IVariableExpression)error.getTarget()).getVariable();
 		//int arrayDimension = e.getIndexDimension();	//Dimensão da array que deu erro
 		
-		IArray array_ref = (IArray)runtime.getReferences().get(array).getValue();
+		IArray array_ref = (IArray)runtime.getVarReferences().get(array).getValue();
+//		IArray array_ref = (IArray)(Iterables.getLast(getVarReferences().get(array))).getValue();
 		
 		text.words("Tentativa de acesso à posição ")
 			.words(Integer.toString(invalidPos))
@@ -45,7 +46,7 @@ class ArrayIndexErrorMessage extends ErrorMessage {
 
 	@Override
 	public String getShortText() {
-		return "Tentativa de acesso a posição inválida";		//adicionar codigo que deu erro por exemplo neste caso: array[5] (meter mesmo o valor)
+		return "Posição inválida";
 	}
 	
 	@Override

@@ -1,6 +1,7 @@
 package pt.iscte.paddle.runtime;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +18,8 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+
+import com.google.common.collect.Iterables;
 
 import pt.iscte.paddle.interpreter.IReference;
 import pt.iscte.paddle.javardise.service.IClassWidget;
@@ -66,42 +69,7 @@ public class RuntimeWindow {
 		buttonGroup.setLayout(new FillLayout());
 		buttonGroup.setFocus();
 		
-		//Button to mark the roles of each variable
-//		Button markRoles = new Button(buttonGroup, SWT.TOGGLE);
-//		markRoles.setText("Mark Roles");
-//		markRoles.addSelectionListener(new SelectionAdapter() {
-//			Link link;
-//			List<Decoration> decs;
-//			
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//				Button bt = (Button)e.getSource();
-//				if(!bt.getSelection()) {
-//					link.dispose();
-//					decs.forEach(d -> d.hide());
-//				} else {
-//					HyperlinkedText txt = new HyperlinkedText(e1 -> MarkerService.mark(InterfaceColor.BLUE.getColor(), e1));
-//					txt.line("Roles present in Procedure:");
-//					for(IVariableDeclaration var : procedure.getVariables()) {
-//						IVariableRole role = IVariableRole.match(var);
-//						txt.line(var.getId() + " : " + role.toString());
-//					}
-//					link = txt.create(shell, SWT.BORDER);
-//
-//					decs = new ArrayList<>();
-//					for(IVariableDeclaration var : procedure.getVariables()) {
-//						IVariableRole role = IVariableRole.match(var);
-//						Decoration d = MarkerService.addDecoration(var, role.toString(), Decoration.Location.RIGHT);
-//						if(d == null) continue;		//Não funciona nos parâmetros da função
-//						decs.add(d);
-//						d.show();
-//					}
-//				}
-//				shell.pack();
-//			}
-//		});
-		
-		//Button to execute the code inside the widget
+		//Button to execute the code inside the widget and display information
 		Button executeCode = new Button(buttonGroup, SWT.PUSH);
 		executeCode.setText("Executar Código");
 		executeCode.addSelectionListener(new SelectionAdapter() {
@@ -126,24 +94,25 @@ public class RuntimeWindow {
 				if(message instanceof ErrorMessage) {
 					ErrorMessage errorMessage = (ErrorMessage) message;
 					IWidget errorLine = IJavardiseService.getWidget(errorMessage.getErrorElement());
-					shortTextDecoration = errorLine.addNote(errorMessage.getShortText(), ICodeDecoration.Location.BOTTOM);	//Add short text right of the line
+					shortTextDecoration = errorLine.addNote(errorMessage.getShortText(), ICodeDecoration.Location.RIGHT);	//Add short text right of the line
 					shortTextDecoration.show();
 					
 					IVariableExpression varExp = ErrorMessage.getVariableFromExpression(errorMessage.getErrorExpression());
 					IWidget errorVariable = IJavardiseService.getWidget(varExp);
-					IReference errorVariableReference = message.getVarReferences().get(varExp.getVariable());
-					errorVariableValueDecoration = errorVariable.addNote(varExp.getVariable() + " = " + errorVariableReference.getValue(), ICodeDecoration.Location.TOP);
+					String varValue = Iterables.getLast(message.getVarValues().get(varExp.getVariable()));
+					errorVariableValueDecoration = errorVariable.addNote(varExp.getVariable() + " = " + varValue, ICodeDecoration.Location.TOP);
 					errorVariableValueDecoration.show();
 				}
 				
-				for(Map.Entry<IVariableDeclaration, IReference> entry : message.getVarReferences().entrySet()) {
+				for(Map.Entry<IVariableDeclaration, Collection<String>> entry : message.getVarValues().asMap().entrySet()) {	//Add Variable Values to GUI
 					IWidget widget = IJavardiseService.getWidget(entry.getKey());
-					ICodeDecoration<Text> d = widget.addNote(entry.getKey() + " = " + entry.getValue().getValue().toString(), ICodeDecoration.Location.RIGHT);
+					String varValue = Iterables.getLast(entry.getValue());
+					ICodeDecoration<Text> d = widget.addNote(entry.getKey() + " = " + varValue, ICodeDecoration.Location.RIGHT);
 					valores.add(d);
 					d.show();
 				}
 				
-				for(Map.Entry<IVariableDeclaration, IReference> entry : message.getParameterReferences().entrySet()) {
+				for(Map.Entry<IVariableDeclaration, IReference> entry : message.getParameterReferences().entrySet()) {	//Add Parameter Values to GUI
 					IWidget widget = IJavardiseService.getWidget(entry.getKey());
 					ICodeDecoration<Text> d = widget.addNote(entry.getKey() + " = " + entry.getValue().getValue().toString(), ICodeDecoration.Location.TOP);
 					valores.add(d);
