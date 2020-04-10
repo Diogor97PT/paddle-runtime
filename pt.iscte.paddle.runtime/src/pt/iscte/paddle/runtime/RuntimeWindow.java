@@ -106,7 +106,7 @@ public class RuntimeWindow {
 					shortTextDecoration.show();
 					errorVariableValueDecoration.show();
 					
-					IWidget errorVariable = IJavardiseService.getWidget(varExp);
+					IWidget errorVariable = IJavardiseService.getWidget(errorMessage.getErrorExpression());
 					errorExpressionHighlight = errorVariable.addMark(InterfaceColors.RED.getColor());
 					errorExpressionHighlight.show();
 				}
