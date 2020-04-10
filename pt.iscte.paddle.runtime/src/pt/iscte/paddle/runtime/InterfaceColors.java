@@ -7,8 +7,7 @@ import org.eclipse.swt.widgets.Display;
 // enum for color shortcuts
 public enum InterfaceColors {
 	BLUE(Display.getDefault().getSystemColor(SWT.COLOR_BLUE)),
-	CYAN(Display.getDefault().getSystemColor(SWT.COLOR_CYAN)),
-	MAGENTA(Display.getDefault().getSystemColor(SWT.COLOR_DARK_MAGENTA));
+	RED(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 	
 	private Color color;
 	

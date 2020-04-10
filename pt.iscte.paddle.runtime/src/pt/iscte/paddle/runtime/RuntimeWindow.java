@@ -12,6 +12,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
@@ -76,6 +77,7 @@ public class RuntimeWindow {
 			Link link;
 			ICodeDecoration<Text> shortTextDecoration;
 			ICodeDecoration<Text> errorVariableValueDecoration;
+			ICodeDecoration<Canvas> errorExpressionHighlight;
 			
 			private List<ICodeDecoration<Text>> valores = new ArrayList<>();
 			
@@ -84,6 +86,7 @@ public class RuntimeWindow {
 				if(link != null) link.dispose();
 				if(shortTextDecoration != null) shortTextDecoration.delete();
 				if(errorVariableValueDecoration != null) errorVariableValueDecoration.delete();
+				if(errorExpressionHighlight != null) errorExpressionHighlight.delete();
 				valores.forEach(dec -> dec.delete());
 				valores.clear();
 				
@@ -93,15 +96,19 @@ public class RuntimeWindow {
 				
 				if(message instanceof ErrorMessage) {
 					ErrorMessage errorMessage = (ErrorMessage) message;
+					
+					IVariableExpression varExp = ErrorMessage.getVariableFromExpression(errorMessage.getErrorExpression());		//Expression where the error Occurs
+					String varValue = Iterables.getLast(message.getVarValues().get(varExp.getVariable()));						//Value of the error expression
+					
 					IWidget errorLine = IJavardiseService.getWidget(errorMessage.getErrorElement());
 					shortTextDecoration = errorLine.addNote(errorMessage.getShortText(), ICodeDecoration.Location.RIGHT);	//Add short text right of the line
+					errorVariableValueDecoration = errorLine.addNote(varExp.getVariable() + " = " + varValue, ICodeDecoration.Location.LEFT);
 					shortTextDecoration.show();
-					
-					IVariableExpression varExp = ErrorMessage.getVariableFromExpression(errorMessage.getErrorExpression());
-					IWidget errorVariable = IJavardiseService.getWidget(varExp);
-					String varValue = Iterables.getLast(message.getVarValues().get(varExp.getVariable()));
-					errorVariableValueDecoration = errorVariable.addNote(varExp.getVariable() + " = " + varValue, ICodeDecoration.Location.TOP);
 					errorVariableValueDecoration.show();
+					
+					IWidget errorVariable = IJavardiseService.getWidget(varExp);
+					errorExpressionHighlight = errorVariable.addMark(InterfaceColors.RED.getColor());
+					errorExpressionHighlight.show();
 				}
 				
 				for(Map.Entry<IVariableDeclaration, Collection<String>> entry : message.getVarValues().asMap().entrySet()) {	//Add Variable Values to GUI
