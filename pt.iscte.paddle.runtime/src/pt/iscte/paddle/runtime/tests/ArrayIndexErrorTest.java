@@ -36,4 +36,5 @@ public class ArrayIndexErrorTest extends Test {
 		
 		body.addReturn(array);
 	}
+	
 }

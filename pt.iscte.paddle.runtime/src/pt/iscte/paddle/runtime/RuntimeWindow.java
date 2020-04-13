@@ -50,8 +50,9 @@ public class RuntimeWindow {
 		
 		Composite comp = new Composite(shell, SWT.NONE);
 		GridLayout l = new GridLayout(2, true);
-		l.horizontalSpacing = 50;
+		l.horizontalSpacing = 80;
 		comp.setLayout(l);
+		comp.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		
 		IClassWidget widget = IJavardiseService.createClassWidget(comp, runtime.getModule());
 		widget.setReadOnly(true);
@@ -125,6 +126,7 @@ public class RuntimeWindow {
 					valores.add(d);
 					d.show();
 				}
+				shell.pack();
 			}
 		});
 		
@@ -146,8 +148,8 @@ public class RuntimeWindow {
 //			}
 //		});
 		
-//		shell.pack();
-		shell.setSize(900, 700);
+		shell.pack();
+//		shell.setSize(900, 700);
 		shell.open();
 		while (!shell.isDisposed()) {
 			if(!display.readAndDispatch())

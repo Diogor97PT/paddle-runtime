@@ -16,6 +16,7 @@ import pt.iscte.paddle.interpreter.IValue;
 import pt.iscte.paddle.javardise.service.IJavardiseService;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
 import pt.iscte.paddle.model.IArrayElementAssignment;
+import pt.iscte.paddle.model.IModel2CodeTranslator;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProgramElement;
@@ -24,7 +25,8 @@ import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.runtime.messages.ErrorMessage;
 import pt.iscte.paddle.runtime.messages.Message;
-import pt.iscte.paddle.runtime.tests.ArrayIndexErrorExpressionTest;
+import pt.iscte.paddle.runtime.tests.ArrayIndexErrorTest;
+import pt.iscte.paddle.runtime.tests.SumAllTest;
 import pt.iscte.paddle.runtime.tests.Test;
 
 public class Runtime {
@@ -38,13 +40,20 @@ public class Runtime {
 	private ListMultimap<IVariableDeclaration, String> varValues = MultimapBuilder.hashKeys().arrayListValues().build();
 	private Map<IVariableDeclaration, IReference> parameterReferences = new HashMap<>();
 	
-	public Runtime(Test test) {
+	//-------------------------------------tests-------------------------------------//
+	Test test = new ArrayIndexErrorTest();
+//	Test test = new ArrayIndexErrorExpressionTest();
+//	Test test = new ArrayIndexErrorBackwardTest();
+//	Test test = new SumAllTest();
+	//-------------------------------------tests-------------------------------------//
+	
+	public Runtime() {
 		module = test.getModule();
 		procedure = test.getProcedure();
 		icfg = procedure.generateCFG();
 		
-//		String code = module.translate(new IModel2CodeTranslator.Java());
-//		System.out.println(code);
+		String code = module.translate(new IModel2CodeTranslator.Java());
+		System.out.println(code);
 		
 		state = IMachine.create(module);
 	}
@@ -96,7 +105,6 @@ public class Runtime {
 			text.newline();
 			message.addVarValuesToText();
 		}
-		System.out.println(varValues);
 		return message;
 	}
 	
@@ -125,10 +133,7 @@ public class Runtime {
 	}
 	
 	public static void main(String[] args) {
-//		ArrayIndexErrorTest test = new ArrayIndexErrorTest();
-		ArrayIndexErrorExpressionTest test = new ArrayIndexErrorExpressionTest();
-//		ArrayIndexErrorBackwardTest test = new ArrayIndexErrorBackwardTest();
-		Runtime runtime = new Runtime(test);
+		Runtime runtime = new Runtime();
 		runtime.addListener();
 		new RuntimeWindow(runtime);
 	}

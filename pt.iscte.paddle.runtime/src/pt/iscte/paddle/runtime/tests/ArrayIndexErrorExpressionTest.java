@@ -31,12 +31,10 @@ public class ArrayIndexErrorExpressionTest extends Test {
 		i.setId("i");
 		
 		ILoop loop = body.addLoop(SMALLER_EQ.on(i, n));
-//		loop.addArrayElementAssignment(array, ADD.on(i, INT.literal(1)), i);
 		loop.addArrayElementAssignment(array, ADD.on(i, INT.literal(1)), ADD.on(i, INT.literal(1)));
 		loop.addAssignment(i, ADD.on(i, INT.literal(1)));
 		
 		body.addReturn(array);
 	}
-	
-	
+
 }

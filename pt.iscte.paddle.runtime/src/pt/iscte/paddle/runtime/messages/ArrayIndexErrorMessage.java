@@ -51,7 +51,7 @@ class ArrayIndexErrorMessage extends ErrorMessage {
 	
 	@Override
 	public IProgramElement getErrorElement() {
-//		System.out.println(error.getSourceElement());
+		System.out.println(error.getSourceElement());
 		return error.getSourceElement();
 	}
 	

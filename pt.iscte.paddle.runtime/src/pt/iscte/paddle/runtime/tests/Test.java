@@ -15,5 +15,5 @@ public abstract class Test {
 	public IProcedure getProcedure() {
 		return procedure;
 	}
-
+	
 }

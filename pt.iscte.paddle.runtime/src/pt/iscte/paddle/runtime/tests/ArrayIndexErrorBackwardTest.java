@@ -36,9 +36,6 @@ public class ArrayIndexErrorBackwardTest extends Test {
 		loop.addAssignment(i, SUB.on(i, INT.literal(1)));
 		
 		body.addReturn(array);
-		
-//		String code = module.translate(new IModel2CodeTranslator.Java());
-//		System.out.println(code);
 	}
-	
+
 }
