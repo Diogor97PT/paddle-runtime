@@ -3,6 +3,7 @@ package pt.iscte.paddle.runtime.messages;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
 import pt.iscte.paddle.model.IExpression;
 import pt.iscte.paddle.model.IProgramElement;
+import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.IVariableExpression;
 import pt.iscte.paddle.runtime.Runtime;
 
@@ -17,6 +18,8 @@ public abstract class ErrorMessage extends Message {
 	public abstract IProgramElement getErrorElement();
 	
 	public abstract IExpression getErrorExpression();
+	
+	public abstract IVariableDeclaration getErrorTarget();
 	
 	public abstract String getShortText();
 	

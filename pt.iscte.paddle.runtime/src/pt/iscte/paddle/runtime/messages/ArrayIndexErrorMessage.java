@@ -51,12 +51,19 @@ class ArrayIndexErrorMessage extends ErrorMessage {
 	
 	@Override
 	public IProgramElement getErrorElement() {
-		System.out.println(error.getSourceElement());
+//		System.out.println(error.getSourceElement());
+//		if(error.getSourceElement() instanceof IArrayElement)
+//			System.out.println("entrei");
 		return error.getSourceElement();
 	}
 	
 	public IExpression getErrorExpression() {
 //		System.out.println(((IVariableExpression)error.getIndexExpression()).getVariable());
 		return error.getIndexExpression();
+	}
+	
+	@Override
+	public IVariableDeclaration getErrorTarget() {
+		return ((IVariableExpression)error.getTarget()).getVariable();
 	}
 }

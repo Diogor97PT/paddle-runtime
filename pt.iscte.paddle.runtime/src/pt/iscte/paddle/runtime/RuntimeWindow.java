@@ -29,6 +29,7 @@ import pt.iscte.paddle.javardise.service.IJavardiseService;
 import pt.iscte.paddle.javardise.service.IWidget;
 import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.IVariableExpression;
+import pt.iscte.paddle.runtime.graphics.ArrayIndexErrorDraw;
 import pt.iscte.paddle.runtime.messages.ErrorMessage;
 import pt.iscte.paddle.runtime.messages.Message;
 import pt.iscte.pidesco.cfgviewer.ext.CFGViewer;
@@ -49,7 +50,7 @@ public class RuntimeWindow {
 		shell.setLayout(layout);
 		
 		Composite comp = new Composite(shell, SWT.NONE);
-		GridLayout l = new GridLayout(2, true);
+		GridLayout l = new GridLayout(3, false);
 		l.horizontalSpacing = 80;
 		comp.setLayout(l);
 		comp.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
@@ -59,7 +60,15 @@ public class RuntimeWindow {
 		
 		CFGViewer cfg = new CFGViewer(comp);
 		cfg.setInput(runtime.getIcfg());
-		cfg.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		GridData gdCfg = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gdCfg.widthHint = 300;
+		cfg.setLayoutData(gdCfg);
+		
+		ArrayIndexErrorDraw arrayDraw = new ArrayIndexErrorDraw(comp);
+		GridData gdDraw = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		gdDraw.widthHint = 500;
+		gdDraw.heightHint = 500;
+		arrayDraw.setLayoutData(gdDraw);
 		
 		Composite buttonsAndText = new Composite(shell, SWT.NONE);
 		buttonsAndText.setLayout(new GridLayout(2, false));
@@ -100,6 +109,7 @@ public class RuntimeWindow {
 					
 					IVariableExpression varExp = ErrorMessage.getVariableFromExpression(errorMessage.getErrorExpression());		//Expression where the error Occurs
 					String varValue = Iterables.getLast(message.getVarValues().get(varExp.getVariable()));						//Value of the error expression
+					arrayDraw.draw(message.getVarReferences().get(errorMessage.getErrorTarget()));
 					
 					IWidget errorLine = IJavardiseService.getWidget(errorMessage.getErrorElement());
 					shortTextDecoration = errorLine.addNote(errorMessage.getShortText(), ICodeDecoration.Location.RIGHT);	//Add short text right of the line
@@ -115,14 +125,14 @@ public class RuntimeWindow {
 				for(Map.Entry<IVariableDeclaration, Collection<String>> entry : message.getVarValues().asMap().entrySet()) {	//Add Variable Values to GUI
 					IWidget widget = IJavardiseService.getWidget(entry.getKey());
 					String varValue = Iterables.getLast(entry.getValue());
-					ICodeDecoration<Text> d = widget.addNote(entry.getKey() + " = " + varValue, ICodeDecoration.Location.RIGHT);
+					ICodeDecoration<Text> d = widget.addNote(varValue, ICodeDecoration.Location.LEFT);
 					valores.add(d);
 					d.show();
 				}
 				
 				for(Map.Entry<IVariableDeclaration, IReference> entry : message.getParameterReferences().entrySet()) {	//Add Parameter Values to GUI
 					IWidget widget = IJavardiseService.getWidget(entry.getKey());
-					ICodeDecoration<Text> d = widget.addNote(entry.getKey() + " = " + entry.getValue().getValue().toString(), ICodeDecoration.Location.TOP);
+					ICodeDecoration<Text> d = widget.addNote(entry.getValue().getValue().toString(), ICodeDecoration.Location.TOP);
 					valores.add(d);
 					d.show();
 				}
