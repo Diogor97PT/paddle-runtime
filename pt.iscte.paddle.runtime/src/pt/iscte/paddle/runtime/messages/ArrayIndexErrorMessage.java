@@ -11,7 +11,7 @@ import pt.iscte.paddle.model.roles.IArrayIndexIterator;
 import pt.iscte.paddle.model.roles.IVariableRole;
 import pt.iscte.paddle.runtime.Runtime;
 
-class ArrayIndexErrorMessage extends ErrorMessage {
+public class ArrayIndexErrorMessage extends ErrorMessage {
 	
 	private ArrayIndexError error;
 
@@ -60,6 +60,10 @@ class ArrayIndexErrorMessage extends ErrorMessage {
 	public IExpression getErrorExpression() {
 //		System.out.println(((IVariableExpression)error.getIndexExpression()).getVariable());
 		return error.getIndexExpression();
+	}
+	
+	public int getErrorIndex() {
+		return error.getInvalidIndex();
 	}
 	
 	@Override

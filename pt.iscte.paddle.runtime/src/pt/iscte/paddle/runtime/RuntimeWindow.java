@@ -30,6 +30,7 @@ import pt.iscte.paddle.javardise.service.IWidget;
 import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.IVariableExpression;
 import pt.iscte.paddle.runtime.graphics.ArrayIndexErrorDraw;
+import pt.iscte.paddle.runtime.messages.ArrayIndexErrorMessage;
 import pt.iscte.paddle.runtime.messages.ErrorMessage;
 import pt.iscte.paddle.runtime.messages.Message;
 import pt.iscte.pidesco.cfgviewer.ext.CFGViewer;
@@ -109,7 +110,6 @@ public class RuntimeWindow {
 					
 					IVariableExpression varExp = ErrorMessage.getVariableFromExpression(errorMessage.getErrorExpression());		//Expression where the error Occurs
 					String varValue = Iterables.getLast(message.getVarValues().get(varExp.getVariable()));						//Value of the error expression
-					arrayDraw.draw(message.getVarReferences().get(errorMessage.getErrorTarget()));
 					
 					IWidget errorLine = IJavardiseService.getWidget(errorMessage.getErrorElement());
 					shortTextDecoration = errorLine.addNote(errorMessage.getShortText(), ICodeDecoration.Location.RIGHT);	//Add short text right of the line
@@ -120,6 +120,11 @@ public class RuntimeWindow {
 					IWidget errorVariable = IJavardiseService.getWidget(errorMessage.getErrorExpression());
 					errorExpressionHighlight = errorVariable.addMark(InterfaceColors.RED.getColor());
 					errorExpressionHighlight.show();
+					
+//					System.out.println(message.getVarReferences().get(errorMessage.getErrorTarget()).getType() instanceof IArrayType);
+					if(errorMessage instanceof ArrayIndexErrorMessage) {
+						arrayDraw.draw(message.getVarReferences().get(errorMessage.getErrorTarget()), ((ArrayIndexErrorMessage)errorMessage).getErrorIndex());
+					}
 				}
 				
 				for(Map.Entry<IVariableDeclaration, Collection<String>> entry : message.getVarValues().asMap().entrySet()) {	//Add Variable Values to GUI

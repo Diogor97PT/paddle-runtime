@@ -25,7 +25,7 @@ import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.runtime.messages.ErrorMessage;
 import pt.iscte.paddle.runtime.messages.Message;
-import pt.iscte.paddle.runtime.tests.SumAllTest;
+import pt.iscte.paddle.runtime.tests.ArrayIndexErrorTest;
 import pt.iscte.paddle.runtime.tests.Test;
 
 public class Runtime {
@@ -40,10 +40,10 @@ public class Runtime {
 	private Map<IVariableDeclaration, IReference> parameterReferences = new HashMap<>();
 	
 	//-------------------------------------tests-------------------------------------//
-//	Test test = new ArrayIndexErrorTest();
+	Test test = new ArrayIndexErrorTest();
 //	Test test = new ArrayIndexErrorExpressionTest();
 //	Test test = new ArrayIndexErrorBackwardTest();
-	Test test = new SumAllTest();
+//	Test test = new SumAllTest();
 	//-------------------------------------tests-------------------------------------//
 	
 	public Runtime() {
@@ -96,7 +96,7 @@ public class Runtime {
 		Message message = null;
 		
 		try {
-			IExecutionData data = state.execute(procedure, 5);
+			IExecutionData data = state.execute(procedure, 20);
 			IValue value = data.getReturnValue();
 			message = Message.getSuccessfulMessage(text, this, value);
 		} catch (ExecutionError e) {
