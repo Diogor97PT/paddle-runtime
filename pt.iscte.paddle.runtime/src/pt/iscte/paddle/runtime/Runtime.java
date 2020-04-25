@@ -25,7 +25,7 @@ import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.runtime.messages.ErrorMessage;
 import pt.iscte.paddle.runtime.messages.Message;
-import pt.iscte.paddle.runtime.tests.ArrayIndexErrorTest;
+import pt.iscte.paddle.runtime.tests.ArrayIndexErrorBackwardTest;
 import pt.iscte.paddle.runtime.tests.Test;
 
 public class Runtime {
@@ -40,9 +40,9 @@ public class Runtime {
 	private Map<IVariableDeclaration, IReference> parameterReferences = new HashMap<>();
 	
 	//-------------------------------------tests-------------------------------------//
-	Test test = new ArrayIndexErrorTest();
+//	Test test = new ArrayIndexErrorTest();
 //	Test test = new ArrayIndexErrorExpressionTest();
-//	Test test = new ArrayIndexErrorBackwardTest();
+	Test test = new ArrayIndexErrorBackwardTest();
 //	Test test = new SumAllTest();
 	//-------------------------------------tests-------------------------------------//
 	
@@ -75,7 +75,7 @@ public class Runtime {
 			
 			@Override
 			public void step(IProgramElement statement) {
-				if(statement instanceof IVariableAssignment) {					//Store variable state when it's assign
+				if(statement instanceof IVariableAssignment) {					//Store variable state when it's assigned
 					IVariableAssignment a = (IVariableAssignment) statement;
 					IReference r = state.getCallStack().getTopFrame().getVariableStore(a.getTarget());
 					varValues.put(a.getTarget(), r.getValue().toString());
@@ -102,7 +102,7 @@ public class Runtime {
 		} catch (ExecutionError e) {
 			message = Message.getErrorMessage(text, this, e);
 			text.newline();
-			message.addVarValuesToText();
+//			message.addVarValuesToText();
 		}
 		return message;
 	}

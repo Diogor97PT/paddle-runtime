@@ -5,7 +5,6 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Path;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
@@ -15,33 +14,37 @@ import pt.iscte.paddle.runtime.InterfaceColors;
 
 public class ArrayIndexErrorDraw extends Canvas {
 	
+	private static final int canvasSizeX = 200;
+	private static final int canvasSizeY = 80;
 	//-------- Rectangle constants --------//
-	private static final int rectangleStartY = 40;						//Onde começar a desenhar o retangulo
-	private static final int rectangleSizeY = 120;
+	private static final int rectangleStartY = 10;						//Onde começar a desenhar o retangulo
+	private static final int rectangleSizeY = 60;
 	//-------- Rectangle constants --------//
 	//-------- Square constants --------//
-	private static final int maxArraySize = 10;
-	private static final int squareStartY = rectangleStartY + 20;		//Onde começar a desenhar os quadrados no retangulo na vertical
-	private static final int squareSizeY = 60;							//Tamanho dos quadrados na vertical
-	private static final int squareStartX = 10;							//Onde começar a desenhar os quadrados no retangulo na horizontal
+	private static final int maxArraySize = 8;							//Número de posições da array desenhada
+	private static final int squareStartY = rectangleStartY + 10;		//Onde começar a desenhar os quadrados no retangulo na vertical
+	private static final int squareSizeY = 30;							//Tamanho dos quadrados na vertical
+	private static final int squareStartX = 5;							//Onde começar a desenhar os quadrados no retangulo na horizontal
 	//-------- Square constants --------//
-	private static final Font boldFont = new Font(null, "Arial", 20, SWT.BOLD);
-	private static final Font normalFont = new Font(null, "Arial", 15, SWT.NORMAL);
+	private static final Font boldFont = new Font(null, "Arial", 11, SWT.BOLD);
+	private static final Font normalFont = new Font(null, "Arial", 7, SWT.NORMAL);
 	
 	private PaintListener paintListener;
 
 	public ArrayIndexErrorDraw(Composite comp) {
 		super(comp, SWT.BORDER);
-//		setSize(500, 500);
-		
-//		canvas.setSize(2000, canvas.getSize().y);
-		addPaintListener(new PaintListener() {
-			@Override
-			public void paintControl(PaintEvent e) {
-				e.gc.setAntialias(SWT.ON);
-				e.gc.drawString("Representação do Erro", 10, 10);
-			}
-		});
+	}
+	
+	//Tamanho do canvas
+	@Override
+	public Point computeSize(int wHint, int hHint) {
+		return new Point(canvasSizeX, canvasSizeY);
+	}
+	
+	//Tamanho do canvas
+	@Override
+	public Point computeSize(int wHint, int hHint, boolean changed) {
+		return new Point(canvasSizeX, canvasSizeY);
 	}
 	
 	public void draw(IReference arrayReference, int errorPosition) {
@@ -58,24 +61,24 @@ public class ArrayIndexErrorDraw extends Canvas {
 				gc.setBackground(InterfaceColors.BLACK.getColor());
 				gc.setAntialias(SWT.ON);
 																				//Horizontal
-				int availableSpaceX = (getSize().x - 20) / (arrayLength + 1);	//Espaço que cada quadrado ocupa (quadrado em si + margem esquerda e direita
+				int availableSpaceX = (getSize().x - 10) / (arrayLength + 1);	//Espaço que cada quadrado ocupa (quadrado em si + margem esquerda e direita
 				int spacingX = availableSpaceX / 10;							//margem de um dos lados
 				int sizeX = availableSpaceX - (spacingX * 2);					//tamanho do quadrado em si
 				
-				gc.fillRoundRectangle(squareStartX, rectangleStartY, getSize().x - 20, rectangleSizeY, 30, 30);
-				
 				int centerY = (squareStartY + (squareStartY + squareSizeY)) / 2;
 				
-				gc.setBackground(InterfaceColors.WHITE.getColor());
+//				gc.setBackground(InterfaceColors.WHITE.getColor());
+				int offset = 0;
+				if(errorPosition < 0) {
+					offset++;
+					gc.fillRectangle(squareStartX + availableSpaceX, rectangleStartY, getSize().x - 10 - availableSpaceX, rectangleSizeY);
+					drawErrorPosition(Integer.toString(errorPosition), gc, availableSpaceX, spacingX, sizeX, centerY, 0);
+				} else {
+					gc.fillRectangle(squareStartX, rectangleStartY, getSize().x - 10 - availableSpaceX, rectangleSizeY);
+					drawErrorPosition(Integer.toString(errorPosition), gc, availableSpaceX, spacingX, sizeX, centerY, array.length);
+				}
+				
 				if(array.length > maxArraySize) {
-					int offset = 0;
-					if(errorPosition < 0) {
-						offset++;
-						drawErrorPosition(errorPosition + "", gc, availableSpaceX, spacingX, sizeX, centerY, 0);
-					} else {
-						drawErrorPosition(errorPosition + "", gc, availableSpaceX, spacingX, sizeX, centerY, maxArraySize);
-					}
-					
 					for(int i = 0; i < maxArraySize - 3; i++) {
 						drawSquare(array[i], i + "", gc, availableSpaceX, spacingX, sizeX, centerY, i + offset);
 					}
@@ -83,13 +86,6 @@ public class ArrayIndexErrorDraw extends Canvas {
 					drawSquare(array[array.length - 2], (array.length - 2) + "", gc, availableSpaceX, spacingX, sizeX, centerY, maxArraySize - 2 + offset);
 					drawSquare(array[array.length - 1], (array.length - 1) + "", gc, availableSpaceX, spacingX, sizeX, centerY, maxArraySize - 1 + offset);
 				} else {
-					int offset = 0;
-					if(errorPosition < 0) {
-						offset++;
-						drawErrorPosition(Integer.toString(errorPosition), gc, availableSpaceX, spacingX, sizeX, centerY, 0);
-					} else {
-						drawErrorPosition(Integer.toString(errorPosition), gc, availableSpaceX, spacingX, sizeX, centerY, array.length);
-					}
 					for(int i = 0; i < arrayLength; i++) {
 						drawSquare(array[i], i + "", gc, availableSpaceX, spacingX, sizeX, centerY, i + offset);
 					}
@@ -124,9 +120,11 @@ public class ArrayIndexErrorDraw extends Canvas {
 	
 	//Draws the position where the error happened
 	private void drawErrorPosition(String positionText, GC gc, int availableSpaceX, int spacingX, int sizeX, int centerY, int i) {
-		gc.setForeground(InterfaceColors.WHITE.getColor());
+		gc.setForeground(InterfaceColors.RED.getColor());
+		gc.setLineStyle(SWT.LINE_DASH);
+		gc.setLineWidth(2);
 		int currentX = (i * availableSpaceX) + squareStartX;
-		gc.drawOval(currentX + spacingX, squareSizeY, sizeX, squareSizeY);
+		gc.drawRectangle(currentX + spacingX, squareStartY, sizeX, squareSizeY);
 		
 		int centerX = (currentX + (currentX + sizeX + spacingX * 2)) / 2;
 		
@@ -135,28 +133,44 @@ public class ArrayIndexErrorDraw extends Canvas {
 		int normalTextX = centerX - (normalTextSize.x / 2);
 		gc.drawString(positionText, normalTextX, centerY + (squareSizeY / 2) + 5, true);
 		
-		drawArrow(gc, centerX, centerY - 80, centerX, centerY - 40, 20, Math.toRadians(45));
+//		drawArrow(gc, centerX, centerY - 60, centerX, centerY - 20, 15, Math.toRadians(45));
 	}
 	
 	//Draws an arrow
-	public static void drawArrow(GC gc, int x1, int y1, int x2, int y2, double arrowLength, double arrowAngle) {
-		gc.setForeground(InterfaceColors.BLUE.getColor());
-		gc.setBackground(InterfaceColors.BLUE.getColor());
-		
-	    double theta = Math.atan2(y2 - y1, x2 - x1);
-	    double offset = (arrowLength - 2) * Math.cos(arrowAngle);
-
-	    gc.drawLine(x1, y1, (int)(x2 - offset * Math.cos(theta)), (int)(y2 - offset * Math.sin(theta)));
-
-	    Path path = new Path(gc.getDevice());
-	    path.moveTo((float)(x2 - arrowLength * Math.cos(theta - arrowAngle)), (float)(y2 - arrowLength * Math.sin(theta - arrowAngle)));
-	    path.lineTo((float)x2, (float)y2);
-	    path.lineTo((float)(x2 - arrowLength * Math.cos(theta + arrowAngle)), (float)(y2 - arrowLength * Math.sin(theta + arrowAngle)));
-	    path.close();
-
-	    gc.fillPath(path);
-
-	    path.dispose();
+//	private static void drawArrow(GC gc, int x1, int y1, int x2, int y2, double arrowLength, double arrowAngle) {
+//		gc.setForeground(InterfaceColors.RED.getColor());
+//		gc.setBackground(InterfaceColors.RED.getColor());
+//		
+//	    double theta = Math.atan2(y2 - y1, x2 - x1);
+//	    double offset = (arrowLength - 2) * Math.cos(arrowAngle);
+//
+//	    gc.drawLine(x1, y1, (int)(x2 - offset * Math.cos(theta)), (int)(y2 - offset * Math.sin(theta)));
+//
+//	    Path path = new Path(gc.getDevice());
+//	    path.moveTo((float)(x2 - arrowLength * Math.cos(theta - arrowAngle)), (float)(y2 - arrowLength * Math.sin(theta - arrowAngle)));
+//	    path.lineTo((float)x2, (float)y2);
+//	    path.lineTo((float)(x2 - arrowLength * Math.cos(theta + arrowAngle)), (float)(y2 - arrowLength * Math.sin(theta + arrowAngle)));
+//	    path.close();
+//
+//	    gc.fillPath(path);
+//
+//	    path.dispose();
+//	}
+	
+	public static String[] stringToShrinkedArray(String s) {
+		String s2 = s.substring(1, s.length()-1);
+		String [] array = s2.trim().replaceAll(" ", "").split(",");
+		if(array.length > maxArraySize) {
+			String [] shrinkedArray = new String [maxArraySize];
+			for(int i = 0; i < maxArraySize - 3; i++) {
+				shrinkedArray[i] = array[i];
+			}
+			shrinkedArray[maxArraySize-3] = "...";
+			shrinkedArray[maxArraySize-2] = array[array.length - 2];
+			shrinkedArray[maxArraySize-1] = array[array.length - 1];
+			return shrinkedArray;
+		} else 
+			return array;
 	}
 	
 	public static String[] stringToArray(String s) {
