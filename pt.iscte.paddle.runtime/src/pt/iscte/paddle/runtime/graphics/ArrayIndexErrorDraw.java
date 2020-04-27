@@ -55,13 +55,13 @@ public class ArrayIndexErrorDraw extends Canvas {
 		paintListener = new PaintListener() {
 			@Override
 			public void paintControl(PaintEvent e) {
-				int arrayLength = array.length > maxArraySize ? maxArraySize : array.length;
+				int arraySize = array.length > maxArraySize ? maxArraySize : array.length;
 				
 				GC gc = e.gc;
 				gc.setBackground(InterfaceColors.BLACK.getColor());
 				gc.setAntialias(SWT.ON);
 																				//Horizontal
-				int availableSpaceX = (getSize().x - 10) / (arrayLength + 1);	//Espaço que cada quadrado ocupa (quadrado em si + margem esquerda e direita
+				int availableSpaceX = (getSize().x - 10) / (arraySize + 1);	//Espaço que cada quadrado ocupa (quadrado em si + margem esquerda e direita
 				int spacingX = availableSpaceX / 10;							//margem de um dos lados
 				int sizeX = availableSpaceX - (spacingX * 2);					//tamanho do quadrado em si
 				
@@ -75,7 +75,7 @@ public class ArrayIndexErrorDraw extends Canvas {
 					drawErrorPosition(Integer.toString(errorPosition), gc, availableSpaceX, spacingX, sizeX, centerY, 0);
 				} else {
 					gc.fillRectangle(squareStartX, rectangleStartY, getSize().x - 10 - availableSpaceX, rectangleSizeY);
-					drawErrorPosition(Integer.toString(errorPosition), gc, availableSpaceX, spacingX, sizeX, centerY, array.length);
+					drawErrorPosition(Integer.toString(errorPosition), gc, availableSpaceX, spacingX, sizeX, centerY, arraySize);
 				}
 				
 				if(array.length > maxArraySize) {
@@ -86,7 +86,7 @@ public class ArrayIndexErrorDraw extends Canvas {
 					drawSquare(array[array.length - 2], (array.length - 2) + "", gc, availableSpaceX, spacingX, sizeX, centerY, maxArraySize - 2 + offset);
 					drawSquare(array[array.length - 1], (array.length - 1) + "", gc, availableSpaceX, spacingX, sizeX, centerY, maxArraySize - 1 + offset);
 				} else {
-					for(int i = 0; i < arrayLength; i++) {
+					for(int i = 0; i < arraySize; i++) {
 						drawSquare(array[i], i + "", gc, availableSpaceX, spacingX, sizeX, centerY, i + offset);
 					}
 				}
