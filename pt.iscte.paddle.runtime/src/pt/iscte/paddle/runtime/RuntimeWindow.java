@@ -54,19 +54,13 @@ public class RuntimeWindow {
 		shell.setLayout(layout);
 		
 		Composite comp = new Composite(shell, SWT.NONE);
-		GridLayout l = new GridLayout(3, false);
-		l.horizontalSpacing = 80;
+		GridLayout l = new GridLayout(2, false);
+		l.horizontalSpacing = 200;
 		comp.setLayout(l);
 		comp.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		
 		IClassWidget widget = IJavardiseService.createClassWidget(comp, runtime.getModule());
 		widget.setReadOnly(true);
-		
-//		ArrayIndexErrorDraw arrayDraw = new ArrayIndexErrorDraw(comp);
-//		GridData gdDraw = new GridData(SWT.FILL, SWT.CENTER, true, false);
-//		gdDraw.widthHint = 500;
-//		gdDraw.heightHint = 500;
-//		arrayDraw.setLayoutData(gdDraw);
 		
 		CFGViewer cfg = new CFGViewer(comp);
 		cfg.setInput(runtime.getIcfg());
@@ -133,13 +127,11 @@ public class RuntimeWindow {
 					errorExpressionHighlight = errorVariable.addMark(InterfaceColors.RED.getColor());
 					errorExpressionHighlight.show();
 					
-//					System.out.println(message.getVarReferences().get(errorMessage.getErrorTarget()).getType() instanceof IArrayType);
 					if(errorMessage instanceof ArrayIndexErrorMessage) {
-//						arrayDraw.draw(message.getVarReferences().get(errorMessage.getErrorTarget()), ((ArrayIndexErrorMessage)errorMessage).getErrorIndex());
-						
+						ArrayIndexErrorMessage arrayIndexError = (ArrayIndexErrorMessage) errorMessage;
 						canvasDec = errorLine.addDecoration((parent, control) -> {
 							ArrayIndexErrorDraw arrayDraw = new ArrayIndexErrorDraw(parent);
-							arrayDraw.draw(message.getVarReferences().get(errorMessage.getErrorTarget()), ((ArrayIndexErrorMessage)errorMessage).getErrorIndex());
+							arrayDraw.draw(message.getVarReferences().get(errorMessage.getErrorTarget()), arrayIndexError.getErrorIndex(), errorMessage.getErrorExpression(), arrayIndexError.getArraySize());
 							return arrayDraw;
 						}, ICodeDecoration.Location.RIGHT);
 						canvasDec.show();
@@ -164,7 +156,7 @@ public class RuntimeWindow {
 					valores.add(d);
 					d.show();
 				}
-				shell.pack();
+//				shell.pack();
 			}
 		});
 		

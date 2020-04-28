@@ -14,6 +14,7 @@ import pt.iscte.paddle.runtime.Runtime;
 public class ArrayIndexErrorMessage extends ErrorMessage {
 	
 	private ArrayIndexError error;
+	private IArray array_ref;
 
 	public ArrayIndexErrorMessage(HyperlinkedText text, Runtime runtime, ArrayIndexError error) {
 		super(text, runtime);
@@ -26,7 +27,7 @@ public class ArrayIndexErrorMessage extends ErrorMessage {
 		IVariableDeclaration array = ((IVariableExpression)error.getTarget()).getVariable();
 		//int arrayDimension = e.getIndexDimension();	//Dimensão da array que deu erro
 		
-		IArray array_ref = (IArray)runtime.getVarReferences().get(array).getValue();
+		array_ref = (IArray)runtime.getVarReferences().get(array).getValue();
 //		IArray array_ref = (IArray)(Iterables.getLast(getVarReferences().get(array))).getValue();
 		
 		text.words("Tentativa de acesso à posição ")
@@ -69,5 +70,9 @@ public class ArrayIndexErrorMessage extends ErrorMessage {
 	@Override
 	public IVariableDeclaration getErrorTarget() {
 		return ((IVariableExpression)error.getTarget()).getVariable();
+	}
+	
+	public int getArraySize() {
+		return array_ref.getLength();
 	}
 }

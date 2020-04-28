@@ -1,9 +1,7 @@
 package pt.iscte.paddle.runtime.messages;
 
-import java.util.Collection;
 import java.util.Map;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.MultimapBuilder;
 
@@ -42,15 +40,15 @@ public abstract class Message {
 		return new SuccessfulMessage(text, runtime, value);
 	}
 	
-	public void addVarValuesToText() {
-		text.line("Valores das variáveis quando ocorreu a Exceção:");
-		
-		for(Map.Entry<IVariableDeclaration, Collection<String>> entry : varValues.asMap().entrySet()) {
-			String varValue = Iterables.getLast(entry.getValue());
-			text.link(entry.getKey().toString(), entry.getKey());
-			text.line(" : " + varValue);
-		}
-	}
+//	public void addVarValuesToText() {
+//		text.line("Valores das variáveis quando ocorreu a Exceção:");
+//		
+//		for(Map.Entry<IVariableDeclaration, Collection<String>> entry : varValues.asMap().entrySet()) {
+//			String varValue = Iterables.getLast(entry.getValue());
+//			text.link(entry.getKey().toString(), entry.getKey());
+//			text.line(" : " + varValue);
+//		}
+//	}
 	
 	public HyperlinkedText getText() {
 		return text;

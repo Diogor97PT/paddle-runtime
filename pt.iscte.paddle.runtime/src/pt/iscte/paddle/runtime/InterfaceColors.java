@@ -9,7 +9,8 @@ public enum InterfaceColors {
 	BLUE(Display.getDefault().getSystemColor(SWT.COLOR_BLUE)),
 	RED(Display.getDefault().getSystemColor(SWT.COLOR_RED)),
 	BLACK(Display.getDefault().getSystemColor(SWT.COLOR_BLACK)),
-	WHITE(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
+	WHITE(Display.getDefault().getSystemColor(SWT.COLOR_WHITE)),
+	GRAY(new Color(null, 135, 140, 136));
 	
 	private Color color;
 	

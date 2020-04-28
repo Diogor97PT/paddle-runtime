@@ -16,7 +16,6 @@ import pt.iscte.paddle.interpreter.IValue;
 import pt.iscte.paddle.javardise.service.IJavardiseService;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
 import pt.iscte.paddle.model.IArrayElementAssignment;
-import pt.iscte.paddle.model.IModel2CodeTranslator;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProgramElement;
@@ -51,8 +50,8 @@ public class Runtime {
 		procedure = test.getProcedure();
 		icfg = procedure.generateCFG();
 		
-		String code = module.translate(new IModel2CodeTranslator.Java());
-		System.out.println(code);
+//		String code = module.translate(new IModel2CodeTranslator.Java());
+//		System.out.println(code);
 		
 		state = IMachine.create(module);
 	}
