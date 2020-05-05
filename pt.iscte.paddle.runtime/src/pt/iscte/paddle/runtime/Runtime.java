@@ -16,15 +16,17 @@ import pt.iscte.paddle.interpreter.IValue;
 import pt.iscte.paddle.javardise.service.IJavardiseService;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
 import pt.iscte.paddle.model.IArrayElementAssignment;
+import pt.iscte.paddle.model.IBlockElement;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProgramElement;
+import pt.iscte.paddle.model.IStatement;
 import pt.iscte.paddle.model.IVariableAssignment;
 import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.runtime.messages.ErrorMessage;
 import pt.iscte.paddle.runtime.messages.Message;
-import pt.iscte.paddle.runtime.tests.ArrayIndexErrorTest;
+import pt.iscte.paddle.runtime.tests.ArrayIndexFunctionTest;
 import pt.iscte.paddle.runtime.tests.Test;
 
 public class Runtime {
@@ -39,10 +41,12 @@ public class Runtime {
 	private Map<IVariableDeclaration, IReference> parameterReferences = new HashMap<>();
 	
 	//-------------------------------------tests-------------------------------------//
-	Test test = new ArrayIndexErrorTest();
+//	Test test = new ArrayIndexErrorTest();
 //	Test test = new ArrayIndexErrorExpressionTest();
 //	Test test = new ArrayIndexErrorBackwardTest();
+	Test test = new ArrayIndexFunctionTest();
 //	Test test = new SumAllTest();
+//	Test test = new NullPointerErrorTest();
 	//-------------------------------------tests-------------------------------------//
 	
 	public Runtime() {
@@ -58,34 +62,40 @@ public class Runtime {
 	
 	public void addListener() {
 		state.addListener(new IListener() {
-			
-			@Override
-			public void programStarted() {
-				procedure.getParameters().forEach(var -> {						//Store Parameter references
-					IReference r = state.getCallStack().getTopFrame().getVariableStore(var);
-					parameterReferences.put(var, r);
-				});
-				
-				procedure.getVariables().forEach(var -> {						//Store Variable references
-					IReference r = state.getCallStack().getTopFrame().getVariableStore(var);
-					varReferences.put(var, r);
-				});
-			}
-			
 			@Override
 			public void step(IProgramElement statement) {
 				if(statement instanceof IVariableAssignment) {					//Store variable state when it's assigned
 					IVariableAssignment a = (IVariableAssignment) statement;
 					IReference r = state.getCallStack().getTopFrame().getVariableStore(a.getTarget());
 					varValues.put(a.getTarget(), r.getValue().toString());
+					varReferences.putIfAbsent(a.getTarget(), r);
 				} else if(statement instanceof IArrayElementAssignment) {		//Store arrays state when one of it's elements is changed
 					IArrayElementAssignment a = (IArrayElementAssignment) statement;
 					IVariableDeclaration var = ErrorMessage.getVariableFromExpression(a.getTarget()).getVariable();
 					IReference r = state.getCallStack().getTopFrame().getVariableStore(var);
 					varValues.put(var, r.getValue().toString());
+					varReferences.putIfAbsent(var, r);
 				}
-//				System.out.println(statement.getClass());
+				getReferences((IStatement)statement);
 			}
+		});
+	}
+	
+	private void getReferences(IStatement statement) {
+		IProgramElement block = statement.getParent();
+		while(!(block instanceof IProcedure)) {
+			block = ((IBlockElement)block).getParent();
+		}
+		IProcedure procedure = (IProcedure)block;
+		
+		procedure.getParameters().forEach(var -> {						//Store Parameter references
+			IReference r = state.getCallStack().getTopFrame().getVariableStore(var);
+			parameterReferences.putIfAbsent(var, r);
+		});
+
+		procedure.getVariables().forEach(var -> {						//Store Variable references
+			IReference r = state.getCallStack().getTopFrame().getVariableStore(var);
+			varReferences.putIfAbsent(var, r);
 		});
 	}
 	

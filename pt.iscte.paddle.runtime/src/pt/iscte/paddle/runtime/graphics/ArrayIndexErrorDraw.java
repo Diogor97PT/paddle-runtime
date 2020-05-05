@@ -52,6 +52,7 @@ public class ArrayIndexErrorDraw extends Canvas {
 		return new Point(canvasSizeX, canvasSizeY);
 	}
 	
+	//TODO acertar melhor o desenho
 	public void draw(IReference arrayReference, int errorPosition, IExpression errorExpression, int originalArraySize) {
 		if(paintListener != null) removePaintListener(paintListener);
 		
@@ -80,7 +81,7 @@ public class ArrayIndexErrorDraw extends Canvas {
 				int rectangleStartX = squareStartX + (availableSpaceX * offset);
 				gc.fillRoundRectangle(rectangleStartX, rectangleStartY, rectangleSizeX, rectangleSizeY, 10, 10);
 				
-				int errorOffset = offset ^ 1;				//XOR -> if offset = 1, errorOffset = 0 and vice-versa
+				int errorOffset = offset ^ 1;				//XOR -> if offset = 1, errorOffset = 0 and vice-versa (inverts errorOffset value)
 				drawErrorPosition(Integer.toString(errorPosition), gc, availableSpaceX, spacingX, sizeX, centerY, (arraySize * errorOffset));
 				
 				drawArraySize(gc, rectangleStartX, rectangleStartX + (rectangleSizeX / 2), rectangleStartX + rectangleSizeX, centerY + (squareSizeY / 2) + 10, errorExpression, originalArraySize);
@@ -106,8 +107,10 @@ public class ArrayIndexErrorDraw extends Canvas {
 	//Draws a square with the value inside
 	private void drawSquare(String text, String positionText, GC gc, int availableSpaceX, int spacingX, int sizeX, int centerY, int i) {
 		gc.setBackground(InterfaceColors.WHITE.getColor());
+		gc.setForeground(InterfaceColors.GREEN.getColor());
 		int currentX = (i * availableSpaceX) + squareStartX;
 		gc.fillRectangle(currentX + spacingX, squareStartY, sizeX, squareSizeY);
+		gc.drawRectangle(currentX + spacingX, squareStartY, sizeX, squareSizeY);
 		
 		int centerX = (currentX + (currentX + sizeX + spacingX * 2)) / 2;
 		
@@ -168,7 +171,7 @@ public class ArrayIndexErrorDraw extends Canvas {
 	}
 	
 	public static String[] stringToShrinkedArray(String s) {
-		String s2 = s.substring(1, s.length()-1);
+		String s2 = s.substring(s.indexOf("[") + 1, s.length()-1);
 		String [] array = s2.trim().replaceAll(" ", "").split(",");
 		if(array.length > maxArraySize) {
 			String [] shrinkedArray = new String [maxArraySize];
@@ -184,7 +187,7 @@ public class ArrayIndexErrorDraw extends Canvas {
 	}
 	
 	public static String[] stringToArray(String s) {
-		String s2 = s.substring(1, s.length()-1);
+		String s2 = s.substring(s.indexOf("[") + 1, s.length()-1);
 		return s2.trim().replaceAll(" ", "").split(",");
 	}
 	

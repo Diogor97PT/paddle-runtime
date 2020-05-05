@@ -2,6 +2,7 @@ package pt.iscte.paddle.runtime.messages;
 
 import pt.iscte.paddle.interpreter.ArrayIndexError;
 import pt.iscte.paddle.interpreter.IArray;
+import pt.iscte.paddle.interpreter.IReference;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
 import pt.iscte.paddle.model.IExpression;
 import pt.iscte.paddle.model.IProgramElement;
@@ -27,8 +28,28 @@ public class ArrayIndexErrorMessage extends ErrorMessage {
 		IVariableDeclaration array = ((IVariableExpression)error.getTarget()).getVariable();
 		//int arrayDimension = e.getIndexDimension();	//Dimensão da array que deu erro
 		
-		array_ref = (IArray)runtime.getVarReferences().get(array).getValue();
-//		IArray array_ref = (IArray)(Iterables.getLast(getVarReferences().get(array))).getValue();
+//		System.out.println(runtime.getVarReferences());
+//		System.out.println(runtime.getVarReferences().get(array));
+//		System.out.println(runtime.getVarReferences().get(array).getValue());
+		
+//		System.out.println(runtime.getVarValues());
+		
+//		for (IVariableDeclaration key : runtime.getVarValues().keySet()) {
+//			String s = key + " : ";
+//			Collection<String> collection = runtime.getVarValues().get(key);
+//			for (String value : collection) {
+//				s += value + ", ";
+//			}
+//			System.out.println(s);
+//		}
+		
+		Object obj = runtime.getVarReferences().get(array).getValue();
+		if(obj instanceof IArray)
+			array_ref = (IArray) obj;
+		else
+			array_ref = (IArray)((IReference)obj).getValue();
+		
+//		array_ref = (IArray)runtime.getVarReferences().get(array).getValue();
 		
 		text.words("Tentativa de acesso à posição ")
 			.words(Integer.toString(invalidPos))
@@ -52,25 +73,22 @@ public class ArrayIndexErrorMessage extends ErrorMessage {
 	
 	@Override
 	public IProgramElement getErrorElement() {
-//		System.out.println(error.getSourceElement());
-//		if(error.getSourceElement() instanceof IArrayElement)
-//			System.out.println("entrei");
 		return error.getSourceElement();
 	}
 	
+	@Override
 	public IExpression getErrorExpression() {
-//		System.out.println(((IVariableExpression)error.getIndexExpression()).getVariable());
 		return error.getIndexExpression();
-	}
-	
-	public int getErrorIndex() {
-		return error.getInvalidIndex();
 	}
 	
 	@Override
 	public IVariableDeclaration getErrorTarget() {
 		return ((IVariableExpression)error.getTarget()).getVariable();
 	}
+	
+	public int getErrorIndex() {
+		return error.getInvalidIndex();
+	} 
 	
 	public int getArraySize() {
 		return array_ref.getLength();
