@@ -9,6 +9,7 @@ import pt.iscte.paddle.interpreter.ArrayIndexError;
 import pt.iscte.paddle.interpreter.ExecutionError;
 import pt.iscte.paddle.interpreter.IReference;
 import pt.iscte.paddle.interpreter.IValue;
+import pt.iscte.paddle.interpreter.NullPointerError;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
 import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.runtime.Runtime;
@@ -29,9 +30,10 @@ public abstract class Message {
 
 	public static Message getErrorMessage(HyperlinkedText text, Runtime runtime, ExecutionError e) {
 		
-		if(e instanceof ArrayIndexError) {
+		if(e instanceof ArrayIndexError)
 			return new ArrayIndexErrorMessage(text, runtime, (ArrayIndexError)e);
-		}
+		else if(e instanceof NullPointerError)
+			return new NullPointerErrorMessage(text, runtime, (NullPointerError)e);
 		
 		return null;
 	}
