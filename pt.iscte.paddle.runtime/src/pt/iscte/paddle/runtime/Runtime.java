@@ -26,7 +26,7 @@ import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.runtime.messages.ErrorMessage;
 import pt.iscte.paddle.runtime.messages.Message;
-import pt.iscte.paddle.runtime.tests.NullPointerErrorTest;
+import pt.iscte.paddle.runtime.tests.ArrayIndexFunctionTest;
 import pt.iscte.paddle.runtime.tests.Test;
 
 public class Runtime {
@@ -44,9 +44,9 @@ public class Runtime {
 //	Test test = new ArrayIndexErrorTest();
 //	Test test = new ArrayIndexErrorExpressionTest();
 //	Test test = new ArrayIndexErrorBackwardTest();
-//	Test test = new ArrayIndexFunctionTest();
+	Test test = new ArrayIndexFunctionTest();
 //	Test test = new SumAllTest();
-	Test test = new NullPointerErrorTest();
+//	Test test = new NullPointerErrorTest();
 	//-------------------------------------tests-------------------------------------//
 	
 	public Runtime() {
@@ -81,7 +81,7 @@ public class Runtime {
 		});
 	}
 	
-	private void getReferences(IStatement statement) {
+	private void getReferences(IStatement statement) {		//TODO Otimizar de maneira a verificar uma procedure apenas uma vez
 		IProgramElement block = statement.getParent();
 		while(!(block instanceof IProcedure)) {
 			block = ((IBlockElement)block).getParent();

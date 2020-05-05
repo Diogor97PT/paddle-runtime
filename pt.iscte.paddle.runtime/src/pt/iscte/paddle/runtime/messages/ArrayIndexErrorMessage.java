@@ -28,28 +28,11 @@ public class ArrayIndexErrorMessage extends ErrorMessage {
 		IVariableDeclaration array = ((IVariableExpression)error.getTarget()).getVariable();
 		//int arrayDimension = e.getIndexDimension();	//Dimensão da array que deu erro
 		
-//		System.out.println(runtime.getVarReferences());
-//		System.out.println(runtime.getVarReferences().get(array));
-//		System.out.println(runtime.getVarReferences().get(array).getValue());
-		
-//		System.out.println(runtime.getVarValues());
-		
-//		for (IVariableDeclaration key : runtime.getVarValues().keySet()) {
-//			String s = key + " : ";
-//			Collection<String> collection = runtime.getVarValues().get(key);
-//			for (String value : collection) {
-//				s += value + ", ";
-//			}
-//			System.out.println(s);
-//		}
-		
 		Object obj = runtime.getVarReferences().get(array).getValue();
 		if(obj instanceof IArray)
 			array_ref = (IArray) obj;
 		else
 			array_ref = (IArray)((IReference)obj).getValue();
-		
-//		array_ref = (IArray)runtime.getVarReferences().get(array).getValue();
 		
 		text.words("Tentativa de acesso à posição ")
 			.words(Integer.toString(invalidPos))

@@ -20,7 +20,7 @@ public class ArrayIndexErrorDraw extends Canvas {
 	private static final int canvasSizeY = 110;
 	
 	//-------- Rectangle constants --------//
-	private static final int rectangleStartY = 5;						//Onde começar a desenhar o retangulo
+	private static final int rectangleStartY = 45;						//Onde começar a desenhar o retangulo
 	private static final int rectangleSizeY = 60;
 	//-------- Rectangle constants --------//
 	
@@ -84,8 +84,9 @@ public class ArrayIndexErrorDraw extends Canvas {
 				int errorOffset = offset ^ 1;				//XOR -> if offset = 1, errorOffset = 0 and vice-versa (inverts errorOffset value)
 				drawErrorPosition(Integer.toString(errorPosition), gc, availableSpaceX, spacingX, sizeX, centerY, (arraySize * errorOffset));
 				
-				drawArraySize(gc, rectangleStartX, rectangleStartX + (rectangleSizeX / 2), rectangleStartX + rectangleSizeX, centerY + (squareSizeY / 2) + 10, errorExpression, originalArraySize);
-				
+//				drawArraySize(gc, rectangleStartX, rectangleStartX + (rectangleSizeX / 2), rectangleStartX + rectangleSizeX, centerY + (squareSizeY / 2) + 10, errorExpression, originalArraySize);
+				drawArraySize(gc, rectangleStartX, rectangleStartX + (rectangleSizeX / 2), rectangleStartX + rectangleSizeX, errorExpression, originalArraySize);
+
 				if(array.length > maxArraySize) {
 					for(int i = 0; i < maxArraySize - 3; i++) {
 						drawSquare(array[i], i + "", gc, availableSpaceX, spacingX, sizeX, centerY, i + offset);
@@ -145,27 +146,30 @@ public class ArrayIndexErrorDraw extends Canvas {
 	}
 	
 	//Draws the symbol that represents the array size
-	private void drawArraySize(GC gc, int rectStartX, int rectCenterX, int rectEndX, int startY, IExpression errorExpression, int arraySize) {
+	private void drawArraySize(GC gc, int rectStartX, int rectCenterX, int rectEndX, IExpression errorExpression, int arraySize) {
 		gc.setForeground(InterfaceColors.BLACK.getColor());
 		gc.setLineStyle(SWT.LINE_SOLID);
 		gc.setFont(boldFont);
+		
+		String errorExpressionString = arraySize + " (" + errorExpression.toString() + ")";
+		Point textSize = gc.textExtent(errorExpressionString);
+		
+		int pathStartY = textSize.y;
 		
 		Path path = new Path(getDisplay());
 		int arcSize = 30;
 		
 		//Left half
-		path.addArc(rectStartX, startY, arcSize, 20, 180, 90);
-		path.addArc(rectCenterX - arcSize, startY + 20, arcSize, 20, 90, -90);
+		path.addArc(rectStartX, pathStartY + 20, arcSize, 20, 180, -90);
+		path.addArc(rectCenterX - arcSize, pathStartY, arcSize, 20, 270, 90);
 		
 		//Right half
-		path.addArc(rectCenterX, startY + 20, arcSize, 20, 180, -90);
-		path.addArc(rectEndX - arcSize, startY, arcSize, 20, 270, 90);
+		path.addArc(rectCenterX, pathStartY, arcSize, 20, 180, 90);
+		path.addArc(rectEndX - arcSize, pathStartY + 20, arcSize, 20, 90, -90);
 		
 		gc.drawPath(path);
 		
-		String errorExpressionString = arraySize + " (" + errorExpression.toString() + ")";
-		Point textSize = gc.textExtent(errorExpressionString);
-		gc.drawText(errorExpressionString, rectCenterX - (textSize.x / 2), startY + 30, true);
+		gc.drawText(errorExpressionString, rectCenterX - (textSize.x / 2), 0, true);
 		
 		path.dispose();
 	}
