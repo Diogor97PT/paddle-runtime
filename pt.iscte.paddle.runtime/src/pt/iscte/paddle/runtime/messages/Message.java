@@ -2,30 +2,23 @@ package pt.iscte.paddle.runtime.messages;
 
 import java.util.Map;
 
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.MultimapBuilder;
-
 import pt.iscte.paddle.interpreter.ArrayIndexError;
 import pt.iscte.paddle.interpreter.ExecutionError;
-import pt.iscte.paddle.interpreter.IReference;
 import pt.iscte.paddle.interpreter.IValue;
 import pt.iscte.paddle.interpreter.NullPointerError;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
 import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.runtime.Runtime;
+import pt.iscte.paddle.runtime.variableInfo.VariableInfo;
 
 public abstract class Message {
 	
 	private HyperlinkedText text;
-	private Map<IVariableDeclaration, IReference> varReferences;
-	private ListMultimap<IVariableDeclaration, String> varValues = MultimapBuilder.hashKeys().arrayListValues().build();
-	private Map<IVariableDeclaration, IReference> parameterReferences;
+	private Map<IVariableDeclaration, VariableInfo> varValues;
 	
 	public Message(HyperlinkedText text, Runtime runtime) {
 		this.text = text;
-		varReferences = runtime.getVarReferences();
 		varValues = runtime.getVarValues();
-		parameterReferences = runtime.getParameterReferences();
 	}
 
 	public static Message getErrorMessage(HyperlinkedText text, Runtime runtime, ExecutionError e) {
@@ -56,15 +49,7 @@ public abstract class Message {
 		return text;
 	}
 	
-	public Map<IVariableDeclaration, IReference> getVarReferences() {
-		return varReferences;
-	}
-	
-	public ListMultimap<IVariableDeclaration, String> getVarValues() {
+	public Map<IVariableDeclaration, VariableInfo> getVarValues() {
 		return varValues;
-	}
-	
-	public Map<IVariableDeclaration, IReference> getParameterReferences() {
-		return parameterReferences;
 	}
 }

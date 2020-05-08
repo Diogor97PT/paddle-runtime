@@ -2,9 +2,8 @@ package pt.iscte.paddle.runtime;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -24,7 +23,6 @@ import org.eclipse.swt.widgets.Text;
 
 import com.google.common.collect.Iterables;
 
-import pt.iscte.paddle.interpreter.IReference;
 import pt.iscte.paddle.javardise.service.IClassWidget;
 import pt.iscte.paddle.javardise.service.ICodeDecoration;
 import pt.iscte.paddle.javardise.service.IJavardiseService;
@@ -36,6 +34,9 @@ import pt.iscte.paddle.runtime.graphics.ArrayIndexErrorDraw;
 import pt.iscte.paddle.runtime.messages.ArrayIndexErrorMessage;
 import pt.iscte.paddle.runtime.messages.ErrorMessage;
 import pt.iscte.paddle.runtime.messages.Message;
+import pt.iscte.paddle.runtime.variableInfo.ArrayVariableInfo;
+import pt.iscte.paddle.runtime.variableInfo.VariableInfo;
+import pt.iscte.paddle.runtime.variableInfo.VariableInfo.VariableType;
 import pt.iscte.pidesco.cfgviewer.ext.CFGViewer;
 
 public class RuntimeWindow {
@@ -115,7 +116,7 @@ public class RuntimeWindow {
 					ErrorMessage errorMessage = (ErrorMessage) message;
 					
 					IVariableExpression varExp = ErrorMessage.getVariableFromExpression(errorMessage.getErrorExpression());		//Expression where the error Occurs
-					String varValue = Iterables.getLast(message.getVarValues().get(varExp.getVariable()));						//Value of the error expression
+					String varValue = Iterables.getLast(message.getVarValues().get(varExp.getVariable()).getVarValues());		//Value of the error expression
 					
 					IWidget errorLine = IJavardiseService.getWidget(errorMessage.getErrorElement());
 					shortTextDecoration = errorLine.addNote(errorMessage.getShortText(), ICodeDecoration.Location.RIGHT);	//Add short text right of the line
@@ -131,28 +132,35 @@ public class RuntimeWindow {
 						ArrayIndexErrorMessage arrayIndexError = (ArrayIndexErrorMessage) errorMessage;
 						canvasDec = errorLine.addDecoration((parent, control) -> {
 							ArrayIndexErrorDraw arrayDraw = new ArrayIndexErrorDraw(parent);
-							arrayDraw.draw(message.getVarReferences().get(errorMessage.getErrorTarget()), arrayIndexError.getErrorIndex(), errorMessage.getErrorExpression(), arrayIndexError.getArraySize());
+							arrayDraw.draw(message.getVarValues().get(errorMessage.getErrorTarget()).getReference(), 
+									arrayIndexError.getErrorIndex(), 
+									errorMessage.getErrorExpression(), 
+									arrayIndexError.getArraySize(), 
+									((ArrayVariableInfo)message.getVarValues().get(errorMessage.getErrorTarget())).getAccessedPositions());
 							return arrayDraw;
 						}, ICodeDecoration.Location.RIGHT);
 						canvasDec.show();
 					}
 				}
 				
-				for(Map.Entry<IVariableDeclaration, Collection<String>> entry : message.getVarValues().asMap().entrySet()) {	//Add Variable Values to GUI
-					IWidget widget = IJavardiseService.getWidget(entry.getKey());
+				for(Entry<IVariableDeclaration, VariableInfo> entry : message.getVarValues().entrySet()) {
+					IVariableDeclaration var = entry.getKey();
+					VariableInfo info = entry.getValue();
+					IWidget widget = IJavardiseService.getWidget(var);
 					String varValue;
-					if(message.getVarReferences().get(entry.getKey()).getType() instanceof IArrayType)
-						varValue = Arrays.toString(ArrayIndexErrorDraw.stringToShrinkedArray(Iterables.getLast(entry.getValue())));
-					else
-						varValue = Iterables.getLast(entry.getValue());
-					ICodeDecoration<Text> d = widget.addNote(varValue, ICodeDecoration.Location.LEFT);
-					valores.add(d);
-					d.show();
-				}
-				
-				for(Map.Entry<IVariableDeclaration, IReference> entry : message.getParameterReferences().entrySet()) {	//Add Parameter Values to GUI
-					IWidget widget = IJavardiseService.getWidget(entry.getKey());
-					ICodeDecoration<Text> d = widget.addNote(entry.getValue().getValue().toString(), ICodeDecoration.Location.TOP);
+					
+					if(info.getReference().getType() instanceof IArrayType)
+						varValue = Arrays.toString(ArrayIndexErrorDraw.stringToShrinkedArray(info.getReference().getValue().toString()));
+					else 
+						varValue = info.getReference().getValue().toString();
+					
+					ICodeDecoration<Text> d;
+					if(info.getVariableType() == VariableType.PARAMETER) {
+						d = widget.addNote(varValue, ICodeDecoration.Location.TOP);
+					} else {
+						d = widget.addNote(varValue, ICodeDecoration.Location.LEFT);
+					}
+					
 					valores.add(d);
 					d.show();
 				}

@@ -1,5 +1,7 @@
 package pt.iscte.paddle.runtime.graphics;
 
+import java.util.ArrayList;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -40,20 +42,20 @@ public class ArrayIndexErrorDraw extends Canvas {
 		super(comp, SWT.BORDER);
 	}
 	
-	//Tamanho do canvas
+	//Canvas Size
 	@Override
 	public Point computeSize(int wHint, int hHint) {
 		return new Point(canvasSizeX, canvasSizeY);
 	}
 	
-	//Tamanho do canvas
+	//Canvas Size
 	@Override
 	public Point computeSize(int wHint, int hHint, boolean changed) {
 		return new Point(canvasSizeX, canvasSizeY);
 	}
 	
 	//TODO acertar melhor o desenho
-	public void draw(IReference arrayReference, int errorPosition, IExpression errorExpression, int originalArraySize) {
+	public void draw(IReference arrayReference, int errorPosition, IExpression errorExpression, int originalArraySize, ArrayList<Integer> accessedPositions) {
 		if(paintListener != null) removePaintListener(paintListener);
 		
 		String [] array = stringToArray(arrayReference.getValue().toString());
@@ -84,19 +86,18 @@ public class ArrayIndexErrorDraw extends Canvas {
 				int errorOffset = offset ^ 1;				//XOR -> if offset = 1, errorOffset = 0 and vice-versa (inverts errorOffset value)
 				drawErrorPosition(Integer.toString(errorPosition), gc, availableSpaceX, spacingX, sizeX, centerY, (arraySize * errorOffset));
 				
-//				drawArraySize(gc, rectangleStartX, rectangleStartX + (rectangleSizeX / 2), rectangleStartX + rectangleSizeX, centerY + (squareSizeY / 2) + 10, errorExpression, originalArraySize);
 				drawArraySize(gc, rectangleStartX, rectangleStartX + (rectangleSizeX / 2), rectangleStartX + rectangleSizeX, errorExpression, originalArraySize);
 
 				if(array.length > maxArraySize) {
 					for(int i = 0; i < maxArraySize - 3; i++) {
-						drawSquare(array[i], i + "", gc, availableSpaceX, spacingX, sizeX, centerY, i + offset);
+						drawSquare(array[i], i + "", gc, availableSpaceX, spacingX, sizeX, centerY, i + offset, accessedPositions);
 					}
-					drawSquare("...", "...", gc, availableSpaceX, spacingX, sizeX, centerY, maxArraySize - 3 + offset);
-					drawSquare(array[array.length - 2], (array.length - 2) + "", gc, availableSpaceX, spacingX, sizeX, centerY, maxArraySize - 2 + offset);
-					drawSquare(array[array.length - 1], (array.length - 1) + "", gc, availableSpaceX, spacingX, sizeX, centerY, maxArraySize - 1 + offset);
+					drawSquare("...", "...", gc, availableSpaceX, spacingX, sizeX, centerY, maxArraySize - 3 + offset, accessedPositions);
+					drawSquare(array[array.length - 2], (array.length - 2) + "", gc, availableSpaceX, spacingX, sizeX, centerY, maxArraySize - 2 + offset, accessedPositions);
+					drawSquare(array[array.length - 1], (array.length - 1) + "", gc, availableSpaceX, spacingX, sizeX, centerY, maxArraySize - 1 + offset, accessedPositions);
 				} else {
 					for(int i = 0; i < arraySize; i++) {
-						drawSquare(array[i], i + "", gc, availableSpaceX, spacingX, sizeX, centerY, i + offset);
+						drawSquare(array[i], i + "", gc, availableSpaceX, spacingX, sizeX, centerY, i + offset, accessedPositions);
 					}
 				}
 			}
@@ -106,12 +107,19 @@ public class ArrayIndexErrorDraw extends Canvas {
 	}
 	
 	//Draws a square with the value inside
-	private void drawSquare(String text, String positionText, GC gc, int availableSpaceX, int spacingX, int sizeX, int centerY, int i) {
+	private void drawSquare(String text, String positionText, GC gc, int availableSpaceX, int spacingX, int sizeX, int centerY, int i, ArrayList<Integer> accessedPositions) {
 		gc.setBackground(InterfaceColors.WHITE.getColor());
 		gc.setForeground(InterfaceColors.GREEN.getColor());
 		int currentX = (i * availableSpaceX) + squareStartX;
 		gc.fillRectangle(currentX + spacingX, squareStartY, sizeX, squareSizeY);
-		gc.drawRectangle(currentX + spacingX, squareStartY, sizeX, squareSizeY);
+		
+		try {
+			if(accessedPositions.contains(Integer.parseInt(positionText)))
+				gc.drawRectangle(currentX + spacingX, squareStartY, sizeX, squareSizeY);
+		} catch (NumberFormatException e) {
+			if(!positionText.equals("..."))
+				e.printStackTrace();
+		}
 		
 		int centerX = (currentX + (currentX + sizeX + spacingX * 2)) / 2;
 		

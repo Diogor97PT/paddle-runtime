@@ -28,7 +28,7 @@ public class ArrayIndexErrorMessage extends ErrorMessage {
 		IVariableDeclaration array = ((IVariableExpression)error.getTarget()).getVariable();
 		//int arrayDimension = e.getIndexDimension();	//Dimensão da array que deu erro
 		
-		Object obj = runtime.getVarReferences().get(array).getValue();
+		Object obj = runtime.getVarValues().get(array).getReference().getValue();
 		if(obj instanceof IArray)
 			array_ref = (IArray) obj;
 		else
