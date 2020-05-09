@@ -1,20 +1,20 @@
-package pt.iscte.paddle.runtime.tests;
+package pt.iscte.paddle.runtime.tests.array;
 
 import static pt.iscte.paddle.model.IOperator.ADD;
-import static pt.iscte.paddle.model.IOperator.GREATER_EQ;
-import static pt.iscte.paddle.model.IOperator.SUB;
+import static pt.iscte.paddle.model.IOperator.SMALLER_EQ;
 import static pt.iscte.paddle.model.IType.INT;
 
 import pt.iscte.paddle.model.IBlock;
 import pt.iscte.paddle.model.ILoop;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IVariableDeclaration;
+import pt.iscte.paddle.runtime.tests.Test;
 
-public class ArrayIndexErrorBackwardTest extends Test {
+public class ArrayIndexErrorExpressionTest extends Test {
 
-	public ArrayIndexErrorBackwardTest() {
+	public ArrayIndexErrorExpressionTest() {
 		module = IModule.create();												//Criar classe
-		module.setId("ArrayIndexErrorBackwardTest");							//dar nome à classe
+		module.setId("ArrayIndexErrorExpressionTest");							//dar nome à classe
 		
 		procedure = module.addProcedure(INT.array().reference());				//criar função
 		procedure.setId("naturals");
@@ -28,12 +28,12 @@ public class ArrayIndexErrorBackwardTest extends Test {
 		array.setId("array");
 		body.addAssignment(array, INT.array().heapAllocation(n));
 		
-		IVariableDeclaration i = body.addVariable(INT, SUB.on(n, INT.literal(1)));
+		IVariableDeclaration i = body.addVariable(INT, INT.literal(0));
 		i.setId("i");
 		
-		ILoop loop = body.addLoop(GREATER_EQ.on(i, INT.literal(-1)));
-		loop.addArrayElementAssignment(array, ADD.on(i, INT.literal(1)), i);
-		loop.addAssignment(i, SUB.on(i, INT.literal(1)));
+		ILoop loop = body.addLoop(SMALLER_EQ.on(i, n));
+		loop.addArrayElementAssignment(array, ADD.on(i, INT.literal(1)), ADD.on(i, INT.literal(1)));
+		loop.addAssignment(i, ADD.on(i, INT.literal(1)));
 		
 		body.addReturn(array);
 	}

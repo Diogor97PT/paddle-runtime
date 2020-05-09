@@ -5,8 +5,8 @@ import pt.iscte.paddle.model.IProcedure;
 
 public abstract class Test {
 	
-	IModule module;
-	IProcedure procedure;
+	protected IModule module;
+	protected IProcedure procedure;
 	
 	public IModule getModule() {
 		return module;

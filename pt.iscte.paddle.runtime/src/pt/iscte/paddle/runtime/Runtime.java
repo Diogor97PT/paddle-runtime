@@ -27,8 +27,9 @@ import pt.iscte.paddle.model.IVariableExpression;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.runtime.messages.ErrorMessage;
 import pt.iscte.paddle.runtime.messages.Message;
-import pt.iscte.paddle.runtime.tests.ArrayIndexErrorTest;
 import pt.iscte.paddle.runtime.tests.Test;
+import pt.iscte.paddle.runtime.tests.array.ArrayIndexErrorTest;
+import pt.iscte.paddle.runtime.tests.array.ArrayIndexPlus2Test;
 import pt.iscte.paddle.runtime.variableInfo.ArrayVariableInfo;
 import pt.iscte.paddle.runtime.variableInfo.VariableInfo;
 import pt.iscte.paddle.runtime.variableInfo.VariableInfo.VariableType;
@@ -43,9 +44,10 @@ public class Runtime {
 	private Map<IVariableDeclaration, VariableInfo> varValues = new HashMap<>();
 	
 	//-------------------------------------tests-------------------------------------//
-	Test test = new ArrayIndexErrorTest();
+//	Test test = new ArrayIndexErrorTest();
 //	Test test = new ArrayIndexErrorExpressionTest();
 //	Test test = new ArrayIndexErrorBackwardTest();
+	Test test = new ArrayIndexPlus2Test();
 //	Test test = new ArrayIndexFunctionTest();
 //	Test test = new SumAllTest();
 //	Test test = new NullPointerErrorTest();

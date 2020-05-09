@@ -1,24 +1,20 @@
 package pt.iscte.paddle.runtime.tests;
 
-import pt.iscte.paddle.model.IBlock;
-import pt.iscte.paddle.model.ILiteral;
-import pt.iscte.paddle.model.ILoop;
-import pt.iscte.paddle.model.IModule;
-import pt.iscte.paddle.model.IRecordType;
-import pt.iscte.paddle.model.IType;
-import pt.iscte.paddle.model.IVariableDeclaration;
-
-import static pt.iscte.paddle.model.IOperator.ADD;
-import static pt.iscte.paddle.model.IOperator.SMALLER;
 import static pt.iscte.paddle.model.IType.INT;
 
+import pt.iscte.paddle.model.IBlock;
+import pt.iscte.paddle.model.ILiteral;
+import pt.iscte.paddle.model.IModule;
+import pt.iscte.paddle.model.IVariableDeclaration;
+
+//TODO completar NullPointerErrorTest
 public class NullPointerErrorTest extends Test {
 	
 	public NullPointerErrorTest() {
 		module = IModule.create();
 		module.setId("NullPointerErrorTest");
 		
-		IRecordType recordType = module.addRecordType("Teste");
+//		IRecordType recordType = module.addRecordType("Teste");
 		
 		procedure = module.addProcedure(INT);
 		procedure.setId("nullPointerIsCool");

@@ -1,4 +1,4 @@
-package pt.iscte.paddle.runtime.tests;
+package pt.iscte.paddle.runtime.tests.array;
 
 import static pt.iscte.paddle.model.IOperator.ADD;
 import static pt.iscte.paddle.model.IOperator.SMALLER;
@@ -9,6 +9,7 @@ import pt.iscte.paddle.model.IBlock;
 import pt.iscte.paddle.model.ILoop;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IVariableDeclaration;
+import pt.iscte.paddle.runtime.tests.Test;
 
 public class SumAllTest extends Test {
 	
