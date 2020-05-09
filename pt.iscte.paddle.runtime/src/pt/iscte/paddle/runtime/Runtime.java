@@ -29,7 +29,6 @@ import pt.iscte.paddle.runtime.messages.ErrorMessage;
 import pt.iscte.paddle.runtime.messages.Message;
 import pt.iscte.paddle.runtime.tests.Test;
 import pt.iscte.paddle.runtime.tests.array.ArrayIndexErrorTest;
-import pt.iscte.paddle.runtime.tests.array.ArrayIndexPlus2Test;
 import pt.iscte.paddle.runtime.variableInfo.ArrayVariableInfo;
 import pt.iscte.paddle.runtime.variableInfo.VariableInfo;
 import pt.iscte.paddle.runtime.variableInfo.VariableInfo.VariableType;
@@ -44,10 +43,10 @@ public class Runtime {
 	private Map<IVariableDeclaration, VariableInfo> varValues = new HashMap<>();
 	
 	//-------------------------------------tests-------------------------------------//
-//	Test test = new ArrayIndexErrorTest();
+	Test test = new ArrayIndexErrorTest();
 //	Test test = new ArrayIndexErrorExpressionTest();
 //	Test test = new ArrayIndexErrorBackwardTest();
-	Test test = new ArrayIndexPlus2Test();
+//	Test test = new ArrayIndexPlus2Test();
 //	Test test = new ArrayIndexFunctionTest();
 //	Test test = new SumAllTest();
 //	Test test = new NullPointerErrorTest();
@@ -73,7 +72,7 @@ public class Runtime {
 				procedure.getParameters().forEach(var -> {						//TODO Otimizar de maneira a verificar um procedure apenas uma vez
 					IReference r = state.getCallStack().getTopFrame().getVariableStore(var);
 					if(r.getType() instanceof IArrayType)
-						varValues.putIfAbsent(var, new ArrayVariableInfo(var, VariableType.PARAMETER, r, r.getValue().toString()));
+						varValues.putIfAbsent(var, new ArrayVariableInfo(var, VariableType.PARAMETER, r, null, r.getValue().toString()));	//if var is Parameter, lenght was assigned before entering the function
 					else
 						varValues.putIfAbsent(var, new VariableInfo(var, VariableType.PARAMETER, r, r.getValue().toString()));
 				});
@@ -94,7 +93,8 @@ public class Runtime {
 						variableType = VariableType.LOCAL_VARIABLE;
 					
 					if(r.getType() instanceof IArrayType) {
-						varValues.putIfAbsent(var, new ArrayVariableInfo(var, variableType, r, r.getValue().toString()));
+						IExpression lengthExpression = a.getExpression().getParts().get(0);		//TODO tornar multidimensional (matrizes)
+						varValues.putIfAbsent(var, new ArrayVariableInfo(var, variableType, r, lengthExpression, r.getValue().toString()));
 					} else {
 						VariableInfo varInfo = varValues.putIfAbsent(var, new VariableInfo(var, variableType, r, r.getValue().toString()));
 						if(varInfo != null)
@@ -105,7 +105,7 @@ public class Runtime {
 					IVariableDeclaration var = ErrorMessage.getVariableFromExpression(a.getTarget()).getVariable();
 					IReference r = state.getCallStack().getTopFrame().getVariableStore(var);
 					
-					int position = getIntValueFromExpression(a.getIndexes().get(0));  //TODO tornar multidimensional
+					int position = getIntValueFromExpression(a.getIndexes().get(0));  	//TODO tornar multidimensional (matrizes)
 					
 					ArrayVariableInfo info = (ArrayVariableInfo) varValues.get(var);
 					info.addArrayAccessInformation(r.getValue().toString(), position);

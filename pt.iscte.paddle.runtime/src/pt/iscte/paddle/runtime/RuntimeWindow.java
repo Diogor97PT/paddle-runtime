@@ -132,11 +132,12 @@ public class RuntimeWindow {
 						ArrayIndexErrorMessage arrayIndexError = (ArrayIndexErrorMessage) errorMessage;
 						canvasDec = errorLine.addDecoration((parent, control) -> {
 							ArrayIndexErrorDraw arrayDraw = new ArrayIndexErrorDraw(parent);
-							arrayDraw.draw(message.getVarValues().get(errorMessage.getErrorTarget()).getReference(), 
+							/*arrayDraw.draw(message.getVarValues().get(errorMessage.getErrorTarget()).getReference(), 
 									arrayIndexError.getErrorIndex(), 
 									errorMessage.getErrorExpression(), 
 									arrayIndexError.getArraySize(), 
-									((ArrayVariableInfo)message.getVarValues().get(errorMessage.getErrorTarget())).getAccessedPositions());
+									((ArrayVariableInfo)message.getVarValues().get(errorMessage.getErrorTarget())).getAccessedPositions());*/
+							arrayDraw.draw(((ArrayVariableInfo)message.getVarValues().get(errorMessage.getErrorTarget())), arrayIndexError.getErrorIndex(), arrayIndexError.getArraySize());
 							return arrayDraw;
 						}, ICodeDecoration.Location.RIGHT);
 						canvasDec.show();

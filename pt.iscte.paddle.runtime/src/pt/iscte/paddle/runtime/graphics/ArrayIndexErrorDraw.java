@@ -1,6 +1,7 @@
 package pt.iscte.paddle.runtime.graphics;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -12,9 +13,9 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 
-import pt.iscte.paddle.interpreter.IReference;
 import pt.iscte.paddle.model.IExpression;
 import pt.iscte.paddle.runtime.InterfaceColors;
+import pt.iscte.paddle.runtime.variableInfo.ArrayVariableInfo;
 
 public class ArrayIndexErrorDraw extends Canvas {
 	
@@ -55,10 +56,12 @@ public class ArrayIndexErrorDraw extends Canvas {
 	}
 	
 	//TODO acertar melhor o desenho
-	public void draw(IReference arrayReference, int errorPosition, IExpression errorExpression, int originalArraySize, ArrayList<Integer> accessedPositions) {
+//	public void draw(IReference arrayReference, int errorPosition, IExpression errorExpression, int originalArraySize, ArrayList<Integer> accessedPositions) {
+	public void draw(ArrayVariableInfo info, int errorPosition, int originalArraySize) {
 		if(paintListener != null) removePaintListener(paintListener);
 		
-		String [] array = stringToArray(arrayReference.getValue().toString());
+		String [] array = stringToArray(info.getReference().getValue().toString());
+		List<Integer> accessedPositions = info.getAccessedPositions();
 		
 		paintListener = new PaintListener() {
 			@Override
@@ -86,7 +89,8 @@ public class ArrayIndexErrorDraw extends Canvas {
 				int errorOffset = offset ^ 1;				//XOR -> if offset = 1, errorOffset = 0 and vice-versa (inverts errorOffset value)
 				drawErrorPosition(Integer.toString(errorPosition), gc, availableSpaceX, spacingX, sizeX, centerY, (arraySize * errorOffset));
 				
-				drawArraySize(gc, rectangleStartX, rectangleStartX + (rectangleSizeX / 2), rectangleStartX + rectangleSizeX, errorExpression, originalArraySize);
+				String lengthExpression = info.getLengthExpression() == null ? "Parâmetro da Função" : info.getLengthExpression().toString();
+				drawArraySize(gc, rectangleStartX, rectangleStartX + (rectangleSizeX / 2), rectangleStartX + rectangleSizeX, lengthExpression, originalArraySize);
 
 				if(array.length > maxArraySize) {
 					for(int i = 0; i < maxArraySize - 3; i++) {
@@ -107,7 +111,7 @@ public class ArrayIndexErrorDraw extends Canvas {
 	}
 	
 	//Draws a square with the value inside
-	private void drawSquare(String text, String positionText, GC gc, int availableSpaceX, int spacingX, int sizeX, int centerY, int i, ArrayList<Integer> accessedPositions) {
+	private void drawSquare(String text, String positionText, GC gc, int availableSpaceX, int spacingX, int sizeX, int centerY, int i, List<Integer> accessedPositions) {
 		gc.setBackground(InterfaceColors.WHITE.getColor());
 		gc.setForeground(InterfaceColors.GREEN.getColor());
 		int currentX = (i * availableSpaceX) + squareStartX;
@@ -154,12 +158,12 @@ public class ArrayIndexErrorDraw extends Canvas {
 	}
 	
 	//Draws the symbol that represents the array size
-	private void drawArraySize(GC gc, int rectStartX, int rectCenterX, int rectEndX, IExpression errorExpression, int arraySize) {
+	private void drawArraySize(GC gc, int rectStartX, int rectCenterX, int rectEndX, String lengthExpression, int arraySize) {
 		gc.setForeground(InterfaceColors.BLACK.getColor());
 		gc.setLineStyle(SWT.LINE_SOLID);
 		gc.setFont(boldFont);
 		
-		String errorExpressionString = arraySize + " (" + errorExpression.toString() + ")";
+		String errorExpressionString = arraySize + " (" + lengthExpression.toString() + ")";
 		Point textSize = gc.textExtent(errorExpressionString);
 		
 		int pathStartY = textSize.y;
