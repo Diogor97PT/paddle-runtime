@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public class Example04Invert {
 	
-	public static int[] inverterVetor(int[] v) {
+	public static int[] invert(int[] v) {
 		int [] v2 = new int[v.length];
 		int i = v.length - 1;
 		while(i >= 0) {
@@ -16,8 +16,9 @@ public class Example04Invert {
 	
 	public static void main(String[] args) {
 		int [] v = {1, 2, 3, 4, 5};
-		int [] array = inverterVetor(v);
-		System.out.println("Array: " + Arrays.toString(array));
+		int [] array = invert(v);
+		System.out.println("Original Array: " + Arrays.toString(v));
+		System.out.println("Inverted Array: " + Arrays.toString(array));
 	}
 
 }
