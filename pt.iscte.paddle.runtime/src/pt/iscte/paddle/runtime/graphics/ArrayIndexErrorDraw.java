@@ -14,6 +14,7 @@ import org.eclipse.swt.widgets.Composite;
 
 import pt.iscte.paddle.runtime.InterfaceColors;
 import pt.iscte.paddle.runtime.variableInfo.ArrayVariableInfo;
+import pt.iscte.paddle.runtime.variableInfo.ArrayVariableInfo.Coordinates;
 
 public class ArrayIndexErrorDraw extends Canvas {
 	
@@ -59,7 +60,7 @@ public class ArrayIndexErrorDraw extends Canvas {
 		if(paintListener != null) removePaintListener(paintListener);
 		
 		String [] array = stringToArray(info.getReference().getValue().toString());
-		List<Integer> accessedPositions = info.getAccessedPositions();
+		List<Coordinates> accessedPositions = info.getAccessedPositions();
 		
 		paintListener = new PaintListener() {
 			@Override
@@ -87,7 +88,8 @@ public class ArrayIndexErrorDraw extends Canvas {
 				int errorOffset = offset ^ 1;				//XOR -> if offset = 1, errorOffset = 0 and vice-versa (inverts errorOffset value)
 				drawErrorPosition(Integer.toString(errorPosition), gc, availableSpaceX, spacingX, sizeX, centerY, (arraySize * errorOffset));
 				
-				String lengthExpression = info.getLengthExpression() == null ? "Parâmetro da Função" : info.getLengthExpression().toString();
+//				System.out.println(info.getLengthExpressions());
+				String lengthExpression = info.getLengthExpressions() != null ? " (" + info.getLengthExpressions().get(0).toString() + ")" : "";	//TODO tornar multidimensional
 				drawArraySize(gc, rectangleStartX, rectangleStartX + (rectangleSizeX / 2), rectangleStartX + rectangleSizeX, lengthExpression, originalArraySize);
 
 				if(array.length > maxArraySize) {
@@ -109,15 +111,19 @@ public class ArrayIndexErrorDraw extends Canvas {
 	}
 	
 	//Draws a square with the value inside
-	private void drawSquare(String text, String positionText, GC gc, int availableSpaceX, int spacingX, int sizeX, int centerY, int i, List<Integer> accessedPositions) {
+	private void drawSquare(String text, String positionText, GC gc, int availableSpaceX, int spacingX, int sizeX, int centerY, int i, List<Coordinates> accessedPositions) {
 		gc.setBackground(InterfaceColors.WHITE.getColor());
 		gc.setForeground(InterfaceColors.GREEN.getColor());
 		int currentX = (i * availableSpaceX) + squareStartX;
 		gc.fillRectangle(currentX + spacingX, squareStartY, sizeX, squareSizeY);
 		
 		try {
-			if(accessedPositions.contains(Integer.parseInt(positionText)))
-				gc.drawRectangle(currentX + spacingX, squareStartY, sizeX, squareSizeY);
+			for(Coordinates coord : accessedPositions) {
+				if(coord.getCoordinates().get(0).equals(Integer.parseInt(positionText)))
+					gc.drawRectangle(currentX + spacingX, squareStartY, sizeX, squareSizeY);
+			}
+//			if(accessedPositions.contains(Integer.parseInt(positionText)))
+//				gc.drawRectangle(currentX + spacingX, squareStartY, sizeX, squareSizeY);
 		} catch (NumberFormatException e) {
 			if(!positionText.equals("..."))
 				e.printStackTrace();
@@ -161,7 +167,7 @@ public class ArrayIndexErrorDraw extends Canvas {
 		gc.setLineStyle(SWT.LINE_SOLID);
 		gc.setFont(boldFont);
 		
-		String errorExpressionString = arraySize + " (" + lengthExpression.toString() + ")";
+		String errorExpressionString = arraySize + lengthExpression;
 		Point textSize = gc.textExtent(errorExpressionString);
 		
 		int pathStartY = textSize.y;

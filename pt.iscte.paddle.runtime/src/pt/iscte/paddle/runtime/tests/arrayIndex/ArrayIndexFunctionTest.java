@@ -1,4 +1,4 @@
-package pt.iscte.paddle.runtime.tests.array;
+package pt.iscte.paddle.runtime.tests.arrayIndex;
 
 import static pt.iscte.paddle.model.IOperator.ADD;
 import static pt.iscte.paddle.model.IOperator.SMALLER;

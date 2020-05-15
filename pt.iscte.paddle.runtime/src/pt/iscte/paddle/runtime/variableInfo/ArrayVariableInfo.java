@@ -9,24 +9,53 @@ import pt.iscte.paddle.model.IVariableDeclaration;
 
 public class ArrayVariableInfo extends VariableInfo {
 
-	private List<Integer> accessedPositions = new ArrayList<>();
-	private IExpression lengthExpression;
+	private List<Coordinates> accessedPositions = new ArrayList<>();
+	private List<IExpression> lengthExpressions;
 	
-	public ArrayVariableInfo(IVariableDeclaration variableDeclaration, VariableType variableType, IReference reference, IExpression lengthExpression, String value) {
+	public ArrayVariableInfo(IVariableDeclaration variableDeclaration, VariableType variableType, IReference reference, 
+			String value, List<IExpression> lengthExpressions) {
+		
 		super(variableDeclaration, variableType, reference, value);
-		this.lengthExpression = lengthExpression;
+		this.lengthExpressions = lengthExpressions;
 	}
 	
-	public void addArrayAccessInformation(String value, int i) {
-		accessedPositions.add(i);
+	public void addArrayAccessInformation(String value, List<Integer> coordinates) {
+		accessedPositions.add(new Coordinates(coordinates));
 		super.addVarValue(value);
 	}
 
-	public List<Integer> getAccessedPositions() {
+	public List<Coordinates> getAccessedPositions() {
 		return accessedPositions;
 	}
 	
-	public IExpression getLengthExpression() {
-		return lengthExpression;
+	public List<IExpression> getLengthExpressions() {
+		return lengthExpressions;
+	}
+	
+	public class Coordinates {
+		
+		private List<Integer> coordinates;
+		
+		public Coordinates(List<Integer> coordinates) {
+			this.coordinates = coordinates;
+		}
+		
+		public List<Integer> getCoordinates() {
+			return coordinates;
+		}
+		
+		@Override
+		public boolean equals(Object obj) {
+			Coordinates coord = (Coordinates) obj;
+			
+			if(this.coordinates.size() != coord.getCoordinates().size()) return false;
+			
+			for(int i = 0; i < this.coordinates.size(); i++) {
+				if(this.coordinates.get(i) != coord.getCoordinates().get(i))
+					return false;
+			}
+			
+			return true;
+		}
 	}
 }

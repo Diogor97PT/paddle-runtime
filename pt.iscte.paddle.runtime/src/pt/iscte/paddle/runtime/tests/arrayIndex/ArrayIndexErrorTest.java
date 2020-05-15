@@ -1,4 +1,4 @@
-package pt.iscte.paddle.runtime.tests.array;
+package pt.iscte.paddle.runtime.tests.arrayIndex;
 
 import static pt.iscte.paddle.model.IOperator.ADD;
 import static pt.iscte.paddle.model.IOperator.SMALLER_EQ;
@@ -10,9 +10,9 @@ import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.runtime.tests.Test;
 
-public class ArrayIndexPlus2Test extends Test {
+public class ArrayIndexErrorTest extends Test {
 	
-	public ArrayIndexPlus2Test() {
+	public ArrayIndexErrorTest() {
 		module = IModule.create();												//Criar classe
 		module.setId("ArrayIndexErrorTest");									//dar nome à classe
 		
@@ -33,9 +33,9 @@ public class ArrayIndexPlus2Test extends Test {
 		
 		ILoop loop = body.addLoop(SMALLER_EQ.on(i, n));
 		loop.addArrayElementAssignment(array, ADD.on(i, INT.literal(1)), i);
-		loop.addAssignment(i, ADD.on(i, INT.literal(2)));
+		loop.addAssignment(i, ADD.on(i, INT.literal(1)));
 		
 		body.addReturn(array);
 	}
-
+	
 }

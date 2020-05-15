@@ -1,6 +1,8 @@
 package pt.iscte.paddle.runtime;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import pt.iscte.paddle.interpreter.ExecutionError;
@@ -12,6 +14,7 @@ import pt.iscte.paddle.interpreter.IReference;
 import pt.iscte.paddle.interpreter.IValue;
 import pt.iscte.paddle.javardise.service.IJavardiseService;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
+import pt.iscte.paddle.model.IArrayElement;
 import pt.iscte.paddle.model.IArrayElementAssignment;
 import pt.iscte.paddle.model.IArrayType;
 import pt.iscte.paddle.model.IBlockElement;
@@ -19,6 +22,7 @@ import pt.iscte.paddle.model.IExpression;
 import pt.iscte.paddle.model.ILiteral;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
+import pt.iscte.paddle.model.IProcedureCall;
 import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.IStatement;
 import pt.iscte.paddle.model.IVariableAssignment;
@@ -28,7 +32,7 @@ import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.runtime.messages.ErrorMessage;
 import pt.iscte.paddle.runtime.messages.Message;
 import pt.iscte.paddle.runtime.tests.Test;
-import pt.iscte.paddle.runtime.tests.array.ArrayIndexErrorTest;
+import pt.iscte.paddle.runtime.tests.arrayIndex.ArrayIndexFunctionTest;
 import pt.iscte.paddle.runtime.variableInfo.ArrayVariableInfo;
 import pt.iscte.paddle.runtime.variableInfo.VariableInfo;
 import pt.iscte.paddle.runtime.variableInfo.VariableInfo.VariableType;
@@ -43,11 +47,11 @@ public class Runtime {
 	private Map<IVariableDeclaration, VariableInfo> varValues = new HashMap<>();
 	
 	//-------------------------------------tests-------------------------------------//
-	Test test = new ArrayIndexErrorTest();
+//	Test test = new ArrayIndexErrorTest();
 //	Test test = new ArrayIndexErrorExpressionTest();
 //	Test test = new ArrayIndexErrorBackwardTest();
 //	Test test = new ArrayIndexPlus2Test();
-//	Test test = new ArrayIndexFunctionTest();
+	Test test = new ArrayIndexFunctionTest();
 //	Test test = new SumAllTest();
 //	Test test = new NullPointerErrorTest();
 	//-------------------------------------tests-------------------------------------//
@@ -63,19 +67,22 @@ public class Runtime {
 		state = IMachine.create(module);
 	}
 	
-	public void addListener() {					//TODO resolver caso sum = sum + array[i] em que nao sei as posições acedidas do array
+	public void addListener() {
 		state.addListener(new IListener() {
 			@Override
 			public void step(IProgramElement statement) {
-				IProcedure procedure = getProcedureFromStatement((IStatement)statement);
-				
-				procedure.getParameters().forEach(var -> {						//TODO Otimizar de maneira a verificar um procedure apenas uma vez
-					IReference r = state.getCallStack().getTopFrame().getVariableStore(var);
-					if(r.getType() instanceof IArrayType)
-						varValues.putIfAbsent(var, new ArrayVariableInfo(var, VariableType.PARAMETER, r, null, r.getValue().toString()));	//if var is Parameter, lenght was assigned before entering the function
-					else
-						varValues.putIfAbsent(var, new VariableInfo(var, VariableType.PARAMETER, r, r.getValue().toString()));
-				});
+
+				if(statement instanceof IStatement && !(statement instanceof IProcedureCall)) {		//ProcedureCalls don't work in this
+					IProcedure procedure = getProcedureFromStatement((IStatement)statement);
+
+					procedure.getParameters().forEach(var -> {						//TODO Otimizar de maneira a verificar um procedure apenas uma vez
+						IReference r = state.getCallStack().getTopFrame().getVariableStore(var);
+						if(r.getType() instanceof IArrayType)
+							varValues.putIfAbsent(var, new ArrayVariableInfo(var, VariableType.PARAMETER, r, r.getValue().toString(), null));	//if var is Parameter, lenght was assigned before entering the function
+						else
+							varValues.putIfAbsent(var, new VariableInfo(var, VariableType.PARAMETER, r, r.getValue().toString()));
+					});
+				}
 				
 				if(statement instanceof IVariableAssignment ) {
 					IVariableAssignment a = (IVariableAssignment) statement;
@@ -93,8 +100,7 @@ public class Runtime {
 						variableType = VariableType.LOCAL_VARIABLE;
 					
 					if(r.getType() instanceof IArrayType) {
-						IExpression lengthExpression = a.getExpression().getParts().get(0);		//TODO tornar multidimensional (matrizes)
-						varValues.putIfAbsent(var, new ArrayVariableInfo(var, variableType, r, lengthExpression, r.getValue().toString()));
+						varValues.putIfAbsent(var, new ArrayVariableInfo(var, variableType, r, r.getValue().toString(), a.getExpression().getParts()));
 					} else {
 						VariableInfo varInfo = varValues.putIfAbsent(var, new VariableInfo(var, variableType, r, r.getValue().toString()));
 						if(varInfo != null)
@@ -105,10 +111,16 @@ public class Runtime {
 					IVariableDeclaration var = ErrorMessage.getVariableFromExpression(a.getTarget()).getVariable();
 					IReference r = state.getCallStack().getTopFrame().getVariableStore(var);
 					
-					int position = getIntValueFromExpression(a.getIndexes().get(0));  	//TODO tornar multidimensional (matrizes)
-					
+					List<Integer> coordinates = new ArrayList<>();
+					a.getIndexes().forEach(indexExpression -> {
+						coordinates.add(getIntValueFromExpression(indexExpression));
+					});
+
 					ArrayVariableInfo info = (ArrayVariableInfo) varValues.get(var);
-					info.addArrayAccessInformation(r.getValue().toString(), position);
+					info.addArrayAccessInformation(r.getValue().toString(), coordinates);
+//					
+				} else if (statement instanceof IArrayElement) {	//TODO resolver caso sum = sum + array[i] em que nao sei as posições acedidas do array
+//					System.out.println("Teste");
 				}
 			}
 		});

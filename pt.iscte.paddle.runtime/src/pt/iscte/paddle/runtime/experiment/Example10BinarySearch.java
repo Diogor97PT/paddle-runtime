@@ -2,7 +2,7 @@ package pt.iscte.paddle.runtime.experiment;
 
 public class Example10BinarySearch {
 	
-	//No error yet
+	//TODO adicionar um erro no codigo
 	public static int binarySearch(int [] v, int n) {
 		int i = 0;
 		int r = v.length - 1;
@@ -25,7 +25,7 @@ public class Example10BinarySearch {
 	
 	public static void main(String[] args) {
 		int [] v = {1, 5, 6, 7, 9, 10, 23, 52, 88, 99};
-		int n = 10;
+		int n = 5;
 		int position = binarySearch(v, n);
 		if(position == -1)
 			System.out.println("Number " + n + " not found.");
