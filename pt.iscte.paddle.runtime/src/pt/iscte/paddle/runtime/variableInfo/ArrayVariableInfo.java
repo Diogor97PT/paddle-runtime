@@ -57,5 +57,15 @@ public class ArrayVariableInfo extends VariableInfo {
 			
 			return true;
 		}
+		
+		@Override
+		public String toString() {
+			String s = "";
+			for(int coord : coordinates) {
+				s += coord + " ";
+			}
+//			s += "\n";
+			return s;
+		}
 	}
 }

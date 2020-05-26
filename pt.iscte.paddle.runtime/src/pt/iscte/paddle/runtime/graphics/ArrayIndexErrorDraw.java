@@ -12,6 +12,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 
+import pt.iscte.paddle.model.IExpression;
 import pt.iscte.paddle.runtime.InterfaceColors;
 import pt.iscte.paddle.runtime.variableInfo.ArrayVariableInfo;
 import pt.iscte.paddle.runtime.variableInfo.ArrayVariableInfo.Coordinates;
@@ -55,12 +56,18 @@ public class ArrayIndexErrorDraw extends Canvas {
 	}
 	
 	//TODO acertar melhor o desenho
-//	public void draw(IReference arrayReference, int errorPosition, IExpression errorExpression, int originalArraySize, ArrayList<Integer> accessedPositions) {
 	public void draw(ArrayVariableInfo info, int errorPosition, int originalArraySize) {
-		if(paintListener != null) removePaintListener(paintListener);
-		
 		String [] array = stringToArray(info.getReference().getValue().toString());
 		List<Coordinates> accessedPositions = info.getAccessedPositions();
+		IExpression expression = info.getLengthExpressions().get(0);
+		
+		drawArray(array, accessedPositions, expression, true, errorPosition, originalArraySize);
+	}
+	
+	//String[] array, List<Coordinates> accessedPositions, IExpression lengthExpression
+//	private void drawArray(ArrayVariableInfo info, int errorPosition, int originalArraySize) {
+	void drawArray(String[] array, List<Coordinates> accessedPositions, IExpression expression, boolean showErrorPosition, int errorPosition, int originalArraySize) {
+		if(paintListener != null) removePaintListener(paintListener);
 		
 		paintListener = new PaintListener() {
 			@Override
@@ -85,11 +92,12 @@ public class ArrayIndexErrorDraw extends Canvas {
 				int rectangleStartX = squareStartX + (availableSpaceX * offset);
 				gc.fillRoundRectangle(rectangleStartX, rectangleStartY, rectangleSizeX, rectangleSizeY, 10, 10);
 				
-				int errorOffset = offset ^ 1;				//XOR -> if offset = 1, errorOffset = 0 and vice-versa (inverts errorOffset value)
-				drawErrorPosition(Integer.toString(errorPosition), gc, availableSpaceX, spacingX, sizeX, centerY, (arraySize * errorOffset));
+				if(showErrorPosition) {
+					int errorOffset = offset ^ 1;				//XOR -> if offset = 1, errorOffset = 0 and vice-versa (inverts errorOffset value)
+					drawErrorPosition(Integer.toString(errorPosition), gc, availableSpaceX, spacingX, sizeX, centerY, (arraySize * errorOffset));
+				}
 				
-//				System.out.println(info.getLengthExpressions());
-				String lengthExpression = info.getLengthExpressions() != null ? " (" + info.getLengthExpressions().get(0).toString() + ")" : "";	//TODO tornar multidimensional
+				String lengthExpression = expression != null ? " (" + expression.toString() + ")" : "";
 				drawArraySize(gc, rectangleStartX, rectangleStartX + (rectangleSizeX / 2), rectangleStartX + rectangleSizeX, lengthExpression, originalArraySize);
 
 				if(array.length > maxArraySize) {
@@ -106,6 +114,7 @@ public class ArrayIndexErrorDraw extends Canvas {
 				}
 			}
 		};
+		
 		addPaintListener(paintListener);
 		redraw();
 	}
@@ -118,12 +127,10 @@ public class ArrayIndexErrorDraw extends Canvas {
 		gc.fillRectangle(currentX + spacingX, squareStartY, sizeX, squareSizeY);
 		
 		try {
-			for(Coordinates coord : accessedPositions) {
+			for(Coordinates coord : accessedPositions) {	//TODO tornar multidimensional
 				if(coord.getCoordinates().get(0).equals(Integer.parseInt(positionText)))
 					gc.drawRectangle(currentX + spacingX, squareStartY, sizeX, squareSizeY);
 			}
-//			if(accessedPositions.contains(Integer.parseInt(positionText)))
-//				gc.drawRectangle(currentX + spacingX, squareStartY, sizeX, squareSizeY);
 		} catch (NumberFormatException e) {
 			if(!positionText.equals("..."))
 				e.printStackTrace();
@@ -211,4 +218,93 @@ public class ArrayIndexErrorDraw extends Canvas {
 		return s2.trim().replaceAll(" ", "").split(",");
 	}
 	
+	/*private void drawSquareMatrix(String text, GC gc, int availableSpaceX, int spacingX, int sizeX, int i, 
+	  int availableSpaceY, int spacingY, int sizeY, int j, List<Coordinates> accessedPositions) {
+gc.setBackground(InterfaceColors.WHITE.getColor());
+gc.setForeground(InterfaceColors.GREEN.getColor());
+
+int currentX = (i * availableSpaceX) + squareStartX;
+int currentY = (j * availableSpaceY) + 5;				//TODO alterar 5 para um atributo
+gc.fillRectangle(currentX + spacingX, currentY + spacingY, sizeX, sizeY);
+
+//Highlight Accessed Position
+for(Coordinates coord : accessedPositions) {
+if(coord.getCoordinates().get(0).equals(i) && coord.getCoordinates().get(1).equals(j))
+gc.drawRectangle(currentX + spacingX, currentY + spacingY, sizeX, sizeY);
+}
+
+int centerX = (currentX + (currentX + sizeX + spacingX * 2)) / 2;
+int centerY = (currentY + (currentY + sizeY + spacingY * 2)) / 2;
+
+gc.setFont(boldFont);
+gc.setForeground(InterfaceColors.BLACK.getColor());
+Point boldTextSize = gc.textExtent(text);
+int textX = centerX - (boldTextSize.x / 2);
+int textY = centerY - (boldTextSize.y / 2);
+gc.drawText(text, textX, textY);						//Text inside square
+}*/
+
+	/*private void drawMatrix(ArrayVariableInfo info, int errorPosition, int originalArraySize) {
+List<String []> matrix = stringToMatrix(info.getReference().getValue().toString());
+List<Coordinates> accessedPositions = info.getAccessedPositions();
+
+paintListener = new PaintListener() {
+@Override
+public void paintControl(PaintEvent e) {
+int matrixSizeX = matrix.size() > maxArraySize ? maxArraySize : matrix.size();
+
+int matrixSizeY = 0; int realMatrixSizeY = 0;
+for(String [] v : matrix)
+if(v.length > matrixSizeY) { 
+matrixSizeY = v.length;
+realMatrixSizeY = v.length;
+}
+if(matrixSizeY > maxArraySize) matrixSizeY = maxArraySize;
+
+GC gc = e.gc;
+gc.setBackground(InterfaceColors.GRAY.getColor());
+gc.setAntialias(SWT.ON);
+
+								//Horizontal
+int availableSpaceX = (getSize().x - 10) / (matrixSizeX + 1);	//Espaço que cada quadrado ocupa (quadrado em si + margem esquerda e direita
+int spacingX = availableSpaceX / 8;								//margem de um dos lados
+int sizeX = availableSpaceX - (spacingX * 2);					//tamanho do quadrado em si
+
+int availableSpaceY = (getSize().y - 10) / (matrixSizeY + 1);
+int spacingY = availableSpaceY / 8;
+int sizeY = availableSpaceY - (spacingY * 2);
+
+int rectangleSizeX = getSize().x - 10 - availableSpaceX;
+
+int rectangleSizeY = getSize().y - 10 - availableSpaceY;
+
+int offsetX = 0;
+if(errorPosition < 0) offsetX++;
+
+int offsetY = 0;
+if(errorPosition < 0) offsetY++;
+
+int rectangleStartX = squareStartX + (availableSpaceX * offsetX);
+int rectangleStartY = 5 + (availableSpaceY * offsetY);				//TODO alterar 5 para um atributo
+
+gc.fillRoundRectangle(rectangleStartX, rectangleStartY, rectangleSizeX, rectangleSizeY, 10, 10);
+
+//Draw Error Position Stuff Here
+
+//Draw Array Size Stuff Here
+
+for(int i = 0; i < matrixSizeX; i++) {
+for(int j = 0; j < matrixSizeY; j++) {
+if(matrix.size() > maxArraySize && i == maxArraySize - 3)
+System.out.println("teste");
+else if (realMatrixSizeY > maxArraySize && j == maxArraySize - 3)
+System.out.println("teste");
+else
+drawSquareMatrix(matrix.get(i)[j], gc, availableSpaceX, spacingX, sizeX, i, 
+availableSpaceY, spacingY, sizeY, j, accessedPositions);
+}
+}
+}
+};
+}*/
 }

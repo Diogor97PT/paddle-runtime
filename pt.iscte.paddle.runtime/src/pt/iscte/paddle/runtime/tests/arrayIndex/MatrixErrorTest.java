@@ -1,10 +1,11 @@
 package pt.iscte.paddle.runtime.tests.arrayIndex;
 
+import static pt.iscte.paddle.model.IOperator.SMALLER;
 import static pt.iscte.paddle.model.IType.INT;
 
 import pt.iscte.paddle.model.IBlock;
+import pt.iscte.paddle.model.ILoop;
 import pt.iscte.paddle.model.IModule;
-import pt.iscte.paddle.model.IType;
 import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.runtime.tests.Test;
 
@@ -14,14 +15,34 @@ public class MatrixErrorTest extends Test {
 		module = IModule.create();
 		module.setId("MatrixErrorTest");
 		
-		procedure = module.addProcedure(IType.VOID);				//criar função
+		procedure = module.addProcedure(INT.array2D().reference());
 		procedure.setId("multiplyMatrix");
 		
 		IVariableDeclaration n = procedure.addParameter(INT);
 		n.setId("n");
 		
 		IBlock body = procedure.getBody();
-		//TODO finish this Test
+		IVariableDeclaration m = body.addVariable(INT.array2D().reference(), INT.array2D().heapAllocation(INT.literal(3), INT.literal(3)));
+		m.setId("m");
+
+		IVariableDeclaration q = body.addVariable(INT, INT.literal(0));
+		q.setId("q");
+		
+		IVariableDeclaration i = body.addVariable(INT, INT.literal(0));
+		i.setId("i");
+		
+		ILoop loop = body.addLoop(SMALLER.on(i, INT.literal(4)));
+		IVariableDeclaration j = loop.addVariable(INT, INT.literal(0));
+		j.setId("j");
+		
+		ILoop loop2 = loop.addLoop(SMALLER.on(j, INT.literal(3)));
+		loop2.addArrayElementAssignment(m, q, i, j);
+		loop2.addIncrement(j);
+		
+		loop.addIncrement(q);
+		loop.addIncrement(i);
+		
+		body.addReturn(m);
 	}
 
 }

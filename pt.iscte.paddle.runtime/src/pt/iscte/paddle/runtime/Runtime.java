@@ -32,7 +32,7 @@ import pt.iscte.paddle.model.cfg.IControlFlowGraph;
 import pt.iscte.paddle.runtime.messages.ErrorMessage;
 import pt.iscte.paddle.runtime.messages.Message;
 import pt.iscte.paddle.runtime.tests.Test;
-import pt.iscte.paddle.runtime.tests.arrayIndex.ArrayIndexFunctionTest;
+import pt.iscte.paddle.runtime.tests.arrayIndex.MatrixErrorTest;
 import pt.iscte.paddle.runtime.variableInfo.ArrayVariableInfo;
 import pt.iscte.paddle.runtime.variableInfo.VariableInfo;
 import pt.iscte.paddle.runtime.variableInfo.VariableInfo.VariableType;
@@ -51,7 +51,8 @@ public class Runtime {
 //	Test test = new ArrayIndexErrorExpressionTest();
 //	Test test = new ArrayIndexErrorBackwardTest();
 //	Test test = new ArrayIndexPlus2Test();
-	Test test = new ArrayIndexFunctionTest();
+//	Test test = new ArrayIndexFunctionTest();
+	Test test = new MatrixErrorTest();
 //	Test test = new SumAllTest();
 //	Test test = new NullPointerErrorTest();
 	//-------------------------------------tests-------------------------------------//
@@ -120,7 +121,17 @@ public class Runtime {
 					info.addArrayAccessInformation(r.getValue().toString(), coordinates);
 //					
 				} else if (statement instanceof IArrayElement) {	//TODO resolver caso sum = sum + array[i] em que nao sei as posições acedidas do array
-//					System.out.println("Teste");
+					IArrayElement a = (IArrayElement) statement;
+					IVariableDeclaration var = ErrorMessage.getVariableFromExpression(a.getTarget()).getVariable();
+					IReference r = state.getCallStack().getTopFrame().getVariableStore(var);
+					
+					List<Integer> coordinates = new ArrayList<>();
+					a.getIndexes().forEach(indexExpression -> {
+						coordinates.add(getIntValueFromExpression(indexExpression));
+					});
+
+					ArrayVariableInfo info = (ArrayVariableInfo) varValues.get(var);
+					info.addArrayAccessInformation(r.getValue().toString(), coordinates);
 				}
 			}
 		});
@@ -138,6 +149,9 @@ public class Runtime {
 		
 		if(exp instanceof IVariableExpression) {
 			return getIntValueFromIVariableExpression((IVariableExpression)exp);
+		} else if (exp instanceof ILiteral) {
+			ILiteral l = (ILiteral) exp;
+			return Integer.parseInt(l.getStringValue());
 		}
 		
 		int sum = 0;
