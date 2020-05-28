@@ -19,6 +19,7 @@ public class MatrixIndexErrorDraw extends Composite {
 	public MatrixIndexErrorDraw(Composite comp) {
 		super(comp, SWT.NONE);
 		GridLayout layout = new GridLayout();
+		layout.verticalSpacing = 0;
 		setLayout(layout);
 	}
 	
@@ -53,7 +54,7 @@ public class MatrixIndexErrorDraw extends Composite {
 			}
 			
 			ArrayIndexErrorDraw arrayDraw = new ArrayIndexErrorDraw(MatrixIndexErrorDraw.this);
-			arrayDraw.drawArray(matrix.get(i), oneDimensionCoordinates, null, false, errorPosition, originalArraySize);
+			arrayDraw.drawArray(matrix.get(i), oneDimensionCoordinates, null, false, errorPosition, false, originalArraySize);
 		}
 	}
 	
