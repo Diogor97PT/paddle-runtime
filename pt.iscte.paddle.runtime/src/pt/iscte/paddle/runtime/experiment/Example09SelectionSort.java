@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public class Example09SelectionSort {
 
-	//No error yet
+	//TODO No error yet
 	public static void selectionSort(int [] v) {
 		for(int i = 0; i < v.length - 1; i++) {
 			int minimumPos = i;
@@ -16,10 +16,10 @@ public class Example09SelectionSort {
 		}
 	}
 	
-	public static void swapElements(int[] nums, int i, int j) {
-		int temp = nums[i];
-		nums[i] = nums[j];
-		nums[j] = temp;
+	public static void swapElements(int[] v, int i, int j) {
+		int temp = v[i];
+		v[i] = v[j];
+		v[j] = temp;
 	}
 	
 	public static void main(String[] args) {

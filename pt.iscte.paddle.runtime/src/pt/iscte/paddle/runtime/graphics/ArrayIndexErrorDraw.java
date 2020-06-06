@@ -59,7 +59,9 @@ public class ArrayIndexErrorDraw extends Canvas {
 	public void draw(ArrayVariableInfo info, int errorPosition, int originalArraySize) {
 		String [] array = stringToArray(info.getReference().getValue().toString());
 		List<Coordinates> accessedPositions = info.getAccessedPositions();
-		IExpression expression = info.getLengthExpressions().get(0);
+		
+//		IExpression expression = info.getLengthExpressions().get(0);
+		IExpression expression = info.getLengthExpressions() != null ? info.getLengthExpressions().get(0) : null;
 		
 		drawArray(array, accessedPositions, expression, true, errorPosition, true, originalArraySize);
 	}
@@ -141,7 +143,7 @@ public class ArrayIndexErrorDraw extends Canvas {
 		gc.fillRectangle(currentX + spacingX, squareStartY, sizeX, squareSizeY);
 		
 		try {
-			for(Coordinates coord : accessedPositions) {	//TODO tornar multidimensional
+			for(Coordinates coord : accessedPositions) {
 				if(coord.getCoordinates().get(0).equals(Integer.parseInt(positionText)))
 					gc.drawRectangle(currentX + spacingX, squareStartY, sizeX, squareSizeY);
 			}

@@ -10,10 +10,10 @@ public class Example07InvertSameVector {
 		}
 	}
 	
-	public static void swapElements(int[] nums, int i, int j) {
-		int temp = nums[i];
-		nums[i] = nums[j];
-		nums[j] = temp;
+	public static void swapElements(int[] v, int i, int j) {
+		int temp = v[i];
+		v[i] = v[j];
+		v[j] = temp;
 	}
 	
 	public static void main(String[] args) {
