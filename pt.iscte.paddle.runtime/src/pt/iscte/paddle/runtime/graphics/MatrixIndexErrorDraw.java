@@ -13,12 +13,12 @@ import pt.iscte.paddle.runtime.variableInfo.ArrayVariableInfo.Coordinates;
 
 public class MatrixIndexErrorDraw extends Composite {
 	
-	private static final int compositeSizeX = 260;	//250
+	private static final int compositeSizeX = 380;	//250
 	private static final int compositeSizeY = 500;	//110
 
 	public MatrixIndexErrorDraw(Composite comp) {
 		super(comp, SWT.NONE);
-		GridLayout layout = new GridLayout();
+		GridLayout layout = new GridLayout(2, false);
 		layout.verticalSpacing = 0;
 		setLayout(layout);
 	}
@@ -43,6 +43,18 @@ public class MatrixIndexErrorDraw extends Composite {
 		List<String []> matrix = stringToMatrix(info.getReference().getValue().toString());
 		List<Coordinates> accessedPositions = info.getAccessedPositions();
 		
+		VerticalArrayDraw verticalArrayDraw = new VerticalArrayDraw(this);
+		if(info.getLengthExpressions() == null)
+			verticalArrayDraw.drawArray(null, false, errorPosition, originalArraySize);
+		else
+			verticalArrayDraw.drawArray(info.getLengthExpressions().get(0), false, errorPosition, originalArraySize);
+		
+		Composite rightSide = new Composite(this, SWT.NONE);
+		GridLayout rightSideLayout = new GridLayout();
+//		rightSideLayout.verticalSpacing = verticalArrayDraw.getSpacingY();
+		rightSideLayout.verticalSpacing = 0;
+		rightSide.setLayout(rightSideLayout);
+		
 		for(int i = 0; i < matrix.size(); i++) {
 			List<Coordinates> oneDimensionCoordinates = new ArrayList<>(); //TODO evitar esta conversão
 			for(Coordinates coordinates : accessedPositions) {
@@ -53,7 +65,7 @@ public class MatrixIndexErrorDraw extends Composite {
 				}
 			}
 			
-			ArrayIndexErrorDraw arrayDraw = new ArrayIndexErrorDraw(MatrixIndexErrorDraw.this);
+			ArrayIndexErrorDraw arrayDraw = new ArrayIndexErrorDraw(rightSide);
 			arrayDraw.drawArray(matrix.get(i), oneDimensionCoordinates, null, false, errorPosition, false, originalArraySize);
 		}
 	}

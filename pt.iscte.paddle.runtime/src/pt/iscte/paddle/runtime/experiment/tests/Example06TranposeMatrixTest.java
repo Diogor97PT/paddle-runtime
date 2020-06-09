@@ -36,9 +36,6 @@ public class Example06TranposeMatrixTest extends Test {
 		body.addArrayElementAssignment(m, INT.literal(5), INT.literal(1), INT.literal(1));
 		body.addArrayElementAssignment(m, INT.literal(6), INT.literal(1), INT.literal(2));
 		
-//		int [][] original = {{1, 2, 3},
-//	  			 {4, 5, 6}};
-		
 		body.addReturn(p2.expression(m));
 	}
 
@@ -63,7 +60,7 @@ public class Example06TranposeMatrixTest extends Test {
 		IVariableDeclaration j = body.addVariable(INT, INT.literal(0));
 		j.setId("j");
 		
-		ILoop loop2 = body.addLoop(SMALLER.on(j, m.length()));
+		ILoop loop2 = loop.addLoop(SMALLER.on(j, m.length()));
 		
 		loop2.addArrayElementAssignment(transposed, m.element(i, j), j, i);
 //		loop2.addArrayElementAssignment(transposed, m.element(j, i), i, j);

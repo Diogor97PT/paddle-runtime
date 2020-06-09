@@ -17,7 +17,7 @@ import pt.iscte.paddle.runtime.tests.Test;
 public class Example09SelectionSortTest extends Test {
 	
 	//TODO Example09 corrigir nao consegui testar porque ocupa demasiado espaço no ecrã
-	//TODO add error to code
+	//TODO Example09 No error yet
 	public Example09SelectionSortTest() {
 		module = IModule.create();
 		module.setId("Example09SelectionSortTest");

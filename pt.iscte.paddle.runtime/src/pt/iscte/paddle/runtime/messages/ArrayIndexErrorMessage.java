@@ -24,7 +24,7 @@ public class ArrayIndexErrorMessage extends ErrorMessage {
 		
 		int invalidPos = error.getInvalidIndex();
 		IExpression errorExpression = error.getIndexExpression();
-		IVariableDeclaration variable = getVariableFromExpression(errorExpression).getVariable();				//TODO Testar se rebenta
+		IVariableDeclaration variable = getVariableFromExpression(errorExpression).getVariable();
 		IVariableDeclaration array = ((IVariableExpression)error.getTarget()).getVariable();
 		//int arrayDimension = e.getIndexDimension();	//Dimensão da array que deu erro
 		
@@ -66,7 +66,7 @@ public class ArrayIndexErrorMessage extends ErrorMessage {
 	
 	@Override
 	public IVariableDeclaration getErrorTarget() {
-		return ((IVariableExpression)error.getTarget()).getVariable();
+		return ((IVariableExpression)error.getTarget()).getVariable();  //IArrayExpression?
 	}
 	
 	public int getErrorIndex() {

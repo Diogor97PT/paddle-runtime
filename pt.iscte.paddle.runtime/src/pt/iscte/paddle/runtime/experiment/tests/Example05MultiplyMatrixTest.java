@@ -14,7 +14,7 @@ import pt.iscte.paddle.runtime.tests.Test;
 
 public class Example05MultiplyMatrixTest extends Test {
 
-	//TODO Example05 corrigir nao consegui testar porque ocupa demasiado espaço no ecrã
+	//TODO Example05 corrigir ocupa demasiado espaço no ecrã
 	public Example05MultiplyMatrixTest() {
 		module = IModule.create();
 		module.setId("Example05MultiplyMatrixTest");
@@ -25,11 +25,6 @@ public class Example05MultiplyMatrixTest extends Test {
 		procedure.setId("main");
 		
 		IBlock body = procedure.getBody();
-		
-//		private int [][] testValue = {{1, 2, 3, 4},
-//				{3, 2, 1},
-//				{4, 1, 7, 3, 9},
-//				{3, 8, 4}};
 		
 		IVariableDeclaration m = body.addVariable(INT.array2D().reference());
 		m.setId("m");
@@ -52,7 +47,6 @@ public class Example05MultiplyMatrixTest extends Test {
 		body.addArrayElementAssignment(m, INT.literal(1), INT.literal(2), INT.literal(1));
 		body.addArrayElementAssignment(m, INT.literal(7), INT.literal(2), INT.literal(2));
 		body.addArrayElementAssignment(m, INT.literal(3), INT.literal(2), INT.literal(3));
-//		body.addArrayElementAssignment(m, INT.literal(9), INT.literal(2), INT.literal(4));
 		
 		body.addArrayElementAssignment(m, INT.literal(3), INT.literal(3), INT.literal(0));
 		body.addArrayElementAssignment(m, INT.literal(8), INT.literal(3), INT.literal(1));

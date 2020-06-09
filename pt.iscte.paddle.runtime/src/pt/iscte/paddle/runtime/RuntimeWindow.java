@@ -53,7 +53,7 @@ public class RuntimeWindow {
 		shell.setText("Runtime");
 		
 		GridLayout layout = new GridLayout(1, false);
-		layout.marginTop = 50;
+		layout.marginTop = 20;
 		layout.marginLeft = 50;
 		layout.verticalSpacing = 20;
 		shell.setLayout(layout);
@@ -179,6 +179,9 @@ public class RuntimeWindow {
 							ArrayIndexErrorDraw arrayDraw = new ArrayIndexErrorDraw(parent);
 							arrayDraw.draw(info, arrayIndexError.getErrorIndex(), arrayIndexError.getArraySize());
 							return arrayDraw;
+//							VerticalArrayDraw arrayDraw = new VerticalArrayDraw(parent);
+//							arrayDraw.draw(info, arrayIndexError.getErrorIndex(), arrayIndexError.getArraySize());
+//							return arrayDraw;
 						}, ICodeDecoration.Location.RIGHT);
 						canvasDec.show();
 					} else if (info.getAccessedPositions().get(0).getCoordinates().size() == 2) {

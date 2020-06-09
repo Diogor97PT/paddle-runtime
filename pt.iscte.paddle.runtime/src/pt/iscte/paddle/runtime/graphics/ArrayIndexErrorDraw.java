@@ -91,8 +91,11 @@ public class ArrayIndexErrorDraw extends Canvas {
 				else
 					availableSpaceX = (getSize().x - 10) / (arraySize);
 				
-				int spacingX = availableSpaceX / 8;								//margem de um dos lados
-				int sizeX = availableSpaceX - (spacingX * 2);					//tamanho do quadrado em si
+//				int spacingX = availableSpaceX / 8;								//margem de um dos lados
+//				int sizeX = availableSpaceX - (spacingX * 2);					//tamanho do quadrado em si
+				
+				int sizeX = 20;													//tamanho do quadrado em si
+				int spacingX = (availableSpaceX - sizeX) / 2;					//margem de um dos lados
 				
 				int centerY = (squareStartY + (squareStartY + squareSizeY)) / 2;
 				
@@ -196,15 +199,16 @@ public class ArrayIndexErrorDraw extends Canvas {
 		int pathStartY = textSize.y;
 		
 		Path path = new Path(getDisplay());
-		int arcSize = 30;
+		int arcSizeX = 30;
+		int arcSizeY = 20;
 		
 		//Left half
-		path.addArc(rectStartX, pathStartY + 20, arcSize, 20, 180, -90);
-		path.addArc(rectCenterX - arcSize, pathStartY, arcSize, 20, 270, 90);
+		path.addArc(rectStartX, pathStartY + 20, arcSizeX, arcSizeY, 180, -90);
+		path.addArc(rectCenterX - arcSizeX, pathStartY, arcSizeX, arcSizeY, 270, 90);
 		
 		//Right half
-		path.addArc(rectCenterX, pathStartY, arcSize, 20, 180, 90);
-		path.addArc(rectEndX - arcSize, pathStartY + 20, arcSize, 20, 90, -90);
+		path.addArc(rectCenterX, pathStartY, arcSizeX, arcSizeY, 180, 90);
+		path.addArc(rectEndX - arcSizeX, pathStartY + 20, arcSizeX, arcSizeY, 90, -90);
 		
 		gc.drawPath(path);
 		
@@ -213,6 +217,7 @@ public class ArrayIndexErrorDraw extends Canvas {
 		path.dispose();
 	}
 	
+	//TODO criar função semelhante para usar no para as matrizes
 	public static String[] stringToShrinkedArray(String s) {
 		String s2 = s.substring(s.indexOf("[") + 1, s.length()-1);
 		String [] array = s2.trim().replaceAll(" ", "").split(",");
