@@ -79,10 +79,10 @@ public class RuntimeWindow {
 		
 		//Code widget and CFG Composite
 		Composite codeAndCFG = new Composite(shell, SWT.NONE);
+		codeAndCFG.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, true));
 		GridLayout l = new GridLayout(2, false);
 		l.horizontalSpacing = 200;
 		codeAndCFG.setLayout(l);
-		codeAndCFG.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		
 		//Code Widget
 		IClassWidget widget = IJavardiseService.createClassWidget(codeAndCFG, runtime.getModule());
@@ -177,7 +177,7 @@ public class RuntimeWindow {
 					if(info.getAccessedPositions().get(0).getCoordinates().size() == 1) {
 						canvasDec = errorLine.addDecoration((parent, control) -> {
 							ArrayIndexErrorDraw arrayDraw = new ArrayIndexErrorDraw(parent);
-							arrayDraw.draw(info, arrayIndexError.getErrorIndex(), arrayIndexError.getArraySize());
+							arrayDraw.draw(info, arrayIndexError.getErrorCoordinates()[0], arrayIndexError.getArraySize());
 							return arrayDraw;
 //							VerticalArrayDraw arrayDraw = new VerticalArrayDraw(parent);
 //							arrayDraw.draw(info, arrayIndexError.getErrorIndex(), arrayIndexError.getArraySize());
@@ -187,7 +187,7 @@ public class RuntimeWindow {
 					} else if (info.getAccessedPositions().get(0).getCoordinates().size() == 2) {
 						canvasDec = errorLine.addDecoration((parent, control) -> {
 							MatrixIndexErrorDraw matrixDraw = new MatrixIndexErrorDraw(parent);
-							matrixDraw.draw(info, arrayIndexError.getErrorIndex(), arrayIndexError.getArraySize());
+							matrixDraw.draw(info, arrayIndexError.getErrorCoordinates(), arrayIndexError.getArraySize());
 							return matrixDraw;
 						}, ICodeDecoration.Location.RIGHT);
 						canvasDec.show();

@@ -4,6 +4,7 @@ import pt.iscte.paddle.interpreter.ArrayIndexError;
 import pt.iscte.paddle.interpreter.IArray;
 import pt.iscte.paddle.interpreter.IReference;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
+import pt.iscte.paddle.model.IArrayElement;
 import pt.iscte.paddle.model.IExpression;
 import pt.iscte.paddle.model.IProgramElement;
 import pt.iscte.paddle.model.IVariableDeclaration;
@@ -16,6 +17,7 @@ public class ArrayIndexErrorMessage extends ErrorMessage {
 	
 	private ArrayIndexError error;
 	private IArray array_ref;
+	private int [] errorCoordinates;
 
 	public ArrayIndexErrorMessage(HyperlinkedText text, Runtime runtime, ArrayIndexError error) {
 		super(text, runtime);
@@ -25,8 +27,12 @@ public class ArrayIndexErrorMessage extends ErrorMessage {
 		int invalidPos = error.getInvalidIndex();
 		IExpression errorExpression = error.getIndexExpression();
 		IVariableDeclaration variable = getVariableFromExpression(errorExpression).getVariable();
-		IVariableDeclaration array = ((IVariableExpression)error.getTarget()).getVariable();
-		//int arrayDimension = e.getIndexDimension();	//Dimensão da array que deu erro
+		
+		IVariableDeclaration array;									//Error array or matrix
+		if(error.getTarget() instanceof IArrayElement)
+			array = getVariableFromExpression(((IArrayElement)error.getTarget()).getTarget()).getVariable();
+		else
+			array = ((IVariableExpression)error.getTarget()).getVariable();
 		
 		Object obj = runtime.getVarValues().get(array).getReference().getValue();
 		if(obj instanceof IArray)
@@ -34,6 +40,21 @@ public class ArrayIndexErrorMessage extends ErrorMessage {
 		else
 			array_ref = (IArray)((IReference)obj).getValue();
 		
+		if(error.getIndexDimension() == 1) {		//Dimensão da array que deu erro = 1
+			IArrayElement arrayElement = (IArrayElement) error.getTarget();
+			int index = runtime.getIntValueFromExpression(arrayElement.getIndexes().get(0));
+			
+			setCoordinates(index, error.getInvalidIndex());
+			
+//			for(int i = 0; i < array_ref.getLength(); i++) {
+//				System.out.println(array_ref.getElement(i));
+//				System.out.println(array_ref.getElement(i).getClass());
+//			}
+		} else {
+			setCoordinates(error.getInvalidIndex());
+		}
+		
+		//TODO corrigir mensagem para refletir quando é uma matriz
 		text.words("Tentativa de acesso à posição ")
 			.words(Integer.toString(invalidPos))
 			.words(", que é inválida para o ")
@@ -48,7 +69,11 @@ public class ArrayIndexErrorMessage extends ErrorMessage {
 			text.words(", que é um iterador para as posições do vetor " + array);
 		}
 	}
-
+	
+	private void setCoordinates(int ... coordinates) {
+		errorCoordinates = coordinates;
+	}
+	
 	@Override
 	public String getShortText() {
 		return "Posição inválida";
@@ -66,12 +91,15 @@ public class ArrayIndexErrorMessage extends ErrorMessage {
 	
 	@Override
 	public IVariableDeclaration getErrorTarget() {
-		return ((IVariableExpression)error.getTarget()).getVariable();  //IArrayExpression?
+		if(error.getTarget() instanceof IVariableExpression)
+			return ((IVariableExpression)error.getTarget()).getVariable();
+		else
+			return getVariableFromExpression(((IArrayElement)error.getTarget()).getTarget()).getVariable();
 	}
 	
-	public int getErrorIndex() {
-		return error.getInvalidIndex();
-	} 
+	public int [] getErrorCoordinates() {
+		return errorCoordinates;
+	}
 	
 	public int getArraySize() {
 		return array_ref.getLength();

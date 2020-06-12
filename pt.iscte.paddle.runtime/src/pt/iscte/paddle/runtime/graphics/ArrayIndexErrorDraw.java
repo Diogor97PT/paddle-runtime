@@ -84,6 +84,7 @@ public class ArrayIndexErrorDraw extends Canvas {
 				GC gc = e.gc;
 				gc.setBackground(InterfaceColors.GRAY.getColor());
 				gc.setAntialias(SWT.ON);
+				gc.setLineWidth(2);
 																				//Horizontal
 				int availableSpaceX;											//Espaço que cada quadrado ocupa (quadrado em si + margem esquerda e direita
 				if(showErrorPosition)
@@ -142,6 +143,7 @@ public class ArrayIndexErrorDraw extends Canvas {
 	private void drawSquare(String text, String positionText, GC gc, int availableSpaceX, int spacingX, int sizeX, int centerY, int i, List<Coordinates> accessedPositions) {
 		gc.setBackground(InterfaceColors.WHITE.getColor());
 		gc.setForeground(InterfaceColors.GREEN.getColor());
+		gc.setLineStyle(SWT.LINE_SOLID);
 		int currentX = (i * availableSpaceX) + squareStartX;
 		gc.fillRectangle(currentX + spacingX, squareStartY, sizeX, squareSizeY);
 		
@@ -175,7 +177,6 @@ public class ArrayIndexErrorDraw extends Canvas {
 	private void drawErrorPosition(String positionText, GC gc, int availableSpaceX, int spacingX, int sizeX, int centerY, int i) {
 		gc.setForeground(InterfaceColors.RED.getColor());
 		gc.setLineStyle(SWT.LINE_DASH);
-		gc.setLineWidth(2);
 		int currentX = (i * availableSpaceX) + squareStartX;
 		gc.drawRectangle(currentX + spacingX, squareStartY, sizeX, squareSizeY);
 		

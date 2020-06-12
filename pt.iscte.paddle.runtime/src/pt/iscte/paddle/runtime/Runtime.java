@@ -30,10 +30,10 @@ import pt.iscte.paddle.model.IVariableAssignment;
 import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.IVariableExpression;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
+import pt.iscte.paddle.runtime.experiment.tests.Example05MultiplyMatrixTest;
 import pt.iscte.paddle.runtime.messages.ErrorMessage;
 import pt.iscte.paddle.runtime.messages.Message;
 import pt.iscte.paddle.runtime.tests.Test;
-import pt.iscte.paddle.runtime.tests.arrayIndex.MatrixErrorTest;
 import pt.iscte.paddle.runtime.variableInfo.ArrayVariableInfo;
 import pt.iscte.paddle.runtime.variableInfo.VariableInfo;
 import pt.iscte.paddle.runtime.variableInfo.VariableInfo.VariableType;
@@ -117,7 +117,7 @@ public class Runtime {
 					
 					List<Integer> coordinates = new ArrayList<>();
 					a.getIndexes().forEach(indexExpression -> {
-						System.out.println(indexExpression);
+//						System.out.println(indexExpression);
 						coordinates.add(getIntValueFromExpression(indexExpression));
 					});
 
@@ -128,7 +128,7 @@ public class Runtime {
 		});
 	}
 	
-	private IProcedure getProcedureFromStatement(IStatement statement) {
+	public IProcedure getProcedureFromStatement(IStatement statement) {
 		IProgramElement block = statement.getParent();
 		while(!(block instanceof IProcedure)) {
 			block = ((IBlockElement)block).getParent();
@@ -136,7 +136,7 @@ public class Runtime {
 		return (IProcedure)block;
 	}
 	
-	private int getIntValueFromExpression(IExpression exp) {
+	public int getIntValueFromExpression(IExpression exp) {
 		
 		if(exp instanceof IVariableExpression) {
 			return getIntValueFromIVariableExpression((IVariableExpression)exp);
@@ -156,11 +156,14 @@ public class Runtime {
 		return sum;
 	}
 	
-	private int getIntValueFromIVariableExpression(IVariableExpression exp) {
+	public int getIntValueFromIVariableExpression(IVariableExpression exp) {
 		VariableInfo info = varValues.get(((IVariableExpression) exp).getVariable());	//IArrayExpression?
 //		System.out.println(info);
 //		System.out.println(info.getReference());
 //		System.out.println(info.getReference().getValue());
+//		if(info == null)
+//			return 0;
+		
 		return Integer.parseInt(info.getReference().getValue().toString());
 	}
 	
@@ -170,11 +173,11 @@ public class Runtime {
 //	Test test = new ArrayIndexErrorBackwardTest();
 //	Test test = new ArrayIndexPlus2Test();
 //	Test test = new ArrayIndexFunctionTest();
-	Test test = new MatrixErrorTest();
+//	Test test = new MatrixErrorTest();
 //	Test test = new SumAllTest();
 //	Test test = new NullPointerErrorTest();
 	
-	private int testValue = 20;
+//	private int testValue = 20;
 	//-------------------------------------tests-------------------------------------//
 	
 	//-------------------------------Experiment tests--------------------------------//
@@ -185,7 +188,7 @@ public class Runtime {
 	
 //	Test test = new Example03LastOccurrenceTest();
 //	Test test = new Example04InvertTest();
-//	Test test = new Example05MultiplyMatrixTest();
+	Test test = new Example05MultiplyMatrixTest();
 	
 //	Test test = new Example06TranposeMatrixTest();
 	
@@ -201,7 +204,7 @@ public class Runtime {
 		Message message = null;
 		
 		try {
-			IExecutionData data = state.execute(procedure, testValue);
+			IExecutionData data = state.execute(procedure);
 			IValue value = data.getReturnValue();
 			message = Message.getSuccessfulMessage(text, this, value);
 		} catch (ExecutionError e) {

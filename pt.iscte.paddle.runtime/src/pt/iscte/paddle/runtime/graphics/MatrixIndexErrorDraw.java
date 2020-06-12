@@ -35,7 +35,7 @@ public class MatrixIndexErrorDraw extends Composite {
 		return new Point(compositeSizeX, compositeSizeY);
 	}
 
-	public void draw(ArrayVariableInfo info, int errorPosition, int originalArraySize) {	//TODO pensar como receber posição com erro
+	public void draw(ArrayVariableInfo info, int[] errorCoordinates, int originalArraySize) {	//TODO pensar como receber posição com erro
 		if(info.getAccessedPositions().get(0).getCoordinates().size()!= 2) {	//Only Draw 2 dimensions
 			return;
 		}
@@ -44,10 +44,14 @@ public class MatrixIndexErrorDraw extends Composite {
 		List<Coordinates> accessedPositions = info.getAccessedPositions();
 		
 		VerticalArrayDraw verticalArrayDraw = new VerticalArrayDraw(this);
-		if(info.getLengthExpressions() == null)
-			verticalArrayDraw.drawArray(null, false, errorPosition, originalArraySize);
+		if(info.getLengthExpressions() == null && errorCoordinates.length > 1)
+			verticalArrayDraw.drawArray(null, false, errorCoordinates[0], originalArraySize);
+		else if (info.getLengthExpressions() != null && errorCoordinates.length > 1)
+			verticalArrayDraw.drawArray(info.getLengthExpressions().get(0), false, errorCoordinates[0], originalArraySize);
+		else if (info.getLengthExpressions() == null && errorCoordinates.length == 1)
+			verticalArrayDraw.drawArray(null, true, errorCoordinates[0], originalArraySize);
 		else
-			verticalArrayDraw.drawArray(info.getLengthExpressions().get(0), false, errorPosition, originalArraySize);
+			verticalArrayDraw.drawArray(info.getLengthExpressions().get(0), true, errorCoordinates[0], originalArraySize);
 		
 		Composite rightSide = new Composite(this, SWT.NONE);
 		GridLayout rightSideLayout = new GridLayout();
@@ -66,7 +70,10 @@ public class MatrixIndexErrorDraw extends Composite {
 			}
 			
 			ArrayIndexErrorDraw arrayDraw = new ArrayIndexErrorDraw(rightSide);
-			arrayDraw.drawArray(matrix.get(i), oneDimensionCoordinates, null, false, errorPosition, false, originalArraySize);
+			if(errorCoordinates.length > 1 && errorCoordinates[0] == i)
+				arrayDraw.drawArray(matrix.get(i), oneDimensionCoordinates, null, true, errorCoordinates[1], false, originalArraySize);
+			else
+				arrayDraw.drawArray(matrix.get(i), oneDimensionCoordinates, null, false, 0, false, originalArraySize);
 		}
 	}
 	
