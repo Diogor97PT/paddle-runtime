@@ -12,7 +12,6 @@ import pt.iscte.paddle.runtime.tests.Test;
 
 public class Example06TranposeMatrixTest extends Test {
 	
-	//TODO Example06 Não funciona ainda
 	public Example06TranposeMatrixTest() {
 		module = IModule.create();
 		module.setId("Example06TranposeMatrixTest");
@@ -57,12 +56,12 @@ public class Example06TranposeMatrixTest extends Test {
 		
 		ILoop loop = body.addLoop(SMALLER.on(i, m.length(INT.literal(0))));
 		
-		IVariableDeclaration j = body.addVariable(INT, INT.literal(0));
+		IVariableDeclaration j = loop.addVariable(INT, INT.literal(0));
 		j.setId("j");
 		
 		ILoop loop2 = loop.addLoop(SMALLER.on(j, m.length()));
 		
-		loop2.addArrayElementAssignment(transposed, m.element(i, j), j, i);
+		loop2.addArrayElementAssignment(transposed, m.element(i, j), j, i);			//swap with the line below
 //		loop2.addArrayElementAssignment(transposed, m.element(j, i), i, j);
 		loop2.addIncrement(j);
 		loop.addIncrement(i);

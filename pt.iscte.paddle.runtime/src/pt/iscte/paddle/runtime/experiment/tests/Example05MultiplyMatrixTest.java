@@ -78,7 +78,7 @@ public class Example05MultiplyMatrixTest extends Test {
 		IVariableDeclaration j = loop.addVariable(INT, INT.literal(0));
 		j.setId("j");
 		
-		ILoop loop2 = loop.addLoop(SMALLER.on(j, m.length()));					//switch with the line below
+		ILoop loop2 = loop.addLoop(SMALLER.on(j, m.length()));					//swap with line below
 //		ILoop loop2 = loop.addLoop(SMALLER.on(j, m.element(i).length()));
 		
 		loop2.addArrayElementAssignment(m, MUL.on(m.element(i, j), n), i, j);

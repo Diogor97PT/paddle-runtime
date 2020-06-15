@@ -7,6 +7,7 @@ import static pt.iscte.paddle.model.IType.INT;
 import pt.iscte.paddle.model.IBlock;
 import pt.iscte.paddle.model.ILoop;
 import pt.iscte.paddle.model.IModule;
+import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.runtime.tests.Test;
 
@@ -15,9 +16,23 @@ public class Example02NaturalsTest extends Test {
 	//Example 2 Test
 	public Example02NaturalsTest() {
 		module = IModule.create();
-		module.setId("Example02Naturals");
+		module.setId("Example02NaturalsTest");
+		
+		IProcedure p2 = createProcedure();
 		
 		procedure = module.addProcedure(INT.array().reference());
+		procedure.setId("main");
+		
+		IBlock body = procedure.getBody();
+		
+		IVariableDeclaration i = body.addVariable(INT, INT.literal(5));
+		i.setId("i");
+		
+		body.addReturn(p2.expression(i));
+	}
+
+	private IProcedure createProcedure() {
+		IProcedure procedure = module.addProcedure(INT.array().reference());
 		procedure.setId("naturals");
 		
 		IVariableDeclaration n = procedure.addParameter(INT);
@@ -34,10 +49,12 @@ public class Example02NaturalsTest extends Test {
 		
 		ILoop loop = body.addLoop(SMALLER.on(i, n));
 		
-		loop.addIncrement(i);										//Switch this line with the one below
+		loop.addIncrement(i);										//Swap this line with the one below
 		loop.addArrayElementAssignment(array, ADD.on(i, INT.literal(1)), i);
 		
 		body.addReturn(array);
+		
+		return procedure;
 	}
 	
 }

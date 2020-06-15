@@ -4,12 +4,11 @@ import java.util.Arrays;
 
 public class Example09SelectionSort {
 
-	//TODO Example09 No error yet
 	public static void selectionSort(int [] v) {
 		for(int i = 0; i < v.length - 1; i++) {
 			int minimumPos = i;
 			for(int j = i + 1; j < v.length; j++) {
-				if(v[j] < v[minimumPos])
+				if(v[j + 1] < v[minimumPos])			//v[j] < v[minimumPos]
 					minimumPos = j;
 			}
 			swapElements(v, minimumPos, i);

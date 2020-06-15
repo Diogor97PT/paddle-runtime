@@ -31,7 +31,7 @@ public class Example08BubbleSortTest extends Test {
 		IVariableDeclaration v = body.addVariable(INT.array().reference());
 		v.setId("v");
 		body.addAssignment(v, INT.array().heapAllocation(INT.literal(8)));
-//		int [] v = {9, 5, 10, 99, 52, 23, 88, 88, 1, 1, 6, 7};
+
 		body.addArrayElementAssignment(v, INT.literal(9), INT.literal(0));
 		body.addArrayElementAssignment(v, INT.literal(10), INT.literal(1));
 		body.addArrayElementAssignment(v, INT.literal(99), INT.literal(2));

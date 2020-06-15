@@ -20,7 +20,6 @@ import pt.iscte.paddle.model.IArrayType;
 import pt.iscte.paddle.model.IBlockElement;
 import pt.iscte.paddle.model.IExpression;
 import pt.iscte.paddle.model.ILiteral;
-import pt.iscte.paddle.model.IModel2CodeTranslator;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.IProcedureCall;
@@ -30,7 +29,7 @@ import pt.iscte.paddle.model.IVariableAssignment;
 import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.IVariableExpression;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
-import pt.iscte.paddle.runtime.experiment.tests.Example05MultiplyMatrixTest;
+import pt.iscte.paddle.runtime.experiment.tests.Example10BinarySearchTest;
 import pt.iscte.paddle.runtime.messages.ErrorMessage;
 import pt.iscte.paddle.runtime.messages.Message;
 import pt.iscte.paddle.runtime.tests.Test;
@@ -52,8 +51,8 @@ public class Runtime {
 		procedure = test.getProcedure();
 		icfg = procedure.generateCFG();
 		
-		String code = module.translate(new IModel2CodeTranslator.Java());
-		System.out.println(code);
+//		String code = module.translate(new IModel2CodeTranslator.Java());
+//		System.out.println(code);
 		
 		state = IMachine.create(module);
 	}
@@ -117,7 +116,6 @@ public class Runtime {
 					
 					List<Integer> coordinates = new ArrayList<>();
 					a.getIndexes().forEach(indexExpression -> {
-//						System.out.println(indexExpression);
 						coordinates.add(getIntValueFromExpression(indexExpression));
 					});
 
@@ -157,14 +155,9 @@ public class Runtime {
 	}
 	
 	public int getIntValueFromIVariableExpression(IVariableExpression exp) {
-		VariableInfo info = varValues.get(((IVariableExpression) exp).getVariable());	//IArrayExpression?
-//		System.out.println(info);
-//		System.out.println(info.getReference());
-//		System.out.println(info.getReference().getValue());
-//		if(info == null)
-//			return 0;
-		
-		return Integer.parseInt(info.getReference().getValue().toString());
+		VariableInfo info = varValues.get(((IVariableExpression) exp).getVariable());
+		double value = Double.parseDouble(info.getReference().getValue().toString());
+		return (int)value;
 	}
 	
 	//-------------------------------------tests-------------------------------------//
@@ -182,20 +175,15 @@ public class Runtime {
 	
 	//-------------------------------Experiment tests--------------------------------//
 //	Test test = new Example01SumTest();
-	
 //	Test test = new Example02NaturalsTest();
-//	private int testValue = 5;
-	
 //	Test test = new Example03LastOccurrenceTest();
 //	Test test = new Example04InvertTest();
-	Test test = new Example05MultiplyMatrixTest();
-	
+//	Test test = new Example05MultiplyMatrixTest();
 //	Test test = new Example06TranposeMatrixTest();
-	
 //	Test test = new Example07InvertSameVectorTest();
 //	Test test = new Example08BubbleSortTest();
 //	Test test = new Example09SelectionSortTest();
-//	Test test = new Example10BinarySearchTest();
+	Test test = new Example10BinarySearchTest();
 	//-------------------------------Experiment tests--------------------------------//
 	
 	public Message execute() {

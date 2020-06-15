@@ -17,7 +17,6 @@ import pt.iscte.paddle.runtime.tests.Test;
 public class Example09SelectionSortTest extends Test {
 	
 	//TODO Example09 corrigir nao consegui testar porque ocupa demasiado espaço no ecrã
-	//TODO Example09 No error yet
 	public Example09SelectionSortTest() {
 		module = IModule.create();
 		module.setId("Example09SelectionSortTest");
@@ -71,7 +70,8 @@ public class Example09SelectionSortTest extends Test {
 		
 		ILoop loop2 = loop.addLoop(SMALLER.on(j, v.length()));
 		
-		ISelection ifSelection = loop2.addSelection(SMALLER.on(v.element(j), v.element(minimumPos)));
+		ISelection ifSelection = loop2.addSelection(SMALLER.on(v.element(ADD.on(j, INT.literal(1))), v.element(minimumPos)));	//swap with the line below
+//		ISelection ifSelection = loop2.addSelection(SMALLER.on(v.element(j), v.element(minimumPos)));
 		ifSelection.addAssignment(minimumPos, j);
 		
 		loop.addCall(swapElements, v, minimumPos, i);

@@ -32,7 +32,7 @@ public class Example10BinarySearchTest extends Test {
 		
 		IVariableDeclaration v = body.addVariable(INT.array().reference());
 		v.setId("v");
-		body.addAssignment(v, INT.array().heapAllocation(INT.literal(8)));
+		body.addAssignment(v, INT.array().heapAllocation(INT.literal(10)));
 		
 		body.addArrayElementAssignment(v, INT.literal(1), INT.literal(0));
 		body.addArrayElementAssignment(v, INT.literal(5), INT.literal(1));
@@ -42,8 +42,10 @@ public class Example10BinarySearchTest extends Test {
 		body.addArrayElementAssignment(v, INT.literal(10), INT.literal(5));
 		body.addArrayElementAssignment(v, INT.literal(23), INT.literal(6));
 		body.addArrayElementAssignment(v, INT.literal(52), INT.literal(7));
+		body.addArrayElementAssignment(v, INT.literal(88), INT.literal(8));
+		body.addArrayElementAssignment(v, INT.literal(99), INT.literal(9));
 		
-		IVariableDeclaration n = body.addVariable(INT, INT.literal(5));
+		IVariableDeclaration n = body.addVariable(INT, INT.literal(88));
 		n.setId("n");
 		
 		body.addReturn(p2.expression(v, n));
@@ -69,7 +71,8 @@ public class Example10BinarySearchTest extends Test {
 		
 		ILoop loop = body.addLoop(SMALLER_EQ.on(i, r));
 		
-		IVariableDeclaration j = loop.addVariable(INT, ADD.on(i, DIV.on(SUB.on(r, i), INT.literal(2))));
+		IVariableDeclaration j = loop.addVariable(INT, ADD.on(i, DIV.on(i, INT.literal(2))));			//swap with the line below
+//		IVariableDeclaration j = loop.addVariable(INT, ADD.on(i, DIV.on(SUB.on(r, i), INT.literal(2))));
 		j.setId("j");
 		
 		ISelection firstIf = loop.addSelection(EQUAL.on(v.element(j), n));
