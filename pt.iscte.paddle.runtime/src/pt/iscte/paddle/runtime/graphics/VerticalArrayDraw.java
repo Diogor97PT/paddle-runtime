@@ -17,9 +17,11 @@ import pt.iscte.paddle.runtime.InterfaceColors;
 public class VerticalArrayDraw extends Canvas {
 
 	private static int canvasSizeX = 110;
-	private static int canvasSizeY = 250;
+//	private static int canvasSizeY = 250;
 	
-	private static final int maxArraySize = 8;
+	private int canvasSizeY = 250;
+	
+//	private static final int maxArraySize = 8;
 	
 	private int rectangleStartX = 45;
 	private static final int rectangleSizeX = 60;
@@ -34,7 +36,7 @@ public class VerticalArrayDraw extends Canvas {
 	private PaintListener paintListener;
 	
 	public VerticalArrayDraw(Composite parent) {
-		super(parent, SWT.NONE);
+		super(parent, SWT.BORDER);
 	}
 
 	@Override
@@ -47,16 +49,21 @@ public class VerticalArrayDraw extends Canvas {
 		return new Point(canvasSizeX, canvasSizeY);
 	}
 	
-	void drawArray(IExpression expression, boolean showErrorPosition, int errorPosition, int originalArraySize) {
+	void drawArray(IExpression expression, boolean showErrorPosition, int errorPosition, int originalArraySize, int maxArraySize) {
 		if(paintListener != null) removePaintListener(paintListener);
 		
 		squareStartX = rectangleStartX + 10;
 		
+		int arraySize = originalArraySize > maxArraySize ? maxArraySize : originalArraySize;
+		
+		canvasSizeY = arraySize * 65;
+		if(showErrorPosition)
+			canvasSizeY += 65;
+//		canvasSizeY = arraySize * 100;
+		
 		paintListener = new PaintListener() {
 			@Override
 			public void paintControl(PaintEvent e) {
-				int arraySize = originalArraySize > maxArraySize ? maxArraySize : originalArraySize;
-				
 				GC gc = e.gc;
 				gc.setBackground(InterfaceColors.GRAY.getColor());
 				gc.setAntialias(SWT.ON);

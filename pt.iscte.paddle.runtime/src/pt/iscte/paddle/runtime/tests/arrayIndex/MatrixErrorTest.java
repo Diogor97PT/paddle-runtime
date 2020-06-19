@@ -22,7 +22,7 @@ public class MatrixErrorTest extends Test {
 		n.setId("n");
 		
 		IBlock body = procedure.getBody();
-		IVariableDeclaration m = body.addVariable(INT.array2D().reference(), INT.array2D().heapAllocation(INT.literal(3), INT.literal(3)));
+		IVariableDeclaration m = body.addVariable(INT.array2D().reference(), INT.array2D().heapAllocation(INT.literal(20), INT.literal(20)));
 		m.setId("m");
 
 		IVariableDeclaration q = body.addVariable(INT, INT.literal(0));
@@ -31,11 +31,11 @@ public class MatrixErrorTest extends Test {
 		IVariableDeclaration i = body.addVariable(INT, INT.literal(0));
 		i.setId("i");
 		
-		ILoop loop = body.addLoop(SMALLER.on(i, INT.literal(4)));
+		ILoop loop = body.addLoop(SMALLER.on(i, INT.literal(21)));
 		IVariableDeclaration j = loop.addVariable(INT, INT.literal(0));
 		j.setId("j");
 		
-		ILoop loop2 = loop.addLoop(SMALLER.on(j, INT.literal(3)));
+		ILoop loop2 = loop.addLoop(SMALLER.on(j, INT.literal(20)));
 		loop2.addArrayElementAssignment(m, q, i, j);
 		loop2.addIncrement(j);
 		

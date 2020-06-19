@@ -2,7 +2,6 @@ package pt.iscte.paddle.runtime.experiment;
 
 public class Example10BinarySearch {
 	
-	//TODO adicionar um erro no codigo
 	//Returns the position of n or -1 if it does not exist 
 	public static int binarySearch(int [] v, int n) {
 		int i = 0;

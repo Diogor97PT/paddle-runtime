@@ -14,7 +14,9 @@ import pt.iscte.paddle.runtime.variableInfo.ArrayVariableInfo.Coordinates;
 public class MatrixIndexErrorDraw extends Composite {
 	
 	private static final int compositeSizeX = 380;	//250
-	private static final int compositeSizeY = 500;	//110
+	private static final int compositeSizeY = 540;	//110
+	
+	private static final int maxArraySize = 8;
 
 	public MatrixIndexErrorDraw(Composite comp) {
 		super(comp, SWT.NONE);
@@ -35,7 +37,7 @@ public class MatrixIndexErrorDraw extends Composite {
 		return new Point(compositeSizeX, compositeSizeY);
 	}
 
-	public void draw(ArrayVariableInfo info, int[] errorCoordinates, int originalArraySize) {	//TODO pensar como receber posição com erro
+	public void draw(ArrayVariableInfo info, int[] errorCoordinates, int originalArraySize) {
 		if(info.getAccessedPositions().get(0).getCoordinates().size()!= 2) {	//Only Draw 2 dimensions
 			return;
 		}
@@ -45,13 +47,13 @@ public class MatrixIndexErrorDraw extends Composite {
 		
 		VerticalArrayDraw verticalArrayDraw = new VerticalArrayDraw(this);
 		if(info.getLengthExpressions() == null && errorCoordinates.length > 1)
-			verticalArrayDraw.drawArray(null, false, errorCoordinates[0], originalArraySize);
+			verticalArrayDraw.drawArray(null, false, errorCoordinates[0], originalArraySize, maxArraySize);
 		else if (info.getLengthExpressions() != null && errorCoordinates.length > 1)
-			verticalArrayDraw.drawArray(info.getLengthExpressions().get(0), false, errorCoordinates[0], originalArraySize);
+			verticalArrayDraw.drawArray(info.getLengthExpressions().get(0), false, errorCoordinates[0], originalArraySize, maxArraySize);
 		else if (info.getLengthExpressions() == null && errorCoordinates.length == 1)
-			verticalArrayDraw.drawArray(null, true, errorCoordinates[0], originalArraySize);
+			verticalArrayDraw.drawArray(null, true, errorCoordinates[0], originalArraySize, maxArraySize);
 		else
-			verticalArrayDraw.drawArray(info.getLengthExpressions().get(0), true, errorCoordinates[0], originalArraySize);
+			verticalArrayDraw.drawArray(info.getLengthExpressions().get(0), true, errorCoordinates[0], originalArraySize, maxArraySize);
 		
 		Composite rightSide = new Composite(this, SWT.NONE);
 		GridLayout rightSideLayout = new GridLayout();
@@ -60,6 +62,9 @@ public class MatrixIndexErrorDraw extends Composite {
 		rightSide.setLayout(rightSideLayout);
 		
 		for(int i = 0; i < matrix.size(); i++) {
+			if(matrix.size() > maxArraySize && i > maxArraySize - 3 && i < matrix.size() - 3)
+				continue;
+			
 			List<Coordinates> oneDimensionCoordinates = new ArrayList<>(); //TODO evitar esta conversão
 			for(Coordinates coordinates : accessedPositions) {
 				if (coordinates.getCoordinates().get(0) == i) {

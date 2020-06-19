@@ -60,7 +60,6 @@ public class ArrayIndexErrorDraw extends Canvas {
 		String [] array = stringToArray(info.getReference().getValue().toString());
 		List<Coordinates> accessedPositions = info.getAccessedPositions();
 		
-//		IExpression expression = info.getLengthExpressions().get(0);
 		IExpression expression = info.getLengthExpressions() != null ? info.getLengthExpressions().get(0) : null;
 		
 		drawArray(array, accessedPositions, expression, true, errorPosition, true, originalArraySize);
