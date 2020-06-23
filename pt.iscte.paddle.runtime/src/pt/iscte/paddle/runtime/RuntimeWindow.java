@@ -9,15 +9,16 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -38,7 +39,6 @@ import pt.iscte.paddle.runtime.messages.Message;
 import pt.iscte.paddle.runtime.variableInfo.ArrayVariableInfo;
 import pt.iscte.paddle.runtime.variableInfo.VariableInfo;
 import pt.iscte.paddle.runtime.variableInfo.VariableInfo.VariableType;
-import pt.iscte.pidesco.cfgviewer.ext.CFGViewer;
 
 public class RuntimeWindow {
 	
@@ -51,23 +51,59 @@ public class RuntimeWindow {
 		Display display = new Display();
 		shell = new Shell(display);
 		shell.setText("Runtime");
+		shell.setSize(1060, 800);
 		
-		GridLayout layout = new GridLayout(1, false);
-		layout.marginTop = 20;
-		layout.marginLeft = 50;
-		layout.verticalSpacing = 20;
+		RowLayout layout = new RowLayout();
+		layout.wrap = false;
+		layout.pack = true;
+		layout.justify = false;
+		layout.marginLeft = 20;
+		layout.marginRight = 5;
+		layout.marginTop = 5;
+		layout.marginBottom = 5;
 		shell.setLayout(layout);
 		
-//		Menu menu = new Menu(shell, SWT.DROP_DOWN);
-//		MenuItem test = new MenuItem(menu, SWT.CASCADE);
+		//Create Menu
+		Menu menubar = new Menu(shell, SWT.BAR);
+
+		MenuItem fileMenuItem = new MenuItem(menubar, SWT.CASCADE);
+		fileMenuItem.setText("File");									//TODO Add Test Selection in the future
+		Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
+		fileMenuItem.setMenu(fileMenu);
+		
+		MenuItem fileInfoItem = new MenuItem(fileMenu, SWT.PUSH);
+		fileInfoItem.setText("&Info");
+		
+		fileInfoItem.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				MessageBox dialog = new MessageBox(shell, SWT.ICON_INFORMATION | SWT.OK);
+				dialog.setText("Alert");
+				dialog.setMessage("In Construction");										//Dialog Test
+				dialog.open();
+			}
+		});
+		
+		shell.setMenuBar(menubar);
+		
+		//Code widget Composite
+		Composite codeComposite = new Composite(shell, SWT.WRAP | SWT.V_SCROLL);	//Vertical Scroll doesn’t work
+		codeComposite.setLayout(new FillLayout(SWT.WRAP | SWT.V_SCROLL));
+
+		//Code Widget
+		IClassWidget widget = IJavardiseService.createClassWidget(codeComposite, runtime.getModule());
+		widget.setReadOnly(true);
 		
 		//Buttons and Text Composite
-		Composite buttonsAndText = new Composite(shell, SWT.NONE);
-		buttonsAndText.setLayout(new GridLayout(2, false));
-		buttonsAndText.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		Composite rightSide = new Composite(shell, SWT.NONE);
+		RowLayout rightSidelayout = new RowLayout(SWT.VERTICAL);
+		rightSidelayout.wrap = false;
+		rightSidelayout.pack = true;
+		rightSidelayout.justify = false;
+		rightSide.setLayout(rightSidelayout);
 		
 		//Group where buttons are inserted
-		Group buttonGroup = new Group(buttonsAndText, SWT.BORDER);
+		Group buttonGroup = new Group(rightSide, SWT.BORDER);
 		buttonGroup.setText("Actions");
 		buttonGroup.setLayout(new FillLayout());
 		buttonGroup.setFocus();
@@ -75,46 +111,8 @@ public class RuntimeWindow {
 		//Button to execute the code inside the widget and display information
 		Button executeCode = new Button(buttonGroup, SWT.PUSH);
 		executeCode.setText("Executar Código");
-		executeCode.addSelectionListener(new ExecuteSelectionAdapter(buttonsAndText));
+		executeCode.addSelectionListener(new ExecuteSelectionAdapter(rightSide));
 		
-		//Code widget and CFG Composite
-		Composite codeAndCFG = new Composite(shell, SWT.NONE);
-		codeAndCFG.setLayoutData(new GridData(SWT.FILL, SWT.BOTTOM, true, true));
-		GridLayout l = new GridLayout(2, false);
-		l.horizontalSpacing = 200;
-		codeAndCFG.setLayout(l);
-		
-		//Code Widget
-		IClassWidget widget = IJavardiseService.createClassWidget(codeAndCFG, runtime.getModule());
-		widget.setReadOnly(true);
-		
-		//CFG
-		CFGViewer cfg = new CFGViewer(codeAndCFG);
-		cfg.setInput(runtime.getIcfg());
-		GridData gdCfg = new GridData(SWT.FILL, SWT.FILL, true, true);
-		gdCfg.widthHint = 300;
-		cfg.setLayoutData(gdCfg);
-		
-//		Button testSelection = new Button(buttonGroup, SWT.PUSH);
-//		testSelection.setText("Testar Seleção");
-//		testSelection.addSelectionListener(new SelectionAdapter() {
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//				INode node1 = runtime.getIcfg().getNodes().get(1);
-//				INode node2 = runtime.getIcfg().getNodes().get(2);
-//				INode node3 = runtime.getIcfg().getNodes().get(3);
-//				
-//				List<INode> nodes = new ArrayList<>();
-//				nodes.add(node1);
-//				nodes.add(node2);
-//				nodes.add(node3);
-//				
-//				cfg.selectNodes(nodes);
-//			}
-//		});
-		
-//		shell.pack();
-		shell.setSize(1100, 800);
 		shell.open();
 		while (!shell.isDisposed()) {
 			if(!display.readAndDispatch())
@@ -128,7 +126,7 @@ public class RuntimeWindow {
 		ICodeDecoration<Text> shortTextDecoration;
 		ICodeDecoration<Text> errorVariableValueDecoration;
 		ICodeDecoration<Canvas> errorExpressionHighlight;
-		ICodeDecoration<Control> canvasDec;
+//		ICodeDecoration<Control> canvasDec;
 		
 		private List<ICodeDecoration<Text>> valores = new ArrayList<>();
 		
@@ -145,7 +143,7 @@ public class RuntimeWindow {
 			if(shortTextDecoration != null) shortTextDecoration.delete();
 			if(errorVariableValueDecoration != null) errorVariableValueDecoration.delete();
 			if(errorExpressionHighlight != null) errorExpressionHighlight.delete();
-			if(canvasDec != null) canvasDec.delete();
+//			if(canvasDec != null) canvasDec.delete();
 			
 			valores.forEach(dec -> dec.delete());
 			valores.clear();
@@ -175,22 +173,23 @@ public class RuntimeWindow {
 					ArrayIndexErrorMessage arrayIndexError = (ArrayIndexErrorMessage) errorMessage;
 					ArrayVariableInfo info = (ArrayVariableInfo)message.getVarValues().get(errorMessage.getErrorTarget());
 					if(info.getAccessedPositions().get(0).getCoordinates().size() == 1) {
-						canvasDec = errorLine.addDecoration((parent, control) -> {
-							ArrayIndexErrorDraw arrayDraw = new ArrayIndexErrorDraw(parent);
-							arrayDraw.draw(info, arrayIndexError.getErrorCoordinates()[0], arrayIndexError.getArraySize());
-							return arrayDraw;
-//							VerticalArrayDraw arrayDraw = new VerticalArrayDraw(parent);
-//							arrayDraw.draw(info, arrayIndexError.getErrorIndex(), arrayIndexError.getArraySize());
+//						canvasDec = errorLine.addDecoration((parent, control) -> {
+//							ArrayIndexErrorDraw arrayDraw = new ArrayIndexErrorDraw(parent);
+//							arrayDraw.draw(info, arrayIndexError.getErrorCoordinates()[0], arrayIndexError.getArraySize());
 //							return arrayDraw;
-						}, ICodeDecoration.Location.RIGHT);
-						canvasDec.show();
+//						}, ICodeDecoration.Location.RIGHT);
+//						canvasDec.show();
+						ArrayIndexErrorDraw arrayDraw = new ArrayIndexErrorDraw(messageComposite);
+						arrayDraw.draw(info, arrayIndexError.getErrorCoordinates()[0], arrayIndexError.getArraySize());
 					} else if (info.getAccessedPositions().get(0).getCoordinates().size() == 2) {
-						canvasDec = errorLine.addDecoration((parent, control) -> {
-							MatrixIndexErrorDraw matrixDraw = new MatrixIndexErrorDraw(parent);
-							matrixDraw.draw(info, arrayIndexError.getErrorCoordinates(), arrayIndexError.getArraySize());
-							return matrixDraw;
-						}, ICodeDecoration.Location.RIGHT);
-						canvasDec.show();
+//						canvasDec = errorLine.addDecoration((parent, control) -> {
+//							MatrixIndexErrorDraw matrixDraw = new MatrixIndexErrorDraw(parent);
+//							matrixDraw.draw(info, arrayIndexError.getErrorCoordinates(), arrayIndexError.getArraySize());
+//							return matrixDraw;
+//						}, ICodeDecoration.Location.RIGHT);
+//						canvasDec.show();
+						MatrixIndexErrorDraw matrixDraw = new MatrixIndexErrorDraw(messageComposite);
+						matrixDraw.draw(info, arrayIndexError.getErrorCoordinates(), arrayIndexError.getArraySize());
 					}
 				}
 			}
