@@ -6,14 +6,15 @@ import java.util.List;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 
 import pt.iscte.paddle.runtime.variableInfo.ArrayVariableInfo;
 import pt.iscte.paddle.runtime.variableInfo.ArrayVariableInfo.Coordinates;
 
-public class MatrixIndexErrorDraw extends Composite {
+public class MatrixIndexErrorDraw extends Canvas {
 	
-	private static final int compositeSizeX = 380;	//250
+	private static final int compositeSizeX = 450;	//250
 	private static final int compositeSizeY = 540;	//110
 	
 	private static final int maxArraySize = 8;
@@ -57,9 +58,11 @@ public class MatrixIndexErrorDraw extends Composite {
 		
 		Composite rightSide = new Composite(this, SWT.NONE);
 		GridLayout rightSideLayout = new GridLayout();
-//		rightSideLayout.verticalSpacing = verticalArrayDraw.getSpacingY();
 		rightSideLayout.verticalSpacing = 0;
 		rightSide.setLayout(rightSideLayout);
+		
+		if(errorCoordinates.length == 1 && errorCoordinates[0] < 0)
+			new ArrayIndexErrorDraw(rightSide);		//Placeholder invisible array for error in start of vertical array
 		
 		for(int i = 0; i < matrix.size(); i++) {
 			if(matrix.size() > maxArraySize && i > maxArraySize - 3 && i < matrix.size() - 3)
@@ -80,6 +83,9 @@ public class MatrixIndexErrorDraw extends Composite {
 			else
 				arrayDraw.drawArray(matrix.get(i), oneDimensionCoordinates, null, false, 0, false, originalArraySize);
 		}
+		
+		if(errorCoordinates.length == 1)
+			new ArrayIndexErrorDraw(rightSide);		//Placeholder invisible array for error in end of vertical array
 	}
 	
 	//Returns a List with a structure very similar to a matrix

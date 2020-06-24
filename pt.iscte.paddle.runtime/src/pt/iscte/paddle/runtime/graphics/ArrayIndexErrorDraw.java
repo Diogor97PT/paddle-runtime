@@ -19,7 +19,7 @@ import pt.iscte.paddle.runtime.variableInfo.ArrayVariableInfo.Coordinates;
 
 public class ArrayIndexErrorDraw extends Canvas {
 	
-	private static final int canvasSizeX = 250;
+	private static final int canvasSizeX = 300;
 	private static int canvasSizeY = 110;
 	
 	//-------- Rectangle constants --------//
@@ -87,9 +87,9 @@ public class ArrayIndexErrorDraw extends Canvas {
 																				//Horizontal
 				int availableSpaceX;											//Espaço que cada quadrado ocupa (quadrado em si + margem esquerda e direita
 				if(showErrorPosition)
-					availableSpaceX = (getSize().x - 10) / (arraySize + 1);
+					availableSpaceX = (getSize().x - 10) / (maxArraySize + 1);
 				else
-					availableSpaceX = (getSize().x - 10) / (arraySize);
+					availableSpaceX = (getSize().x - 10) / (maxArraySize);
 				
 //				int spacingX = availableSpaceX / 8;								//margem de um dos lados
 //				int sizeX = availableSpaceX - (spacingX * 2);					//tamanho do quadrado em si
@@ -99,9 +99,7 @@ public class ArrayIndexErrorDraw extends Canvas {
 				
 				int centerY = (squareStartY + (squareStartY + squareSizeY)) / 2;
 				
-				int rectangleSizeX = getSize().x - 10;
-				if(showErrorPosition)
-					rectangleSizeX -= availableSpaceX;
+				int rectangleSizeX = availableSpaceX * arraySize;
 				
 				int offset = 0;
 				if(errorPosition < 0) offset++;
