@@ -29,10 +29,10 @@ import pt.iscte.paddle.model.IVariableAssignment;
 import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.IVariableExpression;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
+import pt.iscte.paddle.runtime.experiment.tests.Example06TranposeMatrixTest;
 import pt.iscte.paddle.runtime.messages.ErrorMessage;
 import pt.iscte.paddle.runtime.messages.Message;
 import pt.iscte.paddle.runtime.tests.Test;
-import pt.iscte.paddle.runtime.tests.arrayIndex.MatrixErrorTest;
 import pt.iscte.paddle.runtime.variableInfo.ArrayVariableInfo;
 import pt.iscte.paddle.runtime.variableInfo.VariableInfo;
 import pt.iscte.paddle.runtime.variableInfo.VariableInfo.VariableType;
@@ -166,11 +166,11 @@ public class Runtime {
 //	Test test = new ArrayIndexErrorBackwardTest();
 //	Test test = new ArrayIndexPlus2Test();
 //	Test test = new ArrayIndexFunctionTest();
-	Test test = new MatrixErrorTest();
+//	Test test = new MatrixErrorTest();
 //	Test test = new SumAllTest();
 //	Test test = new NullPointerErrorTest();
 	
-	private int testValue = 20;
+//	private int testValue = 20;
 	//-------------------------------------tests-------------------------------------//
 	
 	//-------------------------------Experiment tests--------------------------------//
@@ -179,7 +179,7 @@ public class Runtime {
 //	Test test = new Example03LastOccurrenceTest();
 //	Test test = new Example04InvertTest();
 //	Test test = new Example05MultiplyMatrixTest();
-//	Test test = new Example06TranposeMatrixTest();
+	Test test = new Example06TranposeMatrixTest();
 //	Test test = new Example07InvertSameVectorTest();
 //	Test test = new Example08BubbleSortTest();
 //	Test test = new Example09SelectionSortTest();
@@ -192,7 +192,7 @@ public class Runtime {
 		Message message = null;
 		
 		try {
-			IExecutionData data = state.execute(procedure, testValue);
+			IExecutionData data = state.execute(procedure);
 			IValue value = data.getReturnValue();
 			message = Message.getSuccessfulMessage(text, this, value);
 		} catch (ExecutionError e) {

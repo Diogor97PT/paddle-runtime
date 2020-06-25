@@ -36,7 +36,7 @@ public class VerticalArrayDraw extends Canvas {
 	private PaintListener paintListener;
 	
 	public VerticalArrayDraw(Composite parent) {
-		super(parent, SWT.BORDER);
+		super(parent, SWT.NONE);
 	}
 
 	@Override
@@ -52,7 +52,7 @@ public class VerticalArrayDraw extends Canvas {
 	void drawArray(IExpression expression, boolean showErrorPosition, int errorPosition, int originalArraySize, int maxArraySize) {
 		if(paintListener != null) removePaintListener(paintListener);
 		
-		squareStartX = rectangleStartX + 10;
+		squareStartX = rectangleStartX + 18;
 		
 		int arraySize = originalArraySize > maxArraySize ? maxArraySize : originalArraySize;
 		
@@ -77,7 +77,7 @@ public class VerticalArrayDraw extends Canvas {
 				int spacingY = availableSpaceY / 8;								//margem de um dos lados
 				int sizeY = availableSpaceY - (spacingY * 2);					//tamanho do quadrado em si
 				
-				int centerX = (squareStartX + (squareStartX + squareSizeX)) / 2;
+//				int centerX = (squareStartX + (squareStartX + squareSizeX)) / 2;
 				
 				int rectangleSizeY = getSize().y - 10;
 				if(showErrorPosition)
@@ -91,7 +91,7 @@ public class VerticalArrayDraw extends Canvas {
 				
 				if(showErrorPosition) {
 					int errorOffset = offset ^ 1;				//XOR -> if offset = 1, errorOffset = 0 and vice-versa (inverts errorOffset value)
-					drawErrorPosition(Integer.toString(errorPosition), gc, availableSpaceY, spacingY, sizeY, centerX, (arraySize * errorOffset));
+					drawErrorPosition(Integer.toString(errorPosition), gc, availableSpaceY, spacingY, sizeY, (arraySize * errorOffset));
 				}
 				
 				String lengthExpression = expression != null ? " (" + expression.toString() + ")" : "";
@@ -99,14 +99,14 @@ public class VerticalArrayDraw extends Canvas {
 
 				if(originalArraySize > maxArraySize) {
 					for(int i = 0; i < maxArraySize - 3; i++) {
-						drawSquare(i + "", gc, availableSpaceY, spacingY, sizeY, centerX, i + offset);
+						drawSquare(i + "", gc, availableSpaceY, spacingY, sizeY, i + offset);
 					}
-					drawSquare("...", gc, availableSpaceY, spacingY, sizeY, centerX, maxArraySize - 3 + offset);
-					drawSquare((originalArraySize - 2) + "", gc, availableSpaceY, spacingY, sizeY, centerX, maxArraySize - 2 + offset);
-					drawSquare((originalArraySize - 1) + "", gc, availableSpaceY, spacingY, sizeY, centerX, maxArraySize - 1 + offset);
+					drawSquare("...", gc, availableSpaceY, spacingY, sizeY, maxArraySize - 3 + offset);
+					drawSquare((originalArraySize - 2) + "", gc, availableSpaceY, spacingY, sizeY, maxArraySize - 2 + offset);
+					drawSquare((originalArraySize - 1) + "", gc, availableSpaceY, spacingY, sizeY, maxArraySize - 1 + offset);
 				} else {
 					for(int i = 0; i < arraySize; i++) {
-						drawSquare(i + "", gc, availableSpaceY, spacingY, sizeY, centerX, i + offset);
+						drawSquare(i + "", gc, availableSpaceY, spacingY, sizeY, i + offset);
 					}
 				}
 			}
@@ -117,7 +117,7 @@ public class VerticalArrayDraw extends Canvas {
 	}
 	
 	//Draws a square
-	private void drawSquare(String positionText, GC gc, int availableSpaceY, int spacingY, int sizeY, int centerX, int i) {
+	private void drawSquare(String positionText, GC gc, int availableSpaceY, int spacingY, int sizeY, int i) {
 		gc.setBackground(InterfaceColors.WHITE.getColor());
 		int currentY = (i * availableSpaceY) + squareStartY;
 		gc.fillRectangle(squareStartX, currentY + spacingY, squareSizeX, sizeY);
@@ -128,11 +128,11 @@ public class VerticalArrayDraw extends Canvas {
 		gc.setForeground(InterfaceColors.WHITE.getColor());
 		Point normalTextSize = gc.textExtent(positionText);
 		int normalTextY = centerY - (normalTextSize.y / 2);
-		gc.drawText(positionText, centerX + (squareSizeX / 2) + 5, normalTextY, true);
+		gc.drawText(positionText, squareStartX - 10, normalTextY, true);
 	}
 	
 	//Draws the position where the error happened
-	private void drawErrorPosition(String positionText, GC gc, int availableSpaceY, int spacingY, int sizeY, int centerX, int i) {
+	private void drawErrorPosition(String positionText, GC gc, int availableSpaceY, int spacingY, int sizeY, int i) {
 		gc.setForeground(InterfaceColors.RED.getColor());
 		gc.setLineStyle(SWT.LINE_DASH);
 		gc.setLineWidth(2);
@@ -144,7 +144,7 @@ public class VerticalArrayDraw extends Canvas {
 		gc.setFont(normalFont);
 		Point normalTextSize = gc.textExtent(positionText);
 		int normalTextY = centerY - (normalTextSize.y / 2);
-		gc.drawText(positionText, centerX + (squareSizeX / 2) + 5, normalTextY, true);
+		gc.drawText(positionText, squareStartX - 10, normalTextY, true);
 	}
 	
 	//Draws the symbol that represents the array size

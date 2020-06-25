@@ -40,7 +40,7 @@ public class ArrayIndexErrorDraw extends Canvas {
 	private PaintListener paintListener;
 
 	public ArrayIndexErrorDraw(Composite comp) {
-		super(comp, SWT.BORDER);
+		super(comp, SWT.NONE);
 	}
 	
 	//Canvas Size

@@ -12,6 +12,7 @@ import pt.iscte.paddle.model.IVariableExpression;
 import pt.iscte.paddle.model.roles.IArrayIndexIterator;
 import pt.iscte.paddle.model.roles.IVariableRole;
 import pt.iscte.paddle.runtime.Runtime;
+import pt.iscte.paddle.runtime.variableInfo.ArrayVariableInfo;
 
 public class ArrayIndexErrorMessage extends ErrorMessage {
 	
@@ -34,7 +35,9 @@ public class ArrayIndexErrorMessage extends ErrorMessage {
 		else
 			array = ((IVariableExpression)error.getTarget()).getVariable();
 		
-		Object obj = runtime.getVarValues().get(array).getReference().getValue();
+		ArrayVariableInfo arrayInfo = (ArrayVariableInfo) runtime.getVarValues().get(array);
+		
+		Object obj = arrayInfo.getReference().getValue();
 		if(obj instanceof IArray)
 			array_ref = (IArray) obj;
 		else
@@ -54,19 +57,35 @@ public class ArrayIndexErrorMessage extends ErrorMessage {
 			setCoordinates(error.getInvalidIndex());
 		}
 		
-		//TODO corrigir mensagem para refletir quando é uma matriz
-		text.words("Tentativa de acesso à posição ")
-			.words(Integer.toString(invalidPos))
-			.words(", que é inválida para o ")
-			.link("vetor " + array.getId(), array)
-			.words(" (comprimento " + array_ref.getLength() + ", índices válidos [0, " + (array_ref.getLength() - 1) + "]. ")
-			.newline()
-			.words("O acesso foi feito através da ")
-			.link("variável " + variable.toString(), errorExpression);
 		
-		IVariableRole role = IVariableRole.match(variable);
-		if(role instanceof IArrayIndexIterator && ((IArrayIndexIterator) role).getArrayVariables().contains(array)) {
-			text.words(", que é um iterador para as posições do vetor " + array);
+		
+		//TODO corrigir mensagem para refletir quando é uma matriz
+		if(arrayInfo.getAccessedPositions().get(0).getCoordinates().size() == 1) {
+			text.words("Tentativa de acesso à posição ")
+				.words(Integer.toString(invalidPos))
+				.words(", que é inválida para o ")
+				.link("vetor " + array.getId(), array)
+				.words(" (comprimento " + array_ref.getLength() + ", índices válidos [0, " + (array_ref.getLength() - 1) + "]. ")
+				.newline()
+				.words("O acesso foi feito através da ")
+				.link("variável " + variable.toString(), errorExpression);
+
+			IVariableRole role = IVariableRole.match(variable);
+			if(role instanceof IArrayIndexIterator && ((IArrayIndexIterator) role).getArrayVariables().contains(array)) {
+				text.words(", que é um iterador para as posições do vetor " + array);
+			}
+		} else {
+			System.out.println(array_ref.getLength());
+			text.words("Tentativa de acesso à posição ")
+				.words(Integer.toString(invalidPos))
+				.words(" de dimensão " + error.getIndexDimension())
+				.words(", que é inválida para a ")
+				.link("matriz " + array.getId(), array, array)
+				.newline()
+				.words(" (comprimento + [" + "]. índices válidos [0, 0" + "; 0, 0" + "]")		//TODO Colocar valores corretos
+				.newline()
+				.words("O acesso foi feito através da ")
+				.link("variável " + variable.toString(), errorExpression);
 		}
 	}
 	
