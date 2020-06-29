@@ -29,7 +29,6 @@ import pt.iscte.paddle.model.IVariableAssignment;
 import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.IVariableExpression;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
-import pt.iscte.paddle.runtime.experiment.tests.Example10BinarySearchTest;
 import pt.iscte.paddle.runtime.messages.ErrorMessage;
 import pt.iscte.paddle.runtime.messages.Message;
 import pt.iscte.paddle.runtime.tests.Test;
@@ -46,7 +45,7 @@ public class Runtime {
 	
 	private Map<IVariableDeclaration, VariableInfo> varValues = new HashMap<>();
 	
-	public Runtime() {
+	public Runtime(Test test) {
 		module = test.getModule();
 		procedure = test.getProcedure();
 		icfg = procedure.generateCFG();
@@ -55,6 +54,7 @@ public class Runtime {
 //		System.out.println(code);
 		
 		state = IMachine.create(module);
+		addListener();
 	}
 	
 	public void addListener() {
@@ -160,32 +160,6 @@ public class Runtime {
 		return (int)value;
 	}
 	
-	//-------------------------------------tests-------------------------------------//
-//	Test test = new ArrayIndexErrorTest();
-//	Test test = new ArrayIndexErrorExpressionTest();
-//	Test test = new ArrayIndexErrorBackwardTest();
-//	Test test = new ArrayIndexPlus2Test();
-//	Test test = new ArrayIndexFunctionTest();
-//	Test test = new MatrixErrorTest();
-//	Test test = new SumAllTest();
-//	Test test = new NullPointerErrorTest();
-	
-//	private int testValue = 20;
-	//-------------------------------------tests-------------------------------------//
-	
-	//-------------------------------Experiment tests--------------------------------//
-//	Test test = new Example01SumTest();
-//	Test test = new Example02NaturalsTest();
-//	Test test = new Example03LastOccurrenceTest();
-//	Test test = new Example04InvertTest();
-//	Test test = new Example05MultiplyMatrixTest();
-//	Test test = new Example06TranposeMatrixTest();
-//	Test test = new Example07InvertSameVectorTest();
-//	Test test = new Example08BubbleSortTest();
-//	Test test = new Example09SelectionSortTest();
-	Test test = new Example10BinarySearchTest();
-	//-------------------------------Experiment tests--------------------------------//
-	
 	public Message execute() {
 		HyperlinkedText text = new HyperlinkedText(e -> e.forEach(e2 -> IJavardiseService.getWidget(e2).addMark(InterfaceColors.BLUE.getColor()).show()));
 		
@@ -217,11 +191,5 @@ public class Runtime {
 	
 	public IControlFlowGraph getIcfg() {
 		return icfg;
-	}
-	
-	public static void main(String[] args) {
-		Runtime runtime = new Runtime();
-		runtime.addListener();
-		new RuntimeWindow(runtime);
 	}
 }
