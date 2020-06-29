@@ -80,7 +80,7 @@ public class ArrayIndexErrorMessage extends ErrorMessage {
 				.words(Integer.toString(invalidPos))
 				.words(" de dimensão " + error.getIndexDimension())
 				.words(", que é inválida para a ")
-				.link("matriz " + array.getId(), array, array)
+				.link("matriz " + array.getId(), array)
 				.newline()
 				.words(" (comprimento + [" + "]. índices válidos [0, 0" + "; 0, 0" + "]")		//TODO Colocar valores corretos
 				.newline()

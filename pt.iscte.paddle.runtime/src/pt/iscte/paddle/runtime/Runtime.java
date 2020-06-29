@@ -29,7 +29,7 @@ import pt.iscte.paddle.model.IVariableAssignment;
 import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.IVariableExpression;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
-import pt.iscte.paddle.runtime.experiment.tests.Example06TranposeMatrixTest;
+import pt.iscte.paddle.runtime.experiment.tests.Example10BinarySearchTest;
 import pt.iscte.paddle.runtime.messages.ErrorMessage;
 import pt.iscte.paddle.runtime.messages.Message;
 import pt.iscte.paddle.runtime.tests.Test;
@@ -179,11 +179,11 @@ public class Runtime {
 //	Test test = new Example03LastOccurrenceTest();
 //	Test test = new Example04InvertTest();
 //	Test test = new Example05MultiplyMatrixTest();
-	Test test = new Example06TranposeMatrixTest();
+//	Test test = new Example06TranposeMatrixTest();
 //	Test test = new Example07InvertSameVectorTest();
 //	Test test = new Example08BubbleSortTest();
 //	Test test = new Example09SelectionSortTest();
-//	Test test = new Example10BinarySearchTest();
+	Test test = new Example10BinarySearchTest();
 	//-------------------------------Experiment tests--------------------------------//
 	
 	public Message execute() {

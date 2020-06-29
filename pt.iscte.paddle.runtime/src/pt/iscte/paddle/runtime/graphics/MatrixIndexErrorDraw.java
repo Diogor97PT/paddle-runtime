@@ -20,7 +20,7 @@ public class MatrixIndexErrorDraw extends Canvas {
 	private static final int maxArraySize = 8;
 
 	public MatrixIndexErrorDraw(Composite comp) {
-		super(comp, SWT.NONE);
+		super(comp, SWT.BORDER);
 		GridLayout layout = new GridLayout(2, false);
 		layout.verticalSpacing = 0;
 		setLayout(layout);
