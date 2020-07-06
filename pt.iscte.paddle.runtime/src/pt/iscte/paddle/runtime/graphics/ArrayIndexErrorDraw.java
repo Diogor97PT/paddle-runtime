@@ -20,10 +20,10 @@ import pt.iscte.paddle.runtime.variableInfo.ArrayVariableInfo.Coordinates;
 public class ArrayIndexErrorDraw extends Canvas {
 	
 	private static final int canvasSizeX = 300;
-	private static int canvasSizeY = 110;
+	private int canvasSizeY;
 	
 	//-------- Rectangle constants --------//
-	private static int rectangleStartY = 45;							//Onde começar a desenhar o retangulo
+	private int rectangleStartY;										//Onde começar a desenhar o retangulo
 	private static final int rectangleSizeY = 60;
 	//-------- Rectangle constants --------//
 	
@@ -68,7 +68,10 @@ public class ArrayIndexErrorDraw extends Canvas {
 	void drawArray(String[] array, List<Coordinates> accessedPositions, IExpression expression, boolean showErrorPosition, int errorPosition, boolean showArraySize, int originalArraySize) {
 		if(paintListener != null) removePaintListener(paintListener);
 		
-		if(!showArraySize) {
+		if(showArraySize) {
+			canvasSizeY = 110;
+			rectangleStartY = 45;
+		} else {
 			canvasSizeY = 65;
 			rectangleStartY = 0;
 		}

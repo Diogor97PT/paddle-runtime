@@ -1,7 +1,5 @@
 package pt.iscte.paddle.runtime.messages;
 
-import java.util.List;
-
 import pt.iscte.paddle.interpreter.ArrayIndexError;
 import pt.iscte.paddle.interpreter.IArray;
 import pt.iscte.paddle.interpreter.IReference;
@@ -14,7 +12,6 @@ import pt.iscte.paddle.model.IVariableExpression;
 import pt.iscte.paddle.model.roles.IArrayIndexIterator;
 import pt.iscte.paddle.model.roles.IVariableRole;
 import pt.iscte.paddle.runtime.Runtime;
-import pt.iscte.paddle.runtime.graphics.MatrixIndexErrorDraw;
 import pt.iscte.paddle.runtime.variableInfo.ArrayVariableInfo;
 
 public class ArrayIndexErrorMessage extends ErrorMessage {
@@ -63,11 +60,6 @@ public class ArrayIndexErrorMessage extends ErrorMessage {
 				text.words(", que é um iterador para as posições do vetor " + array);
 			}
 		} else {
-			//TODO corrigir mensagem para refletir quando é uma matriz
-			//Tentativa de acesso à posição x de dimensão y, que é inválida para a matriz z
-			List<String []> matrix = MatrixIndexErrorDraw.stringToMatrix(arrayInfo.getReference().getValue().toString());	//TODO evitar criar isto (repetição)
-			
-//			System.out.println(array_ref.getLength());
 			text.words("Tentativa de acesso à posição ")
 				.words(Integer.toString(invalidPos))
 				.words(" de dimensão " + error.getIndexDimension())
@@ -98,9 +90,6 @@ public class ArrayIndexErrorMessage extends ErrorMessage {
 			if(role instanceof IArrayIndexIterator && ((IArrayIndexIterator) role).getArrayVariables().contains(array)) {
 				text.words(", que é um iterador para as posições da dimensão " + error.getIndexDimension() + " da matriz " + array);
 			}
-			
-//				.words(" (comprimento + [" + "]. índices válidos [0, 0" + "; 0, 0" + "]")		//TODO Colocar valores corretos
-//				.newline();
 		}
 	}
 	
