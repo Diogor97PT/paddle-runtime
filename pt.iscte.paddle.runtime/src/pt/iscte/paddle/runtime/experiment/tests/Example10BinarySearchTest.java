@@ -18,7 +18,6 @@ import pt.iscte.paddle.runtime.tests.Test;
 
 public class Example10BinarySearchTest extends Test {
 	
-	//TODO Example10 corrigir nao consegui testar porque ocupa demasiado espaço no ecrã
 	public Example10BinarySearchTest() {
 		module = IModule.create();
 		module.setId("Example10BinarySearchTest");

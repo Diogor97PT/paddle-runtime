@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
@@ -15,14 +16,19 @@ import pt.iscte.paddle.runtime.variableInfo.ArrayVariableInfo.Coordinates;
 public class MatrixIndexErrorDraw extends Canvas {
 	
 	private static final int compositeSizeX = 450;	//250
-	private static final int compositeSizeY = 540;	//110
+	private static final int compositeSizeY = 610;	//110
 	
 	private static final int maxArraySize = 8;
 
 	public MatrixIndexErrorDraw(Composite comp) {
-		super(comp, SWT.BORDER);
+		super(comp, SWT.NONE);
 		GridLayout layout = new GridLayout(2, false);
 		layout.verticalSpacing = 0;
+		layout.horizontalSpacing = 0;
+		layout.marginBottom = 0;
+		layout.marginTop = 0;
+		layout.marginLeft = 0;
+		layout.marginRight = 0;
 		setLayout(layout);
 	}
 	
@@ -47,6 +53,7 @@ public class MatrixIndexErrorDraw extends Canvas {
 		List<Coordinates> accessedPositions = info.getAccessedPositions();
 		
 		VerticalArrayDraw verticalArrayDraw = new VerticalArrayDraw(this);
+		verticalArrayDraw.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		if(info.getLengthExpressions() == null && errorCoordinates.length > 1)
 			verticalArrayDraw.drawArray(null, false, errorCoordinates[0], originalArraySize, maxArraySize);
 		else if (info.getLengthExpressions() != null && errorCoordinates.length > 1)
@@ -59,14 +66,23 @@ public class MatrixIndexErrorDraw extends Canvas {
 		Composite rightSide = new Composite(this, SWT.NONE);
 		GridLayout rightSideLayout = new GridLayout();
 		rightSideLayout.verticalSpacing = 0;
+		rightSideLayout.marginBottom = 0;
+		rightSideLayout.marginTop = 0;
+		rightSideLayout.marginLeft = 0;
+		rightSideLayout.marginRight = 0;
 		rightSide.setLayout(rightSideLayout);
 		
 		if(errorCoordinates.length == 1 && errorCoordinates[0] < 0)
 			new ArrayIndexErrorDraw(rightSide);		//Placeholder invisible array for error in start of vertical array
 		
 		for(int i = 0; i < matrix.size(); i++) {
-			if(matrix.size() > maxArraySize && i > maxArraySize - 3 && i < matrix.size() - 3)
-				continue;
+			if(matrix.size() > maxArraySize) {
+				if(i == matrix.size() - 3) {			//line where the array "jumps" to the end values
+					new ArrayIndexErrorDraw(rightSide);
+					continue;
+				} else if(i >= maxArraySize - 3 && i < matrix.size() - 2)	//values that dont fit in the drawing
+					continue;
+			}
 			
 			List<Coordinates> oneDimensionCoordinates = new ArrayList<>(); //TODO evitar esta conversão
 			for(Coordinates coordinates : accessedPositions) {
@@ -78,6 +94,7 @@ public class MatrixIndexErrorDraw extends Canvas {
 			}
 			
 			ArrayIndexErrorDraw arrayDraw = new ArrayIndexErrorDraw(rightSide);
+			arrayDraw.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
 			if(errorCoordinates.length > 1 && errorCoordinates[0] == i)
 				arrayDraw.drawArray(matrix.get(i), oneDimensionCoordinates, null, true, errorCoordinates[1], false, originalArraySize);
 			else

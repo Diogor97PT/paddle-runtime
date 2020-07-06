@@ -103,7 +103,7 @@ public class RuntimeWindow {
 		Display display = new Display();
 		shell = new Shell(display);
 		shell.setText("Runtime");
-		shell.setSize(1150, 800);
+		shell.setSize(1230, 820);
 		
 		GridLayout layout = new GridLayout(2, true);
 		layout.marginLeft = 30;
@@ -142,12 +142,12 @@ public class RuntimeWindow {
 		rightSidelayout.wrap = false;
 		rightSidelayout.pack = true;
 		rightSidelayout.justify = false;
-		rightSidelayout.spacing = 10;
+		rightSidelayout.spacing = 20;
 		rightSide.setLayout(rightSidelayout);
 		
 		//Group where buttons are inserted
 		Group buttonGroup = new Group(rightSide, SWT.BORDER);
-		buttonGroup.setText("Actions");
+		buttonGroup.setText("Opções");
 		buttonGroup.setLayout(new FillLayout());
 		buttonGroup.setFocus();
 		
@@ -293,8 +293,8 @@ public class RuntimeWindow {
 //	});
 	}
 	
+	//Delete previous Decorations and Explanation Text
 	private void deleteDecorations() {
-		//Delete Previous Decorations
 		if(link != null) link.dispose();
 		if(errorDraw != null) errorDraw.dispose();
 		if(shortTextDecoration != null) shortTextDecoration.delete();
@@ -305,7 +305,8 @@ public class RuntimeWindow {
 		valores.clear();
 	}
 	
-	private void changeGUIToTest(Test test) {
+	//Delete code widget and decorations and recreate them for a new test
+	private void changeCurrentTest(Test test) {
 		codeWidget.getControl().dispose();
 		deleteDecorations();
 		
@@ -324,34 +325,34 @@ public class RuntimeWindow {
 			
 			switch (item.getText()) {
 			case "Test 01 - Sum":
-				changeGUIToTest(new Example01SumTest());
+				changeCurrentTest(new Example01SumTest());
 				break;
 			case "Test 02 - Naturals":
-				changeGUIToTest(new Example02NaturalsTest());
+				changeCurrentTest(new Example02NaturalsTest());
 				break;
 			case "Test 03 - Last Occurrence":
-				changeGUIToTest(new Example03LastOccurrenceTest());
+				changeCurrentTest(new Example03LastOccurrenceTest());
 				break;
 			case "Test 04 - Invert":
-				changeGUIToTest(new Example04InvertTest());
+				changeCurrentTest(new Example04InvertTest());
 				break;
 			case "Test 05 - Multiply Matrix":
-				changeGUIToTest(new Example05MultiplyMatrixTest());
+				changeCurrentTest(new Example05MultiplyMatrixTest());
 				break;
 			case "Test 06 - Transpose Matrix":
-				changeGUIToTest(new Example06TranposeMatrixTest());
+				changeCurrentTest(new Example06TranposeMatrixTest());
 				break;
 			case "Test 07 - Invert Same Vector":
-				changeGUIToTest(new Example07InvertSameVectorTest());
+				changeCurrentTest(new Example07InvertSameVectorTest());
 				break;
 			case "Test 08 - Bubble Sort":
-				changeGUIToTest(new Example08BubbleSortTest());
+				changeCurrentTest(new Example08BubbleSortTest());
 				break;
 			case "Test 09 - Selection Sort":
-				changeGUIToTest(new Example09SelectionSortTest());
+				changeCurrentTest(new Example09SelectionSortTest());
 				break;
 			case "Test 10 - BinarySearch":
-				changeGUIToTest(new Example10BinarySearchTest());
+				changeCurrentTest(new Example10BinarySearchTest());
 				break;
 			default:
 				break;

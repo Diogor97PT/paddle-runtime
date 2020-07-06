@@ -14,7 +14,6 @@ import pt.iscte.paddle.runtime.tests.Test;
 
 public class Example05MultiplyMatrixTest extends Test {
 
-	//TODO Example05 corrigir ocupa demasiado espaço no ecrã
 	public Example05MultiplyMatrixTest() {
 		module = IModule.create();
 		module.setId("Example05MultiplyMatrixTest");

@@ -1,5 +1,7 @@
 package pt.iscte.paddle.runtime.messages;
 
+import java.util.List;
+
 import pt.iscte.paddle.interpreter.ArrayIndexError;
 import pt.iscte.paddle.interpreter.IArray;
 import pt.iscte.paddle.interpreter.IReference;
@@ -12,6 +14,7 @@ import pt.iscte.paddle.model.IVariableExpression;
 import pt.iscte.paddle.model.roles.IArrayIndexIterator;
 import pt.iscte.paddle.model.roles.IVariableRole;
 import pt.iscte.paddle.runtime.Runtime;
+import pt.iscte.paddle.runtime.graphics.MatrixIndexErrorDraw;
 import pt.iscte.paddle.runtime.variableInfo.ArrayVariableInfo;
 
 public class ArrayIndexErrorMessage extends ErrorMessage {
@@ -43,29 +46,14 @@ public class ArrayIndexErrorMessage extends ErrorMessage {
 		else
 			array_ref = (IArray)((IReference)obj).getValue();
 		
-		if(error.getIndexDimension() == 1) {		//Dimensão da array que deu erro = 1
-			IArrayElement arrayElement = (IArrayElement) error.getTarget();
-			int index = runtime.getIntValueFromExpression(arrayElement.getIndexes().get(0));
-			
-			setCoordinates(index, error.getInvalidIndex());
-			
-//			for(int i = 0; i < array_ref.getLength(); i++) {
-//				System.out.println(array_ref.getElement(i));
-//				System.out.println(array_ref.getElement(i).getClass());
-//			}
-		} else {
-			setCoordinates(error.getInvalidIndex());
-		}
-		
-		
-		
-		//TODO corrigir mensagem para refletir quando é uma matriz
 		if(arrayInfo.getAccessedPositions().get(0).getCoordinates().size() == 1) {
+			setCoordinates(error.getInvalidIndex());
+			
 			text.words("Tentativa de acesso à posição ")
 				.words(Integer.toString(invalidPos))
 				.words(", que é inválida para o ")
 				.link("vetor " + array.getId(), array)
-				.words(" (comprimento " + array_ref.getLength() + ", índices válidos [0, " + (array_ref.getLength() - 1) + "]. ")
+				.words(" (comprimento " + array_ref.getLength() + ", índices válidos [0, " + (array_ref.getLength() - 1) + "]). ")
 				.newline()
 				.words("O acesso foi feito através da ")
 				.link("variável " + variable.toString(), errorExpression);
@@ -75,17 +63,44 @@ public class ArrayIndexErrorMessage extends ErrorMessage {
 				text.words(", que é um iterador para as posições do vetor " + array);
 			}
 		} else {
-			System.out.println(array_ref.getLength());
+			//TODO corrigir mensagem para refletir quando é uma matriz
+			//Tentativa de acesso à posição x de dimensão y, que é inválida para a matriz z
+			List<String []> matrix = MatrixIndexErrorDraw.stringToMatrix(arrayInfo.getReference().getValue().toString());	//TODO evitar criar isto (repetição)
+			
+//			System.out.println(array_ref.getLength());
 			text.words("Tentativa de acesso à posição ")
 				.words(Integer.toString(invalidPos))
 				.words(" de dimensão " + error.getIndexDimension())
 				.words(", que é inválida para a ")
 				.link("matriz " + array.getId(), array)
+				.newline();
+			
+			if(error.getIndexDimension() == 1) {		//Dimensão da array que deu erro = 1
+				IArrayElement arrayElement = (IArrayElement) error.getTarget();
+				int index = runtime.getIntValueFromExpression(arrayElement.getIndexes().get(0));
+				
+				setCoordinates(index, error.getInvalidIndex());
+			} else {
+//				System.out.println(error.getTarget());
+//				System.out.println(error.getTarget().getClass());
+//				System.out.println(arrayInfo.getReference().getTarget());
+//				System.out.println(arrayInfo.getReference().getTarget().getClass());
+				
+				setCoordinates(error.getInvalidIndex());
+			}
+			
+			text.words(" (comprimento da dimensão " + error.getIndexDimension() + ": " + array_ref.getLength() + ", índices válidos [0, " + (array_ref.getLength() - 1) + "]). ")			
 				.newline()
-				.words(" (comprimento + [" + "]. índices válidos [0, 0" + "; 0, 0" + "]")		//TODO Colocar valores corretos
-				.newline()
-				.words("O acesso foi feito através da ")
+				.words("O acesso inválido foi feito através da ")
 				.link("variável " + variable.toString(), errorExpression);
+			
+			IVariableRole role = IVariableRole.match(variable);
+			if(role instanceof IArrayIndexIterator && ((IArrayIndexIterator) role).getArrayVariables().contains(array)) {
+				text.words(", que é um iterador para as posições da dimensão " + error.getIndexDimension() + " da matriz " + array);
+			}
+			
+//				.words(" (comprimento + [" + "]. índices válidos [0, 0" + "; 0, 0" + "]")		//TODO Colocar valores corretos
+//				.newline();
 		}
 	}
 	

@@ -91,9 +91,6 @@ public class ArrayIndexErrorDraw extends Canvas {
 				else
 					availableSpaceX = (getSize().x - 10) / (maxArraySize);
 				
-//				int spacingX = availableSpaceX / 8;								//margem de um dos lados
-//				int sizeX = availableSpaceX - (spacingX * 2);					//tamanho do quadrado em si
-				
 				int sizeX = 20;													//tamanho do quadrado em si
 				int spacingX = (availableSpaceX - sizeX) / 2;					//margem de um dos lados
 				
