@@ -33,6 +33,7 @@ import pt.iscte.paddle.javardise.service.IWidget;
 import pt.iscte.paddle.model.IArrayType;
 import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.IVariableExpression;
+import pt.iscte.paddle.runtime.experiment.tests.Example00Test;
 import pt.iscte.paddle.runtime.experiment.tests.Example01SumTest;
 import pt.iscte.paddle.runtime.experiment.tests.Example02NaturalsTest;
 import pt.iscte.paddle.runtime.experiment.tests.Example03LastOccurrenceTest;
@@ -85,7 +86,8 @@ public class RuntimeWindow {
 	//-------------------------------------tests-------------------------------------//
 	
 	//-------------------------------Experiment tests--------------------------------//
-	Test test = new Example01SumTest();
+	Test test = new Example00Test();
+//	Test test = new Example01SumTest();
 //	Test test = new Example02NaturalsTest();
 //	Test test = new Example03LastOccurrenceTest();
 //	Test test = new Example04InvertTest();
@@ -240,10 +242,14 @@ public class RuntimeWindow {
 
 	    Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
 	    fileMenuHeader.setMenu(fileMenu);
+	    
+	    MenuItem testZero = new MenuItem(fileMenu, SWT.RADIO);
+	    testZero.setText("Test 00 - Example");
+	    testZero.setSelection(true);
+	    testZero.addSelectionListener(new TestSelectionListener());
 
 	    MenuItem firstTest = new MenuItem(fileMenu, SWT.RADIO);
 	    firstTest.setText("Test 01 - Sum");
-	    firstTest.setSelection(true);
 	    firstTest.addSelectionListener(new TestSelectionListener());
 	    
 	    MenuItem secondTest = new MenuItem(fileMenu, SWT.RADIO);
@@ -324,6 +330,9 @@ public class RuntimeWindow {
 			if(!item.getSelection()) return;
 			
 			switch (item.getText()) {
+			case "Test 00 - Example":
+				changeCurrentTest(new Example00Test());
+				break;
 			case "Test 01 - Sum":
 				changeCurrentTest(new Example01SumTest());
 				break;
