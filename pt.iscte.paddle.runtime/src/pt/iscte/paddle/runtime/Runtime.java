@@ -166,7 +166,7 @@ public class Runtime {
 		Message message = null;
 		
 		try {
-			IExecutionData data = state.execute(procedure);
+			IExecutionData data = state.execute(procedure, 20);
 			IValue value = data.getReturnValue();
 			message = Message.getSuccessfulMessage(text, this, value);
 		} catch (ExecutionError e) {

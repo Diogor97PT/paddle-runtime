@@ -51,6 +51,7 @@ import pt.iscte.paddle.runtime.messages.ArrayIndexErrorMessage;
 import pt.iscte.paddle.runtime.messages.ErrorMessage;
 import pt.iscte.paddle.runtime.messages.Message;
 import pt.iscte.paddle.runtime.tests.Test;
+import pt.iscte.paddle.runtime.tests.arrayIndex.MatrixErrorTest;
 import pt.iscte.paddle.runtime.variableInfo.ArrayVariableInfo;
 import pt.iscte.paddle.runtime.variableInfo.VariableInfo;
 import pt.iscte.paddle.runtime.variableInfo.VariableInfo.VariableType;
@@ -79,7 +80,7 @@ public class RuntimeWindow {
 //	Test test = new ArrayIndexErrorBackwardTest();
 //	Test test = new ArrayIndexPlus2Test();
 //	Test test = new ArrayIndexFunctionTest();
-//	Test test = new MatrixErrorTest();
+	Test test = new MatrixErrorTest();
 //	Test test = new SumAllTest();
 //	Test test = new NullPointerErrorTest();
 	
@@ -87,7 +88,7 @@ public class RuntimeWindow {
 	//-------------------------------------tests-------------------------------------//
 	
 	//-------------------------------Experiment tests--------------------------------//
-	Test test = new Example00Test();
+//	Test test = new Example00Test();
 //	Test test = new Example01SumTest();
 //	Test test = new Example02NaturalsTest();
 //	Test test = new Example03LastOccurrenceTest();

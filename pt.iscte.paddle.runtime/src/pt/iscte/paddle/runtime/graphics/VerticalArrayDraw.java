@@ -128,7 +128,8 @@ public class VerticalArrayDraw extends Canvas {
 		gc.setForeground(InterfaceColors.WHITE.getColor());
 		Point normalTextSize = gc.textExtent(positionText);
 		int normalTextY = centerY - (normalTextSize.y / 2);
-		gc.drawText(positionText, squareStartX - 10, normalTextY, true);
+		int normalTextX = squareStartX - 9 - (normalTextSize.x / 2);
+		gc.drawText(positionText, normalTextX, normalTextY, true);
 	}
 	
 	//Draws the position where the error happened
