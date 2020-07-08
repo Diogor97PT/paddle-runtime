@@ -17,7 +17,7 @@ public class Example00Test extends Test {
 
 	public Example00Test() {
 		module = IModule.create();
-		module.setId("Example00Test");
+		module.setId("Example00");
 		
 		IProcedure p2 = createProcedure();
 		

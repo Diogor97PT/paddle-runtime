@@ -15,6 +15,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
@@ -150,13 +151,21 @@ public class RuntimeWindow {
 		//Group where buttons are inserted
 		Group buttonGroup = new Group(rightSide, SWT.BORDER);
 		buttonGroup.setText("Opções");
-		buttonGroup.setLayout(new FillLayout());
+		FillLayout buttonGroupLayout = new FillLayout();
+		buttonGroupLayout.spacing = 10;
+		buttonGroup.setLayout(buttonGroupLayout);
 		buttonGroup.setFocus();
 		
 		//Button to execute the code inside the widget and display information
 		Button executeCode = new Button(buttonGroup, SWT.PUSH);
 		executeCode.setText("Executar Código");
 		executeCode.addSelectionListener(new ExecuteSelectionAdapter());
+		
+		//Combo Dropdown to choose mode
+		Combo combo = new Combo(buttonGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
+		combo.setItems("Normal Mode", "Stack Trace only");
+		combo.addSelectionListener(new ComboModeListener());
+		combo.select(0);
 		
 		shell.open();
 		while (!shell.isDisposed()) {
@@ -364,6 +373,25 @@ public class RuntimeWindow {
 				changeCurrentTest(new Example10BinarySearchTest());
 				break;
 			default:
+				break;
+			}
+		}
+	}
+	
+	private class ComboModeListener extends SelectionAdapter {
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			Combo combo = (Combo)e.widget;
+
+			switch (combo.getText()) {
+			case "Normal Mode":
+				System.out.println("Working in Normal mode");
+				break;
+			case "Stack Trace only":
+				System.out.println("Working in Stack Trace only mode");
+				break;
+			default:
+				System.out.println("Should not reach this");
 				break;
 			}
 		}

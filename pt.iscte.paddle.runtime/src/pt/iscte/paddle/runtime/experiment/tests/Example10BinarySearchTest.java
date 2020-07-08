@@ -20,7 +20,7 @@ public class Example10BinarySearchTest extends Test {
 	
 	public Example10BinarySearchTest() {
 		module = IModule.create();
-		module.setId("Example10BinarySearchTest");
+		module.setId("Example10BinarySearch");
 		
 		IProcedure p2 = createProcedure();
 		

@@ -15,7 +15,7 @@ public class Example01SumTest extends Test {
 	
 	public Example01SumTest() {
 		module = IModule.create();
-		module.setId("Example01SumTest");
+		module.setId("Example01Sum");
 		
 		IProcedure p2 = createProcedure();
 		

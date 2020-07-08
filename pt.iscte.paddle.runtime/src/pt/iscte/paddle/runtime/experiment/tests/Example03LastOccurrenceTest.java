@@ -17,7 +17,7 @@ public class Example03LastOccurrenceTest extends Test {
 	
 	public Example03LastOccurrenceTest() {
 		module = IModule.create();
-		module.setId("Example03LastOccurrenceTest");
+		module.setId("Example03LastOccurrence");
 		
 		IProcedure p2 = createProcedure();
 		

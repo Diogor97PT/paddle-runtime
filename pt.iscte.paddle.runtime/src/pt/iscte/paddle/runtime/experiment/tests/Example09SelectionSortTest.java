@@ -18,7 +18,7 @@ public class Example09SelectionSortTest extends Test {
 	
 	public Example09SelectionSortTest() {
 		module = IModule.create();
-		module.setId("Example09SelectionSortTest");
+		module.setId("Example09SelectionSort");
 		
 		IProcedure p2 = createProcedure();
 		

@@ -14,7 +14,7 @@ public class Example06TranposeMatrixTest extends Test {
 	
 	public Example06TranposeMatrixTest() {
 		module = IModule.create();
-		module.setId("Example06TranposeMatrixTest");
+		module.setId("Example06TranposeMatrix");
 		
 		IProcedure p2 = createProcedure();
 		

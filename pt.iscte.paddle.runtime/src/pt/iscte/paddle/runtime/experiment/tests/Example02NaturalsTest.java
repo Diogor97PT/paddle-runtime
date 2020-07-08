@@ -16,7 +16,7 @@ public class Example02NaturalsTest extends Test {
 	//Example 2 Test
 	public Example02NaturalsTest() {
 		module = IModule.create();
-		module.setId("Example02NaturalsTest");
+		module.setId("Example02Naturals");
 		
 		IProcedure p2 = createProcedure();
 		

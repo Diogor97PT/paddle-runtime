@@ -16,7 +16,7 @@ public class Example05MultiplyMatrixTest extends Test {
 
 	public Example05MultiplyMatrixTest() {
 		module = IModule.create();
-		module.setId("Example05MultiplyMatrixTest");
+		module.setId("Example05MultiplyMatrix");
 		
 		IProcedure p2 = createProcedure();
 		

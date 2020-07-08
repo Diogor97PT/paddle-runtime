@@ -19,7 +19,7 @@ public class Example08BubbleSortTest extends Test {
 	
 	public Example08BubbleSortTest() {
 		module = IModule.create();
-		module.setId("Example08BubbleSortTest");
+		module.setId("Example08BubbleSort");
 		
 		IProcedure p2 = createProcedure();
 		

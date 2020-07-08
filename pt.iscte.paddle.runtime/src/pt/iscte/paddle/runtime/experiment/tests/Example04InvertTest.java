@@ -15,7 +15,7 @@ public class Example04InvertTest extends Test {
 	
 	public Example04InvertTest() {
 		module = IModule.create();
-		module.setId("Example04InvertTest");
+		module.setId("Example04Invert");
 		
 		IProcedure p2 = createProcedure();
 		
