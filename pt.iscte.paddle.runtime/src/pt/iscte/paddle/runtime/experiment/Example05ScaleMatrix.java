@@ -2,14 +2,18 @@ package pt.iscte.paddle.runtime.experiment;
 
 import java.util.Arrays;
 
-public class Example05MultiplyMatrix {
+public class Example05ScaleMatrix {
 	
 	//Example 5
-	public static void multiplyMatrix(int [][] m, int n){
-		for(int i = 0; i < m.length; i++) {
-			for(int j = 0; j < m.length; j++) {			//m[i].length
-				m[i][j] *= n;
+	public static void scaleMatrix(int [][] m, int n){
+		int i = 0;
+		while(i < m.length) {
+			int j = 0;
+			while( j < m.length) {				//m[i].length
+				m[i][j] = m[i][j] * n;
+				j = j + 1;
 			}
+			i = i + 1;
 		}
 	}
 	
@@ -19,7 +23,7 @@ public class Example05MultiplyMatrix {
 					  {4, 1, 7, 3, 9},
 					  {3, 8, 4}};
 		int n = 2;
-		multiplyMatrix(m, n);
+		scaleMatrix(m, n);
 		System.out.println("Matrix After Multiplicating by " + n + " :");
 		System.out.println(Arrays.deepToString(m));
 	}

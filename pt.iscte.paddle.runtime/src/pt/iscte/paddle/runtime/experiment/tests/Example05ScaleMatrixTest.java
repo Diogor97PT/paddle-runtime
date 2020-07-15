@@ -12,11 +12,11 @@ import pt.iscte.paddle.model.IType;
 import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.runtime.tests.Test;
 
-public class Example05MultiplyMatrixTest extends Test {
+public class Example05ScaleMatrixTest extends Test {
 
-	public Example05MultiplyMatrixTest() {
+	public Example05ScaleMatrixTest() {
 		module = IModule.create();
-		module.setId("Example05MultiplyMatrix");
+		module.setId("Example05ScaleMatrix");
 		
 		IProcedure p2 = createProcedure();
 		
@@ -59,7 +59,7 @@ public class Example05MultiplyMatrixTest extends Test {
 	
 	private IProcedure createProcedure() {
 		IProcedure p2 = module.addProcedure(IType.VOID);
-		p2.setId("multiplyMatrix");
+		p2.setId("scaleMatrix");
 		
 		IVariableDeclaration m = p2.addParameter(INT.array2D().reference());
 		m.setId("m");

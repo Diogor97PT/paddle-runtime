@@ -5,14 +5,18 @@ import java.util.Arrays;
 public class Example08BubbleSort {
 
 	public static void bubbleSort(int [] v) {
-		for(int i = 0; i < v.length - 1; i++) {
-			for(int j = 0; j < v.length - i; j++) {			//j < v.length - i - 1
+		int i = 0;
+		while(i < v.length) {
+			int j = 0;
+			while(j < v.length - i) {						//j < v.length - i - 1
 				if(v[j] > v[j + 1]) {
 					int temp = v[j];
 					v[j] = v[j + 1]; 
-					v[j + 1] = temp; 
+					v[j + 1] = temp;  
 				}
+				j = j + 1;
 			}
+			i = i + 1;
 		}
 	}
 	

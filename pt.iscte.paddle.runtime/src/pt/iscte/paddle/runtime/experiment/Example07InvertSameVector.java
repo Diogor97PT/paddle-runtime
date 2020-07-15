@@ -5,8 +5,10 @@ import java.util.Arrays;
 public class Example07InvertSameVector {
 
 	public static void invert(int[] v) {
-		for(int i = 0; i < v.length / 2; i++) {
+		int i = 0;
+		while(i < v.length / 2) {
 			swapElements(v, i, v.length - i);		//swapElements(v, i, v.length - i - 1);
+			i = i + 1;
 		}
 	}
 	

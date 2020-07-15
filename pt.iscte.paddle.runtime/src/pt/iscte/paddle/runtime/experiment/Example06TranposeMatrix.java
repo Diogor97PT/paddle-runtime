@@ -5,7 +5,7 @@ import java.util.Arrays;
 public class Example06TranposeMatrix {
 
 	//columns of the same length and rows of the same length
-	public static int[][] tranposeMatrix(int [][] m){
+	public static int[][] transposeMatrix(int [][] m){
 		int [][] transposed = new int [m[0].length][m.length];
 		for(int i = 0; i < m[0].length; i++) {
 			for(int j = 0; j < m.length; j++) {
@@ -19,7 +19,7 @@ public class Example06TranposeMatrix {
 		int [][] original = {{1, 2, 3},
 				  			 {4, 5, 6}};
 		
-		int [][] transposed = tranposeMatrix(original);
+		int [][] transposed = transposeMatrix(original);
 		
 		System.out.println("Original Matrix:");
 		System.out.println(Arrays.deepToString(original));

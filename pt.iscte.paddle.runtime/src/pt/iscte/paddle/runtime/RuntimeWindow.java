@@ -15,7 +15,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
@@ -31,6 +30,7 @@ import pt.iscte.paddle.javardise.service.IClassWidget;
 import pt.iscte.paddle.javardise.service.ICodeDecoration;
 import pt.iscte.paddle.javardise.service.IJavardiseService;
 import pt.iscte.paddle.javardise.service.IWidget;
+import pt.iscte.paddle.javardise.util.HyperlinkedText;
 import pt.iscte.paddle.model.IArrayType;
 import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.IVariableExpression;
@@ -39,7 +39,7 @@ import pt.iscte.paddle.runtime.experiment.tests.Example01SumTest;
 import pt.iscte.paddle.runtime.experiment.tests.Example02NaturalsTest;
 import pt.iscte.paddle.runtime.experiment.tests.Example03LastOccurrenceTest;
 import pt.iscte.paddle.runtime.experiment.tests.Example04InvertTest;
-import pt.iscte.paddle.runtime.experiment.tests.Example05MultiplyMatrixTest;
+import pt.iscte.paddle.runtime.experiment.tests.Example05ScaleMatrixTest;
 import pt.iscte.paddle.runtime.experiment.tests.Example06TranposeMatrixTest;
 import pt.iscte.paddle.runtime.experiment.tests.Example07InvertSameVectorTest;
 import pt.iscte.paddle.runtime.experiment.tests.Example08BubbleSortTest;
@@ -51,7 +51,6 @@ import pt.iscte.paddle.runtime.messages.ArrayIndexErrorMessage;
 import pt.iscte.paddle.runtime.messages.ErrorMessage;
 import pt.iscte.paddle.runtime.messages.Message;
 import pt.iscte.paddle.runtime.tests.Test;
-import pt.iscte.paddle.runtime.tests.arrayIndex.MatrixErrorTest;
 import pt.iscte.paddle.runtime.variableInfo.ArrayVariableInfo;
 import pt.iscte.paddle.runtime.variableInfo.VariableInfo;
 import pt.iscte.paddle.runtime.variableInfo.VariableInfo.VariableType;
@@ -74,34 +73,11 @@ public class RuntimeWindow {
 	
 	private List<ICodeDecoration<Text>> valores = new ArrayList<>();
 	
-	//-------------------------------------tests-------------------------------------//
-//	Test test = new ArrayIndexErrorTest();
-//	Test test = new ArrayIndexErrorExpressionTest();
-//	Test test = new ArrayIndexErrorBackwardTest();
-//	Test test = new ArrayIndexPlus2Test();
-//	Test test = new ArrayIndexFunctionTest();
-	Test test = new MatrixErrorTest();
-//	Test test = new SumAllTest();
-//	Test test = new NullPointerErrorTest();
+	private Profile profile = Profile.A;		//TODO apagar no futuro
+	public static Test test;		//TODO apagar no futuro //pode ser removido daqui ao apagar o Profile
 	
-//	private int testValue = 20;
-	//-------------------------------------tests-------------------------------------//
-	
-	//-------------------------------Experiment tests--------------------------------//
-//	Test test = new Example00Test();
-//	Test test = new Example01SumTest();
-//	Test test = new Example02NaturalsTest();
-//	Test test = new Example03LastOccurrenceTest();
-//	Test test = new Example04InvertTest();
-//	Test test = new Example05MultiplyMatrixTest();
-//	Test test = new Example06TranposeMatrixTest();
-//	Test test = new Example07InvertSameVectorTest();
-//	Test test = new Example08BubbleSortTest();
-//	Test test = new Example09SelectionSortTest();
-//	Test test = new Example10BinarySearchTest();
-	//-------------------------------Experiment tests--------------------------------//
-	
-	public RuntimeWindow() {
+	public RuntimeWindow(Test test) {
+		this.test = test;
 		runtime = new Runtime(test); 
 		
 		Display display = new Display();
@@ -131,11 +107,12 @@ public class RuntimeWindow {
 		codeComposite.setLayout(new FillLayout());
 		
 		//Code Widget
-		codeWidget = IJavardiseService.createClassWidget(codeComposite, runtime.getModule());
+//		codeWidget = IJavardiseService.createClassWidget(codeComposite, runtime.getModule());
+		codeWidget = IJavardiseService.createClassWidget(codeComposite, runtime.getModule(), true);
 		codeWidget.setReadOnly(true);
 		
 		codeScroll.setContent(codeComposite);
-		codeScroll.setMinSize(700, 1000);		//TODO arranjar maneira de saber o tamanho a scrollar de forma correta
+		codeScroll.setMinSize(700, 1200);		//TODO arranjar maneira de saber o tamanho a scrollar de forma correta
 		codeScroll.setExpandHorizontal(true);
 		codeScroll.setExpandVertical(true);
 
@@ -162,12 +139,6 @@ public class RuntimeWindow {
 		executeCode.setText("Executar Código");
 		executeCode.addSelectionListener(new ExecuteSelectionAdapter());
 		
-		//Combo Dropdown to choose mode
-		Combo combo = new Combo(buttonGroup, SWT.DROP_DOWN | SWT.READ_ONLY);
-		combo.setItems("Normal Mode", "Stack Trace only");
-		combo.addSelectionListener(new ComboModeListener());
-		combo.select(0);
-		
 		shell.open();
 		while (!shell.isDisposed()) {
 			if(!display.readAndDispatch())
@@ -181,6 +152,15 @@ public class RuntimeWindow {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			deleteDecorations();
+			
+			if(profile.isJavaStackTrace()) {		//TODO apagar no futuro
+				String message = profile.getJavaStackTraceExplanation();
+				HyperlinkedText text = new HyperlinkedText(ee -> ee.forEach(e2 -> IJavardiseService.getWidget(e2).addMark(InterfaceColors.BLUE.getColor()).show()));
+				text.line(message);
+				link = text.create(rightSide, SWT.NONE);
+				link.requestLayout();
+				return;
+			}
 			
 			//Create new Decorations
 			Message message = runtime.execute();
@@ -275,7 +255,7 @@ public class RuntimeWindow {
 	    fourthTest.addSelectionListener(new TestSelectionListener());
 	    
 	    MenuItem fifthTest = new MenuItem(fileMenu, SWT.RADIO);
-	    fifthTest.setText("Test 05 - Multiply Matrix");
+	    fifthTest.setText("Test 05 - Scale Matrix");
 	    fifthTest.addSelectionListener(new TestSelectionListener());
 	    
 	    MenuItem sixthTest = new MenuItem(fileMenu, SWT.RADIO);
@@ -290,13 +270,28 @@ public class RuntimeWindow {
 	    eightTest.setText("Test 08 - Bubble Sort");
 	    eightTest.addSelectionListener(new TestSelectionListener());
 	    
-	    MenuItem ninethTest = new MenuItem(fileMenu, SWT.RADIO);
-	    ninethTest.setText("Test 09 - Selection Sort");
-	    ninethTest.addSelectionListener(new TestSelectionListener());
+//	    MenuItem ninethTest = new MenuItem(fileMenu, SWT.RADIO);
+//	    ninethTest.setText("Test 09 - Selection Sort");
+//	    ninethTest.addSelectionListener(new TestSelectionListener());
 	    
-	    MenuItem tenthTest = new MenuItem(fileMenu, SWT.RADIO);
-	    tenthTest.setText("Test 10 - BinarySearch");
-	    tenthTest.addSelectionListener(new TestSelectionListener());
+//	    MenuItem tenthTest = new MenuItem(fileMenu, SWT.RADIO);
+//	    tenthTest.setText("Test 10 - BinarySearch");
+//	    tenthTest.addSelectionListener(new TestSelectionListener());
+	    
+	    MenuItem profileMenuHeader = new MenuItem(menuBar, SWT.CASCADE);
+	    profileMenuHeader.setText("&Profile");
+	    
+	    Menu profileMenu = new Menu(shell, SWT.DROP_DOWN);
+	    profileMenuHeader.setMenu(profileMenu);
+	    
+	    MenuItem profileA = new MenuItem(profileMenu, SWT.RADIO);
+	    profileA.setText("Profile A");
+	    profileA.setSelection(true);
+	    profileA.addSelectionListener(new ProfileSelectionListener());
+	    
+	    MenuItem profileB = new MenuItem(profileMenu, SWT.RADIO);
+	    profileB.setText("Profile B");
+	    profileB.addSelectionListener(new ProfileSelectionListener());
 	    
 //		fileInfoItem.addSelectionListener(new SelectionAdapter() {
 //		@Override
@@ -328,8 +323,10 @@ public class RuntimeWindow {
 		
 		runtime = new Runtime(test);
 		
-		codeWidget = IJavardiseService.createClassWidget(codeComposite, runtime.getModule());
+		codeWidget = IJavardiseService.createClassWidget(codeComposite, runtime.getModule(), true);
 		codeWidget.setReadOnly(true);
+		
+		RuntimeWindow.test = test;			//TODO apagar no futuro
 	}
 	
 	private class TestSelectionListener extends SelectionAdapter {
@@ -355,8 +352,8 @@ public class RuntimeWindow {
 			case "Test 04 - Invert":
 				changeCurrentTest(new Example04InvertTest());
 				break;
-			case "Test 05 - Multiply Matrix":
-				changeCurrentTest(new Example05MultiplyMatrixTest());
+			case "Test 05 - Scale Matrix":
+				changeCurrentTest(new Example05ScaleMatrixTest());
 				break;
 			case "Test 06 - Transpose Matrix":
 				changeCurrentTest(new Example06TranposeMatrixTest());
@@ -379,26 +376,123 @@ public class RuntimeWindow {
 		}
 	}
 	
-	private class ComboModeListener extends SelectionAdapter {
+	private class ProfileSelectionListener extends SelectionAdapter {
 		@Override
 		public void widgetSelected(SelectionEvent e) {
-			Combo combo = (Combo)e.widget;
+			MenuItem item = (MenuItem) e.widget;
 
-			switch (combo.getText()) {
-			case "Normal Mode":
-				System.out.println("Working in Normal mode");
+			if(!item.getSelection()) return;
+			
+			switch (item.getText()) {
+			case "Profile A":
+				System.out.println("Profile A");
+				profile = Profile.A;
 				break;
-			case "Stack Trace only":
-				System.out.println("Working in Stack Trace only mode");
+			case "Profile B":
+				System.out.println("Profile B");
+				profile = Profile.B;
 				break;
 			default:
-				System.out.println("Should not reach this");
 				break;
 			}
 		}
 	}
 	
+	private enum Profile {
+		A, B;
+		
+		public boolean isJavaStackTrace() {
+			Test test = RuntimeWindow.test;
+			if((test instanceof Example00Test) || (test instanceof Example01SumTest) || (test instanceof Example03LastOccurrenceTest) || 
+					(test instanceof Example05ScaleMatrixTest) || (test instanceof Example07InvertSameVectorTest)) {
+				if (this == A)
+					return true;
+				else
+					return false;
+			} else if ((test instanceof Example00Test) || (test instanceof Example02NaturalsTest) || (test instanceof Example04InvertTest) || 
+					(test instanceof Example06TranposeMatrixTest) || (test instanceof Example08BubbleSortTest)) {
+				if (this == A)
+					return false;
+				else
+					return true;
+			}
+			return false;
+		}
+		
+		public String getJavaStackTraceExplanation() {
+			Test test = RuntimeWindow.test;
+			if(test instanceof Example00Test) {
+				return "Exception in thread \"main\" java.lang.ArrayIndexOutOfBoundsException: Index 2 out of bounds for length 2\r\n" + 
+						"              at pt.iscte.paddle.runtime.experiment.Example00.example(Example00.java:6)\r\n" + 
+						"              at pt.iscte.paddle.runtime.experiment.Example00.main(Example00.java:20)";
+			} else if(test instanceof Example01SumTest) {
+				return "Exception in thread \"main\" java.lang.ArrayIndexOutOfBoundsException: Index 4 out of bounds for length 4\r\n" + 
+						"              at pt.iscte.paddle.runtime.experiment.Example01Sum.sum(Example01Sum.java:8)\r\n" + 
+						"              at pt.iscte.paddle.runtime.experiment.Example01Sum.main(Example01Sum.java:20)";
+			} else if(test instanceof Example02NaturalsTest) {
+				return "Exception in thread \"main\" java.lang.ArrayIndexOutOfBoundsException: Index 5 out of bounds for length 5\r\n" + 
+						"              at pt.iscte.paddle.runtime.experiment.Example02Naturals.naturals(Example02Naturals.java:9)\r\n" + 
+						"              at pt.iscte.paddle.runtime.experiment.Example02Naturals.main(Example02Naturals.java:16)";
+			} else if(test instanceof Example03LastOccurrenceTest) {
+				return "Exception in thread \"main\" java.lang.ArrayIndexOutOfBoundsException: Index -1 out of bounds for length 8\r\n" + 
+						"              at pt.iscte.paddle.runtime.experiment.Example03LastOccurrence.lastOccurrence(Example03LastOccurrence.java:6)\r\n" + 
+						"              at pt.iscte.paddle.runtime.experiment.Example03LastOccurrence.main(Example03LastOccurrence.java:26)\r\n";
+			} else if(test instanceof Example04InvertTest) {
+				return "Exception in thread \"main\" java.lang.ArrayIndexOutOfBoundsException: Index 5 out of bounds for length 5\r\n" + 
+						"              at pt.iscte.paddle.runtime.experiment.Example04Invert.invert(Example04Invert.java:8)\r\n" + 
+						"              at pt.iscte.paddle.runtime.experiment.Example04Invert.main(Example04Invert.java:21)";
+			} else if(test instanceof Example05ScaleMatrixTest) {
+				return "Exception in thread \"main\" java.lang.ArrayIndexOutOfBoundsException: Index 3 out of bounds for length 3\r\n" + 
+						"              at pt.iscte.paddle.runtime.experiment.Example05MultiplyMatrix.multiplyMatrix(Example05MultiplyMatrix.java:9)\r\n" + 
+						"              at pt.iscte.paddle.runtime.experiment.Example05MultiplyMatrix.main(Example05MultiplyMatrix.java:38)\r\n";
+			} else if(test instanceof Example06TranposeMatrixTest) {
+				return "NOT DONE YET";		//TODO FAZER ASSIM QUE POSSÍVEL
+			} else if(test instanceof Example07InvertSameVectorTest) {
+				return "Exception in thread \"main\" java.lang.ArrayIndexOutOfBoundsException: Index 5 out of bounds for length 5\r\n" + 
+						"              at pt.iscte.paddle.runtime.experiment.Example07InvertSameVector.swapElements(Example07InvertSameVector.java:13)\r\n" + 
+						"              at pt.iscte.paddle.runtime.experiment.Example07InvertSameVector.invert(Example07InvertSameVector.java:6)\r\n" + 
+						"              at pt.iscte.paddle.runtime.experiment.Example07InvertSameVector.main(Example07InvertSameVector.java:24)\r\n";
+			} else if(test instanceof Example08BubbleSortTest) {
+				return "Exception in thread \"main\" java.lang.ArrayIndexOutOfBoundsException: Index 12 out of bounds for length 12\r\n" + 
+						"              at pt.iscte.paddle.runtime.experiment.Example08BubbleSort.bubbleSort(Example08BubbleSort.java:9)\r\n" + 
+						"              at pt.iscte.paddle.runtime.experiment.Example08BubbleSort.main(Example08BubbleSort.java:31)\r\n";
+			}
+			
+			return "";
+		}
+	}
+	
 	public static void main(String[] args) {
-		new RuntimeWindow();
+		//-------------------------------------tests-------------------------------------//
+//		Test test = new ArrayIndexErrorTest();
+//		Test test = new ArrayIndexErrorExpressionTest();
+//		Test test = new ArrayIndexErrorBackwardTest();
+//		Test test = new ArrayIndexPlus2Test();
+//		Test test = new ArrayIndexFunctionTest();
+//		Test test = new MatrixErrorTest();
+//		Test test = new SumAllTest();
+//		Test test = new NullPointerErrorTest();
+		
+//		private int testValue = 20;
+		//-------------------------------------tests-------------------------------------//
+		
+		//-------------------------------Experiment tests--------------------------------//
+		Test test = new Example00Test();
+//		Test test = new Example01SumTest();
+//		Test test = new Example02NaturalsTest();
+//		Test test = new Example03LastOccurrenceTest();
+//		Test test = new Example04InvertTest();
+//		Test test = new Example05MultiplyMatrixTest();
+//		Test test = new Example06TranposeMatrixTest();
+//		Test test = new Example07InvertSameVectorTest();
+//		Test test = new Example08BubbleSortTest();
+		//-------------------------------Experiment tests--------------------------------//
+		
+		//------------------------Tests not included in experiment-----------------------//
+//		Test test = new Example09SelectionSortTest();
+//		Test test = new Example10BinarySearchTest();
+		//------------------------Tests not included in experiment-----------------------//
+		
+		new RuntimeWindow(test);
 	}
 }

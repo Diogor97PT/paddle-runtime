@@ -40,7 +40,7 @@ public class Example06TranposeMatrixTest extends Test {
 
 	private IProcedure createProcedure() {
 		IProcedure procedure = module.addProcedure(INT.array2D().reference());
-		procedure.setId("tranposeMatrix");
+		procedure.setId("transposeMatrix");
 		
 		IVariableDeclaration m = procedure.addParameter(INT.array2D().reference());
 		m.setId("m");
