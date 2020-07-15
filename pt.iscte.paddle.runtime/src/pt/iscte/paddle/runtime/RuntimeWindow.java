@@ -34,7 +34,8 @@ import pt.iscte.paddle.javardise.util.HyperlinkedText;
 import pt.iscte.paddle.model.IArrayType;
 import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.IVariableExpression;
-import pt.iscte.paddle.runtime.experiment.tests.Example00Test;
+import pt.iscte.paddle.runtime.experiment.tests.Example00TestExplanation;
+import pt.iscte.paddle.runtime.experiment.tests.Example00TestStackTrace;
 import pt.iscte.paddle.runtime.experiment.tests.Example01SumTest;
 import pt.iscte.paddle.runtime.experiment.tests.Example02NaturalsTest;
 import pt.iscte.paddle.runtime.experiment.tests.Example03LastOccurrenceTest;
@@ -234,9 +235,13 @@ public class RuntimeWindow {
 	    fileMenuHeader.setMenu(fileMenu);
 	    
 	    MenuItem testZero = new MenuItem(fileMenu, SWT.RADIO);
-	    testZero.setText("Test 00 - Example");
+	    testZero.setText("Test 00 - Example 1");
 	    testZero.setSelection(true);
 	    testZero.addSelectionListener(new TestSelectionListener());
+	    
+	    MenuItem testZeroTwo = new MenuItem(fileMenu, SWT.RADIO);
+	    testZeroTwo.setText("Test 00 - Example 2");
+	    testZeroTwo.addSelectionListener(new TestSelectionListener());
 
 	    MenuItem firstTest = new MenuItem(fileMenu, SWT.RADIO);
 	    firstTest.setText("Test 01 - Sum");
@@ -337,8 +342,11 @@ public class RuntimeWindow {
 			if(!item.getSelection()) return;
 			
 			switch (item.getText()) {
-			case "Test 00 - Example":
-				changeCurrentTest(new Example00Test());
+			case "Test 00 - Example 1":
+				changeCurrentTest(new Example00TestStackTrace());
+				break;
+			case "Test 00 - Example 2":
+				changeCurrentTest(new Example00TestExplanation());
 				break;
 			case "Test 01 - Sum":
 				changeCurrentTest(new Example01SumTest());
@@ -403,14 +411,20 @@ public class RuntimeWindow {
 		
 		public boolean isJavaStackTrace() {
 			Test test = RuntimeWindow.test;
-			if((test instanceof Example00Test) || (test instanceof Example01SumTest) || (test instanceof Example03LastOccurrenceTest) || 
-					(test instanceof Example05ScaleMatrixTest) || (test instanceof Example07InvertSameVectorTest)) {
+			
+			if(test instanceof Example00TestStackTrace)
+				return true;
+			else if (test instanceof Example00TestExplanation)
+				return false;
+			
+			if(test instanceof Example01SumTest || test instanceof Example03LastOccurrenceTest || 
+					test instanceof Example05ScaleMatrixTest || test instanceof Example07InvertSameVectorTest) {
 				if (this == A)
 					return true;
 				else
 					return false;
-			} else if ((test instanceof Example00Test) || (test instanceof Example02NaturalsTest) || (test instanceof Example04InvertTest) || 
-					(test instanceof Example06TranposeMatrixTest) || (test instanceof Example08BubbleSortTest)) {
+			} else if (test instanceof Example02NaturalsTest || test instanceof Example04InvertTest || 
+					test instanceof Example06TranposeMatrixTest || test instanceof Example08BubbleSortTest) {
 				if (this == A)
 					return false;
 				else
@@ -421,7 +435,7 @@ public class RuntimeWindow {
 		
 		public String getJavaStackTraceExplanation() {
 			Test test = RuntimeWindow.test;
-			if(test instanceof Example00Test) {
+			if(test instanceof Example00TestStackTrace) {
 				return "Exception in thread \"main\" java.lang.ArrayIndexOutOfBoundsException: Index 2 out of bounds for length 2\r\n" + 
 						"              at pt.iscte.paddle.runtime.experiment.Example00.example(Example00.java:6)\r\n" + 
 						"              at pt.iscte.paddle.runtime.experiment.Example00.main(Example00.java:20)";
@@ -477,7 +491,8 @@ public class RuntimeWindow {
 		//-------------------------------------tests-------------------------------------//
 		
 		//-------------------------------Experiment tests--------------------------------//
-		Test test = new Example00Test();
+		Test test = new Example00TestStackTrace();
+//		Test test = new Example00TestExplanation();
 //		Test test = new Example01SumTest();
 //		Test test = new Example02NaturalsTest();
 //		Test test = new Example03LastOccurrenceTest();

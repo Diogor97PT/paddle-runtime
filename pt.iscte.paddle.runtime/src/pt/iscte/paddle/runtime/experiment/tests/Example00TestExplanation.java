@@ -13,9 +13,9 @@ import pt.iscte.paddle.model.ISelection;
 import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.runtime.tests.Test;
 
-public class Example00Test extends Test {
+public class Example00TestExplanation extends Test {
 
-	public Example00Test() {
+	public Example00TestExplanation() {
 		module = IModule.create();
 		module.setId("Example00");
 		
