@@ -74,11 +74,11 @@ public class RuntimeWindow {
 	
 	private List<ICodeDecoration<Text>> valores = new ArrayList<>();
 	
-	private Profile profile = Profile.A;		//TODO apagar no futuro
-	public static Test test;		//TODO apagar no futuro //pode ser removido daqui ao apagar o Profile
+	private Profile profile = Profile.A;
+	public static Test test;		//se apagar o profile no futuro, pode ser removido daqui
 	
 	public RuntimeWindow(Test test) {
-		this.test = test;
+		RuntimeWindow.test = test;
 		runtime = new Runtime(test); 
 		
 		Display display = new Display();
@@ -154,7 +154,7 @@ public class RuntimeWindow {
 		public void widgetSelected(SelectionEvent e) {
 			deleteDecorations();
 			
-			if(profile.isJavaStackTrace()) {		//TODO apagar no futuro
+			if(profile.isJavaStackTrace()) {
 				String message = profile.getJavaStackTraceExplanation();
 				HyperlinkedText text = new HyperlinkedText(ee -> ee.forEach(e2 -> IJavardiseService.getWidget(e2).addMark(InterfaceColors.BLUE.getColor()).show()));
 				text.line(message);
@@ -331,7 +331,7 @@ public class RuntimeWindow {
 		codeWidget = IJavardiseService.createClassWidget(codeComposite, runtime.getModule(), true);
 		codeWidget.setReadOnly(true);
 		
-		RuntimeWindow.test = test;			//TODO apagar no futuro
+		RuntimeWindow.test = test;
 	}
 	
 	private class TestSelectionListener extends SelectionAdapter {
