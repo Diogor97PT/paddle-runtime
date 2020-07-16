@@ -10,6 +10,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 
 import pt.iscte.paddle.model.IExpression;
 import pt.iscte.paddle.runtime.InterfaceColors;
@@ -116,12 +117,29 @@ public class VerticalArrayDraw extends Canvas {
 		redraw();
 	}
 	
+	static void createArrowForLine(GC gc, Point fromPoint, double rotationDeg, double length, double wingsAngleDeg ) {
+		  double ax = fromPoint.x;
+		  double ay = fromPoint.y;
+		  double radB = Math.toRadians( -rotationDeg + wingsAngleDeg );
+		  double radC = Math.toRadians( -rotationDeg - wingsAngleDeg );
+		  Path path = new Path( gc.getDevice());
+		  path.moveTo( ( float )( length * Math.cos( radB ) + ax ), ( float )( length * Math.sin( radB ) + ay ) );
+		  path.lineTo( ( float )ax, ( float )ay );
+		  path.lineTo( ( float )( length * Math.cos( radC ) + ax ), ( float )( length * Math.sin( radC ) + ay ) );
+		  gc.fillPath( path );
+		  path.dispose();
+	}
+	
 	//Draws a square
 	private void drawSquare(String positionText, GC gc, int availableSpaceY, int spacingY, int sizeY, int i) {
 		gc.setBackground(InterfaceColors.WHITE.getColor());
 		int currentY = (i * availableSpaceY) + squareStartY;
 		gc.fillRectangle(squareStartX, currentY + spacingY, squareSizeX, sizeY);
-
+		
+		gc.setForeground(InterfaceColors.BLACK.getColor());
+		gc.setBackground(InterfaceColors.BLACK.getColor());
+		gc.drawLine(squareStartX + squareSizeX/2, currentY + spacingY + sizeY/2, squareStartX + squareSizeX/2 + 50, currentY + spacingY + sizeY/2);
+		createArrowForLine(gc, new Point(squareStartX + squareSizeX/2 + 50, currentY + spacingY + sizeY/2), 180, 10, 45);
 		int centerY = (currentY + (currentY + sizeY + spacingY * 2)) / 2;
 
 		gc.setFont(normalFont);

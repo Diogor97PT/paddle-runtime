@@ -6,7 +6,10 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.DragDetectEvent;
+import org.eclipse.swt.events.DragDetectListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
@@ -17,7 +20,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -76,6 +78,7 @@ public class RuntimeWindow {
 	
 	private Profile profile = Profile.A;		//TODO apagar no futuro
 	public static Test test;		//TODO apagar no futuro //pode ser removido daqui ao apagar o Profile
+	private Button executeCode;
 	
 	public RuntimeWindow(Test test) {
 		this.test = test;
@@ -91,7 +94,7 @@ public class RuntimeWindow {
 		layout.marginRight = 5;
 		layout.marginTop = 5;
 		layout.marginBottom = 5;
-		shell.setLayout(layout);
+		shell.setLayout(new FillLayout());
 		
 		//Create Menu
 		Menu menuBar = new Menu(shell, SWT.BAR);
@@ -99,8 +102,10 @@ public class RuntimeWindow {
 
 		shell.setMenuBar(menuBar);
 		
+		SashForm sashForm = new SashForm(shell, SWT.HORIZONTAL);
+		   
 		//Code widget Composite
-		ScrolledComposite codeScroll = new ScrolledComposite(shell, SWT.H_SCROLL | SWT.V_SCROLL);
+		ScrolledComposite codeScroll = new ScrolledComposite(sashForm, SWT.H_SCROLL | SWT.V_SCROLL);
 		codeScroll.setLayout(new GridLayout(1, false));
 		codeScroll.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		
@@ -116,9 +121,9 @@ public class RuntimeWindow {
 		codeScroll.setMinSize(700, 1200);		//TODO arranjar maneira de saber o tamanho a scrollar de forma correta
 		codeScroll.setExpandHorizontal(true);
 		codeScroll.setExpandVertical(true);
-
+			  
 		//Buttons and Text Composite
-		rightSide = new Composite(shell, SWT.NONE);
+		rightSide = new Composite(sashForm, SWT.NONE);
 		rightSide.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		RowLayout rightSidelayout = new RowLayout(SWT.VERTICAL);
 		rightSidelayout.wrap = false;
@@ -128,15 +133,14 @@ public class RuntimeWindow {
 		rightSide.setLayout(rightSidelayout);
 		
 		//Group where buttons are inserted
-		Group buttonGroup = new Group(rightSide, SWT.BORDER);
-		buttonGroup.setText("Opções");
-		FillLayout buttonGroupLayout = new FillLayout();
-		buttonGroupLayout.spacing = 10;
-		buttonGroup.setLayout(buttonGroupLayout);
-		buttonGroup.setFocus();
+//		Group buttonGroup = new Group(rightSide, SWT.BORDER);
+//		buttonGroup.setText("Opções");
+//		FillLayout buttonGroupLayout = new FillLayout();
+//		buttonGroupLayout.spacing = 10;
+//		buttonGroup.setLayout(buttonGroupLayout);
+//		buttonGroup.setFocus();
 		
-		//Button to execute the code inside the widget and display information
-		Button executeCode = new Button(buttonGroup, SWT.PUSH);
+		executeCode = new Button(rightSide, SWT.PUSH);
 		executeCode.setText("Executar Código");
 		executeCode.addSelectionListener(new ExecuteSelectionAdapter());
 		
@@ -329,6 +333,7 @@ public class RuntimeWindow {
 		runtime = new Runtime(test);
 		
 		codeWidget = IJavardiseService.createClassWidget(codeComposite, runtime.getModule(), true);
+		codeWidget.getControl().setFocus();
 		codeWidget.setReadOnly(true);
 		
 		RuntimeWindow.test = test;			//TODO apagar no futuro
