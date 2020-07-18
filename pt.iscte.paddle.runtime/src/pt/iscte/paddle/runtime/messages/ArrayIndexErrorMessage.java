@@ -43,7 +43,7 @@ public class ArrayIndexErrorMessage extends ErrorMessage {
 		else
 			array_ref = (IArray)((IReference)obj).getValue();
 		
-		if(arrayInfo.getAccessedPositions().get(0).getCoordinates().size() == 1) {
+		if(arrayInfo.getNumberOfDimensions() == 1) {
 			setCoordinates(error.getInvalidIndex());
 			
 			text.words("Tentativa de acesso à posição ")
@@ -73,11 +73,6 @@ public class ArrayIndexErrorMessage extends ErrorMessage {
 				
 				setCoordinates(index, error.getInvalidIndex());
 			} else {
-//				System.out.println(error.getTarget());
-//				System.out.println(error.getTarget().getClass());
-//				System.out.println(arrayInfo.getReference().getTarget());
-//				System.out.println(arrayInfo.getReference().getTarget().getClass());
-				
 				setCoordinates(error.getInvalidIndex());
 			}
 			

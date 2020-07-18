@@ -11,12 +11,17 @@ public class ArrayVariableInfo extends VariableInfo {
 
 	private List<Coordinates> accessedPositions = new ArrayList<>();
 	private List<IExpression> lengthExpressions;
+	private int numberOfDimensions = 0;
 	
 	public ArrayVariableInfo(IVariableDeclaration variableDeclaration, VariableType variableType, IReference reference, 
 			String value, List<IExpression> lengthExpressions) {
 		
 		super(variableDeclaration, variableType, reference, value);
 		this.lengthExpressions = lengthExpressions;
+		
+		while(value.charAt(numberOfDimensions) == '[') {
+			numberOfDimensions++;
+		}
 	}
 	
 	public void addArrayAccessInformation(String value, List<Integer> coordinates) {
@@ -30,6 +35,10 @@ public class ArrayVariableInfo extends VariableInfo {
 	
 	public List<IExpression> getLengthExpressions() {
 		return lengthExpressions;
+	}
+	
+	public int getNumberOfDimensions() {
+		return numberOfDimensions;
 	}
 	
 	public class Coordinates {
