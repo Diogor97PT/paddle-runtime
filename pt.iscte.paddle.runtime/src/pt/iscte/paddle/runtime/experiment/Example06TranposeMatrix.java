@@ -7,10 +7,14 @@ public class Example06TranposeMatrix {
 	//columns of the same length and rows of the same length
 	public static int[][] transposeMatrix(int [][] m){
 		int [][] transposed = new int [m[0].length][m.length];
-		for(int i = 0; i < m[0].length; i++) {
-			for(int j = 0; j < m.length; j++) {
+		int i = 0;
+		while(i < m[0].length) {
+			int j = 0;
+			while(j < m.length) {
 				transposed[j][i] = m[i][j];				//transposed[i][j] = m[j][i]
+				j = j + 1;
 			}
+			i = i + 1;
 		}
 		return transposed;
 	}

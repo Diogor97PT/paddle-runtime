@@ -10,7 +10,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Transform;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 
 import pt.iscte.paddle.model.IExpression;
 import pt.iscte.paddle.runtime.InterfaceColors;

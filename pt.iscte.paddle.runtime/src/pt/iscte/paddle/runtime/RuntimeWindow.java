@@ -8,8 +8,6 @@ import java.util.Map.Entry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.DragDetectEvent;
-import org.eclipse.swt.events.DragDetectListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
@@ -77,8 +75,9 @@ public class RuntimeWindow {
 	private List<ICodeDecoration<Text>> valores = new ArrayList<>();
 	
 
-	private Profile profile = Profile.A;		//TODO apagar no futuro
-	public static Test test;		//TODO apagar no futuro //pode ser removido daqui ao apagar o Profile
+	private Profile profile = Profile.A;
+	public static Test test;
+	
 	private Button executeCode;
 	
 	public RuntimeWindow(Test test) {
@@ -90,11 +89,11 @@ public class RuntimeWindow {
 		shell.setText("Runtime");
 		shell.setSize(1230, 820);
 		
-		GridLayout layout = new GridLayout(2, true);
-		layout.marginLeft = 30;
-		layout.marginRight = 5;
-		layout.marginTop = 5;
-		layout.marginBottom = 5;
+//		GridLayout layout = new GridLayout(2, true);
+//		layout.marginLeft = 30;
+//		layout.marginRight = 5;
+//		layout.marginTop = 5;
+//		layout.marginBottom = 5;
 		shell.setLayout(new FillLayout());
 		
 		//Create Menu
@@ -280,14 +279,6 @@ public class RuntimeWindow {
 	    eightTest.setText("Test 08 - Bubble Sort");
 	    eightTest.addSelectionListener(new TestSelectionListener());
 	    
-//	    MenuItem ninethTest = new MenuItem(fileMenu, SWT.RADIO);
-//	    ninethTest.setText("Test 09 - Selection Sort");
-//	    ninethTest.addSelectionListener(new TestSelectionListener());
-	    
-//	    MenuItem tenthTest = new MenuItem(fileMenu, SWT.RADIO);
-//	    tenthTest.setText("Test 10 - BinarySearch");
-//	    tenthTest.addSelectionListener(new TestSelectionListener());
-	    
 	    MenuItem profileMenuHeader = new MenuItem(menuBar, SWT.CASCADE);
 	    profileMenuHeader.setText("&Profile");
 	    
@@ -466,7 +457,9 @@ public class RuntimeWindow {
 						"              at pt.iscte.paddle.runtime.experiment.Example05MultiplyMatrix.multiplyMatrix(Example05MultiplyMatrix.java:9)\r\n" + 
 						"              at pt.iscte.paddle.runtime.experiment.Example05MultiplyMatrix.main(Example05MultiplyMatrix.java:38)\r\n";
 			} else if(test instanceof Example06TranposeMatrixTest) {
-				return "NOT DONE YET";		//TODO FAZER ASSIM QUE POSSÍVEL
+				return "Exception in thread \"main\" java.lang.ArrayIndexOutOfBoundsException: Index 2 out of bounds for length 2\r\n" + 
+						"              at pt.iscte.paddle.runtime.experiment.Example06TranposeMatrix.transposeMatrix(Example06TranposeMatrix.java:11)\r\n" + 
+						"              at pt.iscte.paddle.runtime.experiment.Example06TranposeMatrix.main(Example06TranposeMatrix.java:27)";
 			} else if(test instanceof Example07InvertSameVectorTest) {
 				return "Exception in thread \"main\" java.lang.ArrayIndexOutOfBoundsException: Index 5 out of bounds for length 5\r\n" + 
 						"              at pt.iscte.paddle.runtime.experiment.Example07InvertSameVector.swapElements(Example07InvertSameVector.java:13)\r\n" + 
