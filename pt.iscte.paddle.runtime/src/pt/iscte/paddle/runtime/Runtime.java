@@ -148,7 +148,6 @@ public class Runtime {
 		}
 		
 		int sum = 0;
-		System.out.println(exp.getParts());
 		for (IExpression part : exp.getParts()) {
 			if(part instanceof ILiteral)
 				sum += Integer.parseInt(((ILiteral)part).getStringValue());

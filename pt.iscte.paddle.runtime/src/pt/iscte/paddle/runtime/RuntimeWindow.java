@@ -1,5 +1,7 @@
 package pt.iscte.paddle.runtime;
 
+import static pt.iscte.paddle.model.IType.INT;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -63,7 +65,7 @@ public class RuntimeWindow {
 	private Composite rightSide;
 	
 	//Message and graphic stuff
-	private Link link;
+	private Link codeErrorMessage;
 	private Composite errorDraw;
 	private ICodeDecoration<Text> shortTextDecoration;
 //	private ICodeDecoration<Text> errorVariableValueDecoration;
@@ -75,6 +77,7 @@ public class RuntimeWindow {
 	private Profile profile = Profile.A;
 	public static Test test;
 	
+	private Link exerciseExplanationLink;
 	private Button executeCode;
 	
 	public RuntimeWindow(Test test) {
@@ -128,6 +131,12 @@ public class RuntimeWindow {
 		rightSidelayout.spacing = 20;
 		rightSide.setLayout(rightSidelayout);
 		
+		//Code explanation text
+		HyperlinkedText text = new HyperlinkedText(e -> e.forEach(e2 -> IJavardiseService.getWidget(e2).addMark(InterfaceColors.BLUE.getColor()).show()));
+		createExerciseExplanationText(text);
+		exerciseExplanationLink = text.create(rightSide, SWT.NONE);
+		exerciseExplanationLink.requestLayout();
+		
 		//Execute Code Button
 		executeCode = new Button(rightSide, SWT.PUSH);
 		executeCode.setText("Executar Código");
@@ -151,15 +160,15 @@ public class RuntimeWindow {
 				String message = profile.getJavaStackTraceExplanation();
 				HyperlinkedText text = new HyperlinkedText(ee -> ee.forEach(e2 -> IJavardiseService.getWidget(e2).addMark(InterfaceColors.BLUE.getColor()).show()));
 				text.line(message);
-				link = text.create(rightSide, SWT.NONE);
-				link.requestLayout();
+				codeErrorMessage = text.create(rightSide, SWT.NONE);
+				codeErrorMessage.requestLayout();
 				return;
 			}
 			
 			//Create new Decorations
 			Message message = runtime.execute();
-			link = message.getText().create(rightSide, SWT.NONE);
-			link.requestLayout();
+			codeErrorMessage = message.getText().create(rightSide, SWT.NONE);
+			codeErrorMessage.requestLayout();
 			
 			if(message instanceof ErrorMessage) {
 				ErrorMessage errorMessage = (ErrorMessage) message;
@@ -291,7 +300,7 @@ public class RuntimeWindow {
 	
 	//Delete previous Decorations and Explanation Text
 	private void deleteDecorations() {
-		if(link != null) link.dispose();
+		if(codeErrorMessage != null) codeErrorMessage.dispose();
 		if(errorDraw != null) errorDraw.dispose();
 		if(shortTextDecoration != null) shortTextDecoration.delete();
 //		if(errorVariableValueDecoration != null) errorVariableValueDecoration.delete();
@@ -313,6 +322,20 @@ public class RuntimeWindow {
 		codeWidget.setReadOnly(true);
 		
 		RuntimeWindow.test = test;
+		
+		exerciseExplanationLink.dispose();
+		executeCode.dispose();
+		
+		//Code explanation text
+		HyperlinkedText text = new HyperlinkedText(e -> e.forEach(e2 -> IJavardiseService.getWidget(e2).addMark(InterfaceColors.BLUE.getColor()).show()));
+		createExerciseExplanationText(text);
+		exerciseExplanationLink = text.create(rightSide, SWT.NONE);
+		exerciseExplanationLink.requestLayout();
+		
+		//Execute Code Button
+		executeCode = new Button(rightSide, SWT.PUSH);
+		executeCode.setText("Executar Código");
+		executeCode.addSelectionListener(new ExecuteSelectionAdapter());
 	}
 	
 	private class TestSelectionListener extends SelectionAdapter {
@@ -374,11 +397,9 @@ public class RuntimeWindow {
 			
 			switch (item.getText()) {
 			case "Profile A":
-				System.out.println("Profile A");
 				profile = Profile.A;
 				break;
 			case "Profile B":
-				System.out.println("Profile B");
 				profile = Profile.B;
 				break;
 			default:
@@ -387,75 +408,66 @@ public class RuntimeWindow {
 		}
 	}
 	
-	private enum Profile {
-		A, B;
-		
-		public boolean isJavaStackTrace() {
-			Test test = RuntimeWindow.test;
-			
-			if(test instanceof Example00TestStackTrace)
-				return true;
-			else if (test instanceof Example00TestExplanation)
-				return false;
-			
-			if(test instanceof Example01SumTest || test instanceof Example03LastOccurrenceTest || 
-					test instanceof Example05ScaleMatrixTest || test instanceof Example07InvertSameVectorTest) {
-				if (this == A)
-					return true;
-				else
-					return false;
-			} else if (test instanceof Example02NaturalsTest || test instanceof Example04InvertTest || 
-					test instanceof Example06TranposeMatrixTest || test instanceof Example08BubbleSortTest) {
-				if (this == A)
-					return false;
-				else
-					return true;
-			}
-			return false;
-		}
-		
-		public String getJavaStackTraceExplanation() {
-			Test test = RuntimeWindow.test;
-			if(test instanceof Example00TestStackTrace) {
-				return "Exception in thread \"main\" java.lang.ArrayIndexOutOfBoundsException: Index 2 out of bounds for length 2\r\n" + 
-						"              at pt.iscte.paddle.runtime.experiment.Example00.example(Example00.java:4)\r\n" + 
-						"              at pt.iscte.paddle.runtime.experiment.Example00.main(Example00.java:12)";
-			} else if(test instanceof Example01SumTest) {
-				return "Exception in thread \"main\" java.lang.ArrayIndexOutOfBoundsException: Index 4 out of bounds for length 4\r\n" + 
-						"              at pt.iscte.paddle.runtime.experiment.Example01Sum.sum(Example01Sum.java:8)\r\n" + 
-						"              at pt.iscte.paddle.runtime.experiment.Example01Sum.main(Example01Sum.java:20)";
-			} else if(test instanceof Example02NaturalsTest) {
-				return "Exception in thread \"main\" java.lang.ArrayIndexOutOfBoundsException: Index 5 out of bounds for length 5\r\n" + 
-						"              at pt.iscte.paddle.runtime.experiment.Example02Naturals.naturals(Example02Naturals.java:9)\r\n" + 
-						"              at pt.iscte.paddle.runtime.experiment.Example02Naturals.main(Example02Naturals.java:16)";
-			} else if(test instanceof Example03LastOccurrenceTest) {
-				return "Exception in thread \"main\" java.lang.ArrayIndexOutOfBoundsException: Index -1 out of bounds for length 8\r\n" + 
-						"              at pt.iscte.paddle.runtime.experiment.Example03LastOccurrence.lastOccurrence(Example03LastOccurrence.java:6)\r\n" + 
-						"              at pt.iscte.paddle.runtime.experiment.Example03LastOccurrence.main(Example03LastOccurrence.java:26)\r\n";
-			} else if(test instanceof Example04InvertTest) {
-				return "Exception in thread \"main\" java.lang.ArrayIndexOutOfBoundsException: Index 5 out of bounds for length 5\r\n" + 
-						"              at pt.iscte.paddle.runtime.experiment.Example04Invert.invert(Example04Invert.java:8)\r\n" + 
-						"              at pt.iscte.paddle.runtime.experiment.Example04Invert.main(Example04Invert.java:21)";
-			} else if(test instanceof Example05ScaleMatrixTest) {
-				return "Exception in thread \"main\" java.lang.ArrayIndexOutOfBoundsException: Index 3 out of bounds for length 3\r\n" + 
-						"              at pt.iscte.paddle.runtime.experiment.Example05MultiplyMatrix.multiplyMatrix(Example05MultiplyMatrix.java:9)\r\n" + 
-						"              at pt.iscte.paddle.runtime.experiment.Example05MultiplyMatrix.main(Example05MultiplyMatrix.java:38)\r\n";
-			} else if(test instanceof Example06TranposeMatrixTest) {
-				return "Exception in thread \"main\" java.lang.ArrayIndexOutOfBoundsException: Index 2 out of bounds for length 2\r\n" + 
-						"              at pt.iscte.paddle.runtime.experiment.Example06TranposeMatrix.transposeMatrix(Example06TranposeMatrix.java:11)\r\n" + 
-						"              at pt.iscte.paddle.runtime.experiment.Example06TranposeMatrix.main(Example06TranposeMatrix.java:27)";
-			} else if(test instanceof Example07InvertSameVectorTest) {
-				return "Exception in thread \"main\" java.lang.ArrayIndexOutOfBoundsException: Index 5 out of bounds for length 5\r\n" + 
-						"              at pt.iscte.paddle.runtime.experiment.Example07InvertSameVector.swapElements(Example07InvertSameVector.java:13)\r\n" + 
-						"              at pt.iscte.paddle.runtime.experiment.Example07InvertSameVector.invert(Example07InvertSameVector.java:6)\r\n" + 
-						"              at pt.iscte.paddle.runtime.experiment.Example07InvertSameVector.main(Example07InvertSameVector.java:24)\r\n";
-			} else if(test instanceof Example08BubbleSortTest) {
-				return "Exception in thread \"main\" java.lang.ArrayIndexOutOfBoundsException: Index 12 out of bounds for length 12\r\n" + 
-						"              at pt.iscte.paddle.runtime.experiment.Example08BubbleSort.bubbleSort(Example08BubbleSort.java:9)\r\n" + 
-						"              at pt.iscte.paddle.runtime.experiment.Example08BubbleSort.main(Example08BubbleSort.java:31)\r\n";
-			}
-			
-			return "";
+	private void createExerciseExplanationText(HyperlinkedText text){
+		if(test instanceof Example00TestStackTrace) {
+			text.line("Este exercício serve apenas como exemplo para demonstrar o funcionamento do programa.");
+			text.line("");
+			text.line("Valores iniciais:");
+			text.line("v = {1, 2}");
+		} else if(test instanceof Example00TestExplanation) {
+			text.line("Este exercício é igual ao anterior.");
+			text.line("");
+			text.line("Valores iniciais:");
+			text.line("v = {1, 2}");
+		} else if(test instanceof Example01SumTest) {
+			text.line("O objetivo deste exercício é devolver a soma dos inteiros que estão dentro do vetor v.");
+			text.line("");
+			text.line("Valores iniciais:");
+			text.line("v = {1, 3, 5, 10}");
+		} else if(test instanceof Example02NaturalsTest) {
+			text.line("Este excerto de código tem como objetivo devolver um vetor com todos os números naturais desde");
+			text.line("1 até ao inteiro n.");
+			text.line("");
+			text.line("Valores iniciais:");
+			text.line("n = 5");
+		} else if(test instanceof Example03LastOccurrenceTest) {
+			text.line("O objetivo deste exercício é devolver o índice da última vez que aparece o inteiro n no vetor v.");
+			text.line("");
+			text.line("Valores iniciais:");
+			text.line("v = {1, 2, 8, 2, 5, 2, 9, 1}, n = 3");
+		} else if(test instanceof Example04InvertTest) {
+			text.line("Este exercício tem como objetivo inverter a ordem dos valores do vetor v.");
+			text.line("");
+			text.line("Valores iniciais:");
+			text.line("v = {1, 2, 3, 4, 5}");
+		} else if(test instanceof Example05ScaleMatrixTest) {
+			text.line("Neste excerto de código, o objetivo é multplicar todos valores da matriz de inteiro m pelo inteiro n");
+			text.line("");
+			text.line("Valores iniciais:");
+			text.line("n = 2");
+			text.line("m = {{1, 2, 3, 4},");
+			text.line("          {3, 2, 1},");
+			text.line("          {4, 1, 7, 3},");
+			text.line("          {3, 8, 4}}");
+		} else if(test instanceof Example06TranposeMatrixTest) {
+			text.line("Neste excerto de código, o objetivo é obter a transposta da matriz m. A transposta da matriz é obtida");
+			text.line("ao trocar as linhas pelas colunas e vice-versa.");
+			text.line("");
+			text.line("Valores iniciais:");
+			text.line("m = {{1, 2, 3},");
+			text.line("          {4, 5, 6}}");
+		} else if(test instanceof Example07InvertSameVectorTest) {
+			text.line("Este exercício tem o mesmo objetivo do exercício 4, ou seja, inverter o vetor v, mas utiliza");
+			text.line("código diferente para o efeito.");
+			text.line("");
+			text.line("Valores iniciais:");
+			text.line("v = {1, 2, 3, 4, 5}");
+		} else if(test instanceof Example08BubbleSortTest) {
+			text.line("Neste exercício o código tem como objetivo ordenar o vetor por ordem crescente utilizando o bubblesort.");
+			text.line("O algoritmo bubblesort funciona colocando a cada o maior numero no fim do vetor a cada passagem por este.");
+			text.line("");
+			text.line("Valores iniciais:");
+			text.line("v = {9, 10, 99, 52, 23, 1, 88, 1}");
 		}
 	}
 	

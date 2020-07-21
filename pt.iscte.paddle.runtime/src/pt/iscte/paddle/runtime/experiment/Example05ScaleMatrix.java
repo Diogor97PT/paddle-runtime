@@ -20,7 +20,7 @@ public class Example05ScaleMatrix {
 	public static void main(String[] args) {
 		int [][] m = {{1, 2, 3, 4},
 					  {3, 2, 1},
-					  {4, 1, 7, 3, 9},
+					  {4, 1, 7, 3},
 					  {3, 8, 4}};
 		int n = 2;
 		scaleMatrix(m, n);

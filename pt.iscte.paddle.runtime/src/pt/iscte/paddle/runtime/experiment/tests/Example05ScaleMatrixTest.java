@@ -51,10 +51,10 @@ public class Example05ScaleMatrixTest extends Test {
 		body.addArrayElementAssignment(m, INT.literal(8), INT.literal(3), INT.literal(1));
 		body.addArrayElementAssignment(m, INT.literal(4), INT.literal(3), INT.literal(2));
 		
-		IVariableDeclaration i = body.addVariable(INT, INT.literal(2));
-		i.setId("i");
+		IVariableDeclaration n = body.addVariable(INT, INT.literal(2));
+		n.setId("n");
 		
-		body.addCall(p2, m, i);
+		body.addCall(p2, m, n);
 	}
 	
 	private IProcedure createProcedure() {
