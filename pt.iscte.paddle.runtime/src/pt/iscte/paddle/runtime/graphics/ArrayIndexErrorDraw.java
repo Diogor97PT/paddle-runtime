@@ -55,7 +55,6 @@ public class ArrayIndexErrorDraw extends Canvas {
 		return new Point(canvasSizeX, canvasSizeY);
 	}
 	
-	//TODO acertar melhor o desenho
 	public void draw(ArrayVariableInfo info, int errorPosition, int originalArraySize) {
 		String [] array = stringToArray(info.getReference().getValue().toString());
 		List<Coordinates> accessedPositions = info.getAccessedPositions();
@@ -229,6 +228,7 @@ public class ArrayIndexErrorDraw extends Canvas {
 			return array;
 	}
 	
+	//Converts string array to normal array
 	public static String[] stringToArray(String s) {
 		String s2 = s.substring(s.indexOf("[") + 1, s.length()-1);
 		return s2.trim().replaceAll(" ", "").split(",");

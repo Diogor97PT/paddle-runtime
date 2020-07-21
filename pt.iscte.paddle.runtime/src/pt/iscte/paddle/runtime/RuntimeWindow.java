@@ -24,8 +24,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import com.google.common.collect.Iterables;
-
 import pt.iscte.paddle.javardise.service.IClassWidget;
 import pt.iscte.paddle.javardise.service.ICodeDecoration;
 import pt.iscte.paddle.javardise.service.IJavardiseService;
@@ -33,7 +31,6 @@ import pt.iscte.paddle.javardise.service.IWidget;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
 import pt.iscte.paddle.model.IArrayType;
 import pt.iscte.paddle.model.IVariableDeclaration;
-import pt.iscte.paddle.model.IVariableExpression;
 import pt.iscte.paddle.runtime.experiment.tests.Example00TestExplanation;
 import pt.iscte.paddle.runtime.experiment.tests.Example00TestStackTrace;
 import pt.iscte.paddle.runtime.experiment.tests.Example01SumTest;
@@ -113,7 +110,6 @@ public class RuntimeWindow {
 		codeComposite.setLayout(new FillLayout());
 		
 		//Code Widget
-//		codeWidget = IJavardiseService.createClassWidget(codeComposite, runtime.getModule());
 		codeWidget = IJavardiseService.createClassWidget(codeComposite, runtime.getModule(), true);
 		codeWidget.setReadOnly(true);
 		
@@ -132,14 +128,7 @@ public class RuntimeWindow {
 		rightSidelayout.spacing = 20;
 		rightSide.setLayout(rightSidelayout);
 		
-		//Group where buttons are inserted
-//		Group buttonGroup = new Group(rightSide, SWT.BORDER);
-//		buttonGroup.setText("Opções");
-//		FillLayout buttonGroupLayout = new FillLayout();
-//		buttonGroupLayout.spacing = 10;
-//		buttonGroup.setLayout(buttonGroupLayout);
-//		buttonGroup.setFocus();
-		
+		//Execute Code Button
 		executeCode = new Button(rightSide, SWT.PUSH);
 		executeCode.setText("Executar Código");
 		executeCode.addSelectionListener(new ExecuteSelectionAdapter());
@@ -175,16 +164,11 @@ public class RuntimeWindow {
 			if(message instanceof ErrorMessage) {
 				ErrorMessage errorMessage = (ErrorMessage) message;
 				
-				IVariableExpression varExp = ErrorMessage.getVariableFromExpression(errorMessage.getErrorExpression());		//Expression where the error Occurs
-				String varValue = Iterables.getLast(message.getVarValues().get(varExp.getVariable()).getVarValues());		//Value of the error expression
+				String varValue = Integer.toString(runtime.getIntValueFromExpression(errorMessage.getErrorExpression()));	//Value of the error expression
 				
 				IWidget errorLine = IJavardiseService.getWidget(errorMessage.getErrorElement());
-//				shortTextDecoration = errorLine.addNote(errorMessage.getShortText(), ICodeDecoration.Location.RIGHT);	//Add short text right of the line
-//				errorVariableValueDecoration = errorLine.addNote(varExp.getVariable() + " = " + varValue, ICodeDecoration.Location.LEFT);
-//				shortTextDecoration.show();
-//				errorVariableValueDecoration.show();
 				
-				shortTextDecoration = errorLine.addNote(errorMessage.getShortText() + ", " + varExp.getVariable() + " = " + varValue, 
+				shortTextDecoration = errorLine.addNote(errorMessage.getShortText() + ", " + errorMessage.getErrorExpression() + " = " + varValue, 
 						ICodeDecoration.Location.RIGHT);	//Add short text and value of the variable to the end of the line
 				shortTextDecoration.show();
 				

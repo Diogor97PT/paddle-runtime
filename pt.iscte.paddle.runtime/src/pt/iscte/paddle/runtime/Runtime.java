@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Iterables;
+
 import pt.iscte.paddle.interpreter.ExecutionError;
 import pt.iscte.paddle.interpreter.IExecutionData;
 import pt.iscte.paddle.interpreter.IMachine;
@@ -16,6 +18,7 @@ import pt.iscte.paddle.javardise.service.IJavardiseService;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
 import pt.iscte.paddle.model.IArrayElement;
 import pt.iscte.paddle.model.IArrayElementAssignment;
+import pt.iscte.paddle.model.IArrayLength;
 import pt.iscte.paddle.model.IArrayType;
 import pt.iscte.paddle.model.IBlockElement;
 import pt.iscte.paddle.model.IExpression;
@@ -29,6 +32,7 @@ import pt.iscte.paddle.model.IVariableAssignment;
 import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.model.IVariableExpression;
 import pt.iscte.paddle.model.cfg.IControlFlowGraph;
+import pt.iscte.paddle.runtime.graphics.ArrayIndexErrorDraw;
 import pt.iscte.paddle.runtime.messages.ErrorMessage;
 import pt.iscte.paddle.runtime.messages.Message;
 import pt.iscte.paddle.runtime.tests.Test;
@@ -144,12 +148,24 @@ public class Runtime {
 		}
 		
 		int sum = 0;
-		
+		System.out.println(exp.getParts());
 		for (IExpression part : exp.getParts()) {
 			if(part instanceof ILiteral)
 				sum += Integer.parseInt(((ILiteral)part).getStringValue());
-			else if (part instanceof IVariableExpression)
-				sum += getIntValueFromIVariableExpression((IVariableExpression)part);
+			else if(part instanceof IArrayLength) {
+				IArrayLength length = (IArrayLength) part;
+				String [] v = ArrayIndexErrorDraw.stringToArray(Iterables.getLast(varValues.get(((IVariableExpression)length.getTarget()).getVariable()).getVarValues()));
+				sum += v.length;
+			} else if (part instanceof IVariableExpression) {
+				IVariableExpression e = (IVariableExpression) part;
+				if(varValues.get(e.getVariable()) instanceof ArrayVariableInfo) {			//if it is an array, the array size is needed not the array itself
+					String [] v = ArrayIndexErrorDraw.stringToArray(Iterables.getLast(((ArrayVariableInfo)varValues.get(e.getVariable())).getVarValues()));
+					sum += v.length;
+				}
+				else {
+				sum += getIntValueFromIVariableExpression(e);
+				}
+			} 
 		}
 		return sum;
 	}

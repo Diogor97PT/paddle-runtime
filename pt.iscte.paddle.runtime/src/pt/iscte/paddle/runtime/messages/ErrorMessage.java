@@ -9,8 +9,6 @@ import pt.iscte.paddle.runtime.Runtime;
 
 public abstract class ErrorMessage extends Message {
 	
-	
-
 	public ErrorMessage(HyperlinkedText text, Runtime runtime) {
 		super(text, runtime);
 	}
@@ -27,7 +25,7 @@ public abstract class ErrorMessage extends Message {
 		if(exp.getNumberOfParts() == 0)
 			return (IVariableExpression) exp;
 		
-		for(IExpression possibleVar : exp.getParts()) {								//TODO verificar se funciona bem
+		for(IExpression possibleVar : exp.getParts()) {								
 			if(possibleVar instanceof IVariableExpression) {
 				return (IVariableExpression) possibleVar;
 			}
