@@ -1,6 +1,7 @@
 package pt.iscte.paddle.runtime.experiment.tests;
 
 import static pt.iscte.paddle.model.IType.INT;
+import static pt.iscte.paddle.model.IType.VOID;
 
 import pt.iscte.paddle.model.IBlock;
 import pt.iscte.paddle.model.IModule;
@@ -16,7 +17,7 @@ public class Example00TestStackTrace extends Test {
 		
 		IProcedure p2 = createProcedure();
 		
-		procedure = module.addProcedure(INT);
+		procedure = module.addProcedure(VOID);
 		procedure.setId("main");
 		
 		IBlock body = procedure.getBody();
@@ -29,7 +30,8 @@ public class Example00TestStackTrace extends Test {
 		body.addArrayElementAssignment(v, INT.literal(1), INT.literal(0));
 		body.addArrayElementAssignment(v, INT.literal(2), INT.literal(1));
 		
-		body.addReturn(p2.expression(v));
+//		body.addReturn(p2.expression(v));
+		body.addCall(p2, v);
 	}
 
 	private IProcedure createProcedure() {

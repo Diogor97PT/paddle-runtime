@@ -2,6 +2,7 @@ package pt.iscte.paddle.runtime.experiment.tests;
 
 import static pt.iscte.paddle.model.IOperator.SMALLER;
 import static pt.iscte.paddle.model.IType.INT;
+import static pt.iscte.paddle.model.IType.VOID;
 
 import pt.iscte.paddle.model.IBlock;
 import pt.iscte.paddle.model.ILoop;
@@ -18,7 +19,7 @@ public class Example06TranposeMatrixTest extends Test {
 		
 		IProcedure p2 = createProcedure();
 		
-		procedure = module.addProcedure(INT.array2D().reference());
+		procedure = module.addProcedure(VOID);
 		procedure.setId("main");
 		
 		IBlock body = procedure.getBody();
@@ -35,7 +36,8 @@ public class Example06TranposeMatrixTest extends Test {
 		body.addArrayElementAssignment(m, INT.literal(5), INT.literal(1), INT.literal(1));
 		body.addArrayElementAssignment(m, INT.literal(6), INT.literal(1), INT.literal(2));
 		
-		body.addReturn(p2.expression(m));
+//		body.addReturn(p2.expression(m));
+		body.addCall(p2, m);
 	}
 
 	private IProcedure createProcedure() {

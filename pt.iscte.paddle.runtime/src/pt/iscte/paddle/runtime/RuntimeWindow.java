@@ -1,7 +1,5 @@
 package pt.iscte.paddle.runtime;
 
-import static pt.iscte.paddle.model.IType.INT;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -411,38 +409,38 @@ public class RuntimeWindow {
 	private void createExerciseExplanationText(HyperlinkedText text){
 		if(test instanceof Example00TestStackTrace) {
 			text.line("Este exercício serve apenas como exemplo para demonstrar o funcionamento do programa.");
-			text.line("");
+			text.newline();
 			text.line("Valores iniciais:");
 			text.line("v = {1, 2}");
 		} else if(test instanceof Example00TestExplanation) {
 			text.line("Este exercício é igual ao anterior.");
-			text.line("");
+			text.newline();
 			text.line("Valores iniciais:");
 			text.line("v = {1, 2}");
 		} else if(test instanceof Example01SumTest) {
 			text.line("O objetivo deste exercício é devolver a soma dos inteiros que estão dentro do vetor v.");
-			text.line("");
+			text.newline();
 			text.line("Valores iniciais:");
 			text.line("v = {1, 3, 5, 10}");
 		} else if(test instanceof Example02NaturalsTest) {
 			text.line("Este excerto de código tem como objetivo devolver um vetor com todos os números naturais desde");
 			text.line("1 até ao inteiro n.");
-			text.line("");
+			text.newline();
 			text.line("Valores iniciais:");
 			text.line("n = 5");
 		} else if(test instanceof Example03LastOccurrenceTest) {
 			text.line("O objetivo deste exercício é devolver o índice da última vez que aparece o inteiro n no vetor v.");
-			text.line("");
+			text.newline();
 			text.line("Valores iniciais:");
 			text.line("v = {1, 2, 8, 2, 5, 2, 9, 1}, n = 3");
 		} else if(test instanceof Example04InvertTest) {
 			text.line("Este exercício tem como objetivo inverter a ordem dos valores do vetor v.");
-			text.line("");
+			text.newline();
 			text.line("Valores iniciais:");
 			text.line("v = {1, 2, 3, 4, 5}");
 		} else if(test instanceof Example05ScaleMatrixTest) {
-			text.line("Neste excerto de código, o objetivo é multplicar todos valores da matriz de inteiro m pelo inteiro n");
-			text.line("");
+			text.line("Neste excerto de código, o objetivo é multiplicar todos valores da matriz de inteiro m pelo inteiro n");
+			text.newline();
 			text.line("Valores iniciais:");
 			text.line("n = 2");
 			text.line("m = {{1, 2, 3, 4},");
@@ -452,20 +450,21 @@ public class RuntimeWindow {
 		} else if(test instanceof Example06TranposeMatrixTest) {
 			text.line("Neste excerto de código, o objetivo é obter a transposta da matriz m. A transposta da matriz é obtida");
 			text.line("ao trocar as linhas pelas colunas e vice-versa.");
-			text.line("");
+			text.newline();
 			text.line("Valores iniciais:");
 			text.line("m = {{1, 2, 3},");
 			text.line("          {4, 5, 6}}");
 		} else if(test instanceof Example07InvertSameVectorTest) {
 			text.line("Este exercício tem o mesmo objetivo do exercício 4, ou seja, inverter o vetor v, mas utiliza");
 			text.line("código diferente para o efeito.");
-			text.line("");
+			text.newline();
 			text.line("Valores iniciais:");
 			text.line("v = {1, 2, 3, 4, 5}");
 		} else if(test instanceof Example08BubbleSortTest) {
 			text.line("Neste exercício o código tem como objetivo ordenar o vetor por ordem crescente utilizando o bubblesort.");
-			text.line("O algoritmo bubblesort funciona colocando a cada o maior numero no fim do vetor a cada passagem por este.");
-			text.line("");
+			text.line("O algoritmo bubblesort funciona percorrendo o vetor várias vezes, e a cada passagem colocar o maior valor");
+			text.line("no fim do vetor.");
+			text.newline();
 			text.line("Valores iniciais:");
 			text.line("v = {9, 10, 99, 52, 23, 1, 88, 1}");
 		}

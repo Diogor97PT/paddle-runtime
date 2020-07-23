@@ -5,6 +5,7 @@ import static pt.iscte.paddle.model.IOperator.GREATER;
 import static pt.iscte.paddle.model.IOperator.SMALLER;
 import static pt.iscte.paddle.model.IOperator.SUB;
 import static pt.iscte.paddle.model.IType.INT;
+import static pt.iscte.paddle.model.IType.VOID;
 
 import pt.iscte.paddle.model.IBlock;
 import pt.iscte.paddle.model.ILoop;
@@ -23,7 +24,7 @@ public class Example08BubbleSortTest extends Test {
 		
 		IProcedure p2 = createProcedure();
 		
-		procedure = module.addProcedure(INT.array().reference());
+		procedure = module.addProcedure(VOID);
 		procedure.setId("main");
 		
 		IBlock body = procedure.getBody();
@@ -42,11 +43,11 @@ public class Example08BubbleSortTest extends Test {
 		body.addArrayElementAssignment(v, INT.literal(1), INT.literal(7));
 		
 		body.addCall(p2, v);
-		body.addReturn(v);
+//		body.addReturn(v);
 	}
 
 	private IProcedure createProcedure() {
-		IProcedure procedure2 = module.addProcedure(IType.VOID);
+		IProcedure procedure2 = module.addProcedure(VOID);
 		procedure2.setId("bubbleSort");
 		
 		IVariableDeclaration v = procedure2.addParameter(INT.array().reference());

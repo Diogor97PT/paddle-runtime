@@ -4,6 +4,7 @@ import static pt.iscte.paddle.model.IOperator.SUB;
 import static pt.iscte.paddle.model.IOperator.SMALLER;
 import static pt.iscte.paddle.model.IOperator.DIV;
 import static pt.iscte.paddle.model.IType.INT;
+import static pt.iscte.paddle.model.IType.VOID;
 import pt.iscte.paddle.model.IBlock;
 import pt.iscte.paddle.model.ILoop;
 import pt.iscte.paddle.model.IModule;
@@ -20,7 +21,7 @@ public class Example07InvertSameVectorTest extends Test {
 		
 		IProcedure p2 = createProcedure();
 		
-		procedure = module.addProcedure(INT.array().reference());
+		procedure = module.addProcedure(VOID);
 		procedure.setId("main");
 		
 		IBlock body = procedure.getBody();
@@ -37,11 +38,11 @@ public class Example07InvertSameVectorTest extends Test {
 		
 		body.addCall(p2, v);
 		
-		body.addReturn(v);
+//		body.addReturn(v);
 	}
 
 	private IProcedure createProcedure() {
-		IProcedure procedure = module.addProcedure(IType.VOID);
+		IProcedure procedure = module.addProcedure(VOID);
 		procedure.setId("invert");
 		
 		IProcedure swapElements = createProcedure2();

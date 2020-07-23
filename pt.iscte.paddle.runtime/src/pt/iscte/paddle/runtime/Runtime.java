@@ -8,12 +8,10 @@ import java.util.Map;
 import com.google.common.collect.Iterables;
 
 import pt.iscte.paddle.interpreter.ExecutionError;
-import pt.iscte.paddle.interpreter.IExecutionData;
 import pt.iscte.paddle.interpreter.IMachine;
 import pt.iscte.paddle.interpreter.IProgramState;
 import pt.iscte.paddle.interpreter.IProgramState.IListener;
 import pt.iscte.paddle.interpreter.IReference;
-import pt.iscte.paddle.interpreter.IValue;
 import pt.iscte.paddle.javardise.service.IJavardiseService;
 import pt.iscte.paddle.javardise.util.HyperlinkedText;
 import pt.iscte.paddle.model.IArrayElement;
@@ -181,9 +179,11 @@ public class Runtime {
 		Message message = null;
 		
 		try {
-			IExecutionData data = state.execute(procedure);
-			IValue value = data.getReturnValue();
-			message = Message.getSuccessfulMessage(text, this, value);
+			state.execute(procedure);
+			
+//			IExecutionData data = state.execute(procedure);
+//			IValue value = data.getReturnValue();
+//			message = Message.getSuccessfulMessage(text, this, value);		//TODO all examples are voids, how to obtain the value?
 		} catch (ExecutionError e) {
 			message = Message.getErrorMessage(text, this, e);
 			text.newline();

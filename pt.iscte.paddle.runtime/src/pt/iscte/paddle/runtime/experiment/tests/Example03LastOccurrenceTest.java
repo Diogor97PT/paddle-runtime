@@ -4,6 +4,7 @@ import static pt.iscte.paddle.model.IOperator.EQUAL;
 import static pt.iscte.paddle.model.IOperator.GREATER_EQ;
 import static pt.iscte.paddle.model.IOperator.SUB;
 import static pt.iscte.paddle.model.IType.INT;
+import static pt.iscte.paddle.model.IType.VOID;
 
 import pt.iscte.paddle.model.IBlock;
 import pt.iscte.paddle.model.ILoop;
@@ -21,7 +22,7 @@ public class Example03LastOccurrenceTest extends Test {
 		
 		IProcedure p2 = createProcedure();
 		
-		procedure = module.addProcedure(INT);
+		procedure = module.addProcedure(VOID);
 		procedure.setId("main");
 		
 		IBlock body = procedure.getBody();
@@ -43,7 +44,8 @@ public class Example03LastOccurrenceTest extends Test {
 		IVariableDeclaration i = body.addVariable(INT, INT.literal(3));			//Number to find
 		i.setId("i");
 		
-		body.addReturn(p2.expression(v, i));
+//		body.addReturn(p2.expression(v, i));
+		body.addCall(p2, v, i);
 	}
 
 	private IProcedure createProcedure() {

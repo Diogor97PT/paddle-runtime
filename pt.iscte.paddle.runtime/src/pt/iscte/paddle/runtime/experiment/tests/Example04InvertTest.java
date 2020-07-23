@@ -3,6 +3,7 @@ package pt.iscte.paddle.runtime.experiment.tests;
 import static pt.iscte.paddle.model.IOperator.SUB;
 import static pt.iscte.paddle.model.IOperator.GREATER_EQ;
 import static pt.iscte.paddle.model.IType.INT;
+import static pt.iscte.paddle.model.IType.VOID;
 
 import pt.iscte.paddle.model.IBlock;
 import pt.iscte.paddle.model.ILoop;
@@ -19,7 +20,7 @@ public class Example04InvertTest extends Test {
 		
 		IProcedure p2 = createProcedure();
 		
-		procedure = module.addProcedure(INT.array().reference());
+		procedure = module.addProcedure(VOID);
 		procedure.setId("main");
 		
 		IBlock body = procedure.getBody();
@@ -35,7 +36,8 @@ public class Example04InvertTest extends Test {
 		body.addArrayElementAssignment(v, INT.literal(4), INT.literal(3));
 		body.addArrayElementAssignment(v, INT.literal(5), INT.literal(4));
 		
-		body.addReturn(p2.expression(v));
+//		body.addReturn(p2.expression(v));
+		body.addCall(p2, v);
 	}
 
 	private IProcedure createProcedure() {

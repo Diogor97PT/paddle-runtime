@@ -3,6 +3,7 @@ package pt.iscte.paddle.runtime.experiment.tests;
 import static pt.iscte.paddle.model.IOperator.ADD;
 import static pt.iscte.paddle.model.IOperator.SMALLER;
 import static pt.iscte.paddle.model.IType.INT;
+import static pt.iscte.paddle.model.IType.VOID;
 
 import pt.iscte.paddle.model.IBlock;
 import pt.iscte.paddle.model.ILoop;
@@ -20,7 +21,7 @@ public class Example02NaturalsTest extends Test {
 		
 		IProcedure p2 = createProcedure();
 		
-		procedure = module.addProcedure(INT.array().reference());
+		procedure = module.addProcedure(VOID);
 		procedure.setId("main");
 		
 		IBlock body = procedure.getBody();
@@ -28,7 +29,8 @@ public class Example02NaturalsTest extends Test {
 		IVariableDeclaration i = body.addVariable(INT, INT.literal(5));
 		i.setId("i");
 		
-		body.addReturn(p2.expression(i));
+//		body.addReturn(p2.expression(i));
+		body.addCall(p2, i);
 	}
 
 	private IProcedure createProcedure() {
