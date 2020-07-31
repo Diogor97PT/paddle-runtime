@@ -262,13 +262,13 @@ public class RuntimeWindow {
 	    sixthTest.setText("Test 06 - Transpose Matrix");
 	    sixthTest.addSelectionListener(new TestSelectionListener());
 	    
-	    MenuItem seventhTest = new MenuItem(fileMenu, SWT.RADIO);
-	    seventhTest.setText("Test 07 - Invert Same Vector");
-	    seventhTest.addSelectionListener(new TestSelectionListener());
-	    
-	    MenuItem eightTest = new MenuItem(fileMenu, SWT.RADIO);
-	    eightTest.setText("Test 08 - Bubble Sort");
-	    eightTest.addSelectionListener(new TestSelectionListener());
+//	    MenuItem seventhTest = new MenuItem(fileMenu, SWT.RADIO);
+//	    seventhTest.setText("Test 07 - Invert Same Vector");
+//	    seventhTest.addSelectionListener(new TestSelectionListener());
+//	    
+//	    MenuItem eightTest = new MenuItem(fileMenu, SWT.RADIO);
+//	    eightTest.setText("Test 08 - Bubble Sort");
+//	    eightTest.addSelectionListener(new TestSelectionListener());
 	    
 	    MenuItem profileMenuHeader = new MenuItem(menuBar, SWT.CASCADE);
 	    profileMenuHeader.setText("&Profile");
@@ -410,64 +410,95 @@ public class RuntimeWindow {
 		if(test instanceof Example00TestStackTrace) {
 			text.line("Este exercício serve apenas como exemplo para demonstrar o funcionamento do programa.");
 			text.newline();
-			text.line("Valores iniciais:");
+			text.line("Argumentos:");
 			text.line("v = {1, 2}");
+			text.newline();
+			text.line("Resultado esperado: ");
+			text.line("2");
 		} else if(test instanceof Example00TestExplanation) {
 			text.line("Este exercício é igual ao anterior.");
 			text.newline();
-			text.line("Valores iniciais:");
+			text.line("Argumentos:");
 			text.line("v = {1, 2}");
+			text.newline();
+			text.line("Resultado esperado: ");
+			text.line("2");
 		} else if(test instanceof Example01SumTest) {
 			text.line("O objetivo deste exercício é devolver a soma dos inteiros que estão dentro do vetor v.");
 			text.newline();
-			text.line("Valores iniciais:");
+			text.line("Argumentos:");
 			text.line("v = {1, 3, 5, 10}");
+			text.newline();
+			text.line("Resultado esperado: ");
+			text.line("19");
 		} else if(test instanceof Example02NaturalsTest) {
 			text.line("Este excerto de código tem como objetivo devolver um vetor com todos os números naturais desde");
 			text.line("1 até ao inteiro n.");
 			text.newline();
-			text.line("Valores iniciais:");
+			text.line("Argumentos:");
 			text.line("n = 5");
-		} else if(test instanceof Example03LastOccurrenceTest) {
-			text.line("O objetivo deste exercício é devolver o índice da última vez que aparece o inteiro n no vetor v.");
 			text.newline();
-			text.line("Valores iniciais:");
-			text.line("v = {1, 2, 8, 2, 5, 2, 9, 1}, n = 3");
+			text.line("Resultado esperado: ");
+			text.line("{1, 2, 3, 4, 5}");
+		} else if(test instanceof Example03LastOccurrenceTest) {
+			text.line("O objetivo deste exercício é devolver o índice da última vez que aparece o inteiro n no vetor v, ou -1 se não existir.");
+			text.newline();
+			text.line("Argumentos:");
+			text.line("v = {1, 2, 8, 2, 5, 2, 9, 1}");
+			text.line("n = 3");
+			text.newline();
+			text.line("Resultado esperado: ");
+			text.line("-1");
 		} else if(test instanceof Example04InvertTest) {
 			text.line("Este exercício tem como objetivo inverter a ordem dos valores do vetor v.");
 			text.newline();
-			text.line("Valores iniciais:");
+			text.line("Argumentos:");
 			text.line("v = {1, 2, 3, 4, 5}");
+			text.newline();
+			text.line("Resultado esperado: ");
+			text.line("{5, 4, 3, 2, 1}");
 		} else if(test instanceof Example05ScaleMatrixTest) {
 			text.line("Neste excerto de código, o objetivo é multiplicar todos valores da matriz de inteiro m pelo inteiro n");
 			text.newline();
-			text.line("Valores iniciais:");
-			text.line("n = 2");
+			text.line("Argumentos:");
 			text.line("m = {{1, 2, 3, 4},");
 			text.line("          {3, 2, 1},");
 			text.line("          {4, 1, 7, 3},");
 			text.line("          {3, 8, 4}}");
+			text.line("n = 2");
+			text.newline();
+			text.line("Resultado esperado: ");
+			text.line("{{2, 4, 6, 8},");
+			text.line(" {6, 4, 2},");
+			text.line(" {8, 2, 14, 6},");
+			text.line(" {6, 16, 8}}");
 		} else if(test instanceof Example06TranposeMatrixTest) {
 			text.line("Neste excerto de código, o objetivo é obter a transposta da matriz m. A transposta da matriz é obtida");
 			text.line("ao trocar as linhas pelas colunas e vice-versa.");
 			text.newline();
-			text.line("Valores iniciais:");
+			text.line("Argumentos:");
 			text.line("m = {{1, 2, 3},");
 			text.line("          {4, 5, 6}}");
-		} else if(test instanceof Example07InvertSameVectorTest) {
-			text.line("Este exercício tem o mesmo objetivo do exercício 4, ou seja, inverter o vetor v, mas utiliza");
-			text.line("código diferente para o efeito.");
 			text.newline();
-			text.line("Valores iniciais:");
-			text.line("v = {1, 2, 3, 4, 5}");
-		} else if(test instanceof Example08BubbleSortTest) {
-			text.line("Neste exercício o código tem como objetivo ordenar o vetor por ordem crescente utilizando o bubblesort.");
-			text.line("O algoritmo bubblesort funciona percorrendo o vetor várias vezes, e a cada passagem colocar o maior valor");
-			text.line("no fim do vetor.");
-			text.newline();
-			text.line("Valores iniciais:");
-			text.line("v = {9, 10, 99, 52, 23, 1, 88, 1}");
-		}
+			text.line("Resultado esperado: ");
+			text.line("{{1, 4},");
+			text.line(" {2, 5},");
+			text.line(" {3, 6}}");
+		} 
+//		else if(test instanceof Example07InvertSameVectorTest) {
+//			text.line("Este exercício tem o mesmo objetivo do exercício 4, ou seja, inverter o vetor v, mas utiliza");
+//			text.line("código diferente para o efeito.");
+//			text.newline();
+//			text.line("Valores iniciais:");
+//			text.line("v = {1, 2, 3, 4, 5}");
+//		} else if(test instanceof Example08BubbleSortTest) {
+//			text.line("Neste exercício o código tem como objetivo ordenar o vetor por ordem crescente utilizando o bubblesort.");
+//			text.line("O algoritmo bubblesort funciona percorrendo o vetor várias vezes, e a cada passagem colocar o maior valor");
+//			text.line("no fim do vetor.");
+//			text.newline();
+//			text.line("Valores iniciais:");
+//			text.line("v = {9, 10, 99, 52, 23, 1, 88, 1}");
+//		}
 	}
 	
 	public static void main(String[] args) {

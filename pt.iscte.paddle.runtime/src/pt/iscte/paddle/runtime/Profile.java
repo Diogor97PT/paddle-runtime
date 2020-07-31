@@ -44,8 +44,8 @@ public enum Profile {
 		Test test = RuntimeWindow.test;
 		if(test instanceof Example00TestStackTrace) {
 			return "Exception in thread \"main\" java.lang.ArrayIndexOutOfBoundsException: Index 2 out of bounds for length 2\r\n" + 
-					"              at pt.iscte.paddle.runtime.experiment.Example00.example(Example00.java:4)\r\n" + 
-					"              at pt.iscte.paddle.runtime.experiment.Example00.main(Example00.java:12)";
+					"              at pt.iscte.paddle.runtime.experiment.Example00.example(Example00.java:6)\r\n" + 
+					"              at pt.iscte.paddle.runtime.experiment.Example00.main(Example00.java:13)";
 		} else if(test instanceof Example01SumTest) {
 			return "Exception in thread \"main\" java.lang.ArrayIndexOutOfBoundsException: Index 4 out of bounds for length 4\r\n" + 
 					"              at pt.iscte.paddle.runtime.experiment.Example01Sum.sum(Example01Sum.java:8)\r\n" + 

@@ -3,7 +3,9 @@ package pt.iscte.paddle.runtime.experiment;
 public class Example00 {
 	
 	public static int example(int [] v) {
-		return v[v.length];
+		int [] v2 = new int[v.length];
+		v2[1] = 4;
+		return v2[v2.length];
 	}
 	
 	public static void main(String[] args) {

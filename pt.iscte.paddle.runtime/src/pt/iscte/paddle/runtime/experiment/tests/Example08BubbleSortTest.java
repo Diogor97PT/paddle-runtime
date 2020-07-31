@@ -12,7 +12,6 @@ import pt.iscte.paddle.model.ILoop;
 import pt.iscte.paddle.model.IModule;
 import pt.iscte.paddle.model.IProcedure;
 import pt.iscte.paddle.model.ISelection;
-import pt.iscte.paddle.model.IType;
 import pt.iscte.paddle.model.IVariableDeclaration;
 import pt.iscte.paddle.runtime.tests.Test;
 

@@ -43,12 +43,12 @@ public class Example00TestExplanation extends Test {
 		
 		IBlock body = procedure.getBody();
 		
-		IVariableDeclaration i = body.addVariable(INT);
-		i.setId("i");
+		IVariableDeclaration v2 = body.addVariable(INT.array().reference(), INT.array().heapAllocation(v.length()));
+		v2.setId("v2");
 		
-		body.addAssignment(i, v.element(v.length()));
+		body.addArrayElementAssignment(v2, INT.literal(2), INT.literal(1));
 		
-		body.addReturn(i);
+		body.addReturn(v2.element(v2.length()));
 		
 		return procedure;
 	}
